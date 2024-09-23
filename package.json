@@ -1,0 +1,38 @@
+{
+  "name": "devflow",
+  "version": "0.0.0",
+  "description": "",
+  "main": "src/server.ts",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "npx ts-node src/server.ts",
+    "build": "pushd ./src/frontend && npx ng build && popd",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ramtinsoltani/devflow.git"
+  },
+  "author": "Ramtin Soltani",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ramtinsoltani/devflow/issues"
+  },
+  "homepage": "https://github.com/ramtinsoltani/devflow#readme",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "mongoose": "^8.6.3",
+    "validator": "^13.12.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.5.5",
+    "@types/validator": "^13.12.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  }
+}
