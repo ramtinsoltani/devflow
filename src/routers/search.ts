@@ -3,6 +3,7 @@ import { ICollection, IItem } from "../models/normalized";
 import { asyncHandler } from "../lib/async-handler";
 import { DatabaseService } from "../services/database";
 import { SearchCollectionItemsRequest, SearchCollectionsRequest, SearchItemsRequest } from "../models/requests";
+import { queryArrayParserMiddleware } from "../lib/utilities";
 
 const db = new DatabaseService();
 export const SearchRouter = Router();
@@ -15,18 +16,24 @@ SearchRouter.get('/search/collections', asyncHandler(async (req: SearchCollectio
 
 }));
 
-SearchRouter.get('/search/items/:collectionId', asyncHandler(async (req: SearchCollectionItemsRequest, res: Response<IItem[]>) => {
+SearchRouter.get('/search/items/:collectionId',
+  queryArrayParserMiddleware('tags'),
+  asyncHandler(async (req: SearchCollectionItemsRequest, res: Response<IItem[]>) => {
 
-  const result = await db.searchCollectionItems(req.params.collectionId, req.query.q, req.query.tags);
+    const result = await db.searchCollectionItems(req.params.collectionId, req.query.q, req.query.tags);
 
-  res.json(result);
+    res.json(result);
 
-}));
+  })
+);
 
-SearchRouter.get('/search/items', asyncHandler(async (req: SearchItemsRequest, res: Response<IItem[]>) => {
+SearchRouter.get('/search/items',
+  queryArrayParserMiddleware('tags'),
+  asyncHandler(async (req: SearchItemsRequest, res: Response<IItem[]>) => {
 
-  const result = await db.searchItems(req.query.q, req.query.tags);
+    const result = await db.searchItems(req.query.q, req.query.tags);
 
-  res.json(result);
+    res.json(result);
 
-}));
+  })
+);

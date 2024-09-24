@@ -4,6 +4,7 @@ import { IRequestNewCollection, IRequestNewItem, IRequestUpdateCollection, IRequ
 import { ICollection, IItem } from '../models/normalized';
 import { normalizeCommonDocument } from '../lib/normalizer';
 import { ServerError } from '../lib/error';
+import { queryStringToRegex } from '../lib/utilities';
 
 export class DatabaseService {
 
@@ -142,19 +143,73 @@ export class DatabaseService {
 
   public async searchCollections(q: string): Promise<ICollection[]> {
 
-    return [];
+    if ( ! q?.trim().length )
+      return this.getCollections();
+
+    const qregex = queryStringToRegex(q);
+    const docs = await DbCollection.find({ name: { $regex: qregex.regex, $options: qregex.flags } });
+
+    return docs.map(c => normalizeCommonDocument(c) as ICollection);
 
   }
 
   public async searchCollectionItems(collectionId: string, q?: string, tags?: string[]): Promise<IItem[]> {
 
-    return [];
+    if ( ! collectionId )
+      throw new ServerError('invalid-request', 'No collection specified!');
+    else if ( ! await DbCollection.findById(collectionId) )
+      throw new ServerError('invalid-request', `Could not find collection with ID "${ collectionId }"!`);
+    else if ( ! q?.trim().length && ! tags?.length )
+      throw new ServerError('invalid-request', 'No search criteria defined!');
+
+    const query: any = {
+      collectionId
+    };
+
+    if ( q?.trim() ) {
+
+      const qregex = queryStringToRegex(q);
+
+      query.title = { $regex: qregex.regex, $options: qregex.flags };
+
+    }
+
+    if ( tags?.length ) {
+
+      query['tags.label'] = { $in: tags.map(t => t.trim()).filter(t => t.length) };
+
+    }
+
+    const docs = await DbItem.find(query);
+
+    return docs.map(i => normalizeCommonDocument(i) as IItem);
 
   }
   
   public async searchItems(q?: string, tags?: string[]): Promise<IItem[]> {
 
-    return [];
+    if ( ! q?.trim().length && ! tags?.length )
+      throw new ServerError('invalid-request', 'No search criteria defined!');
+
+    const query: any = {};
+
+    if ( q?.trim() ) {
+
+      const qregex = queryStringToRegex(q);
+
+      query.title = { $regex: qregex.regex, $options: qregex.flags };
+
+    }
+
+    if ( tags?.length ) {
+
+      query['tags.label'] = { $in: tags.map(t => t.trim()).filter(t => t.length) };
+
+    }
+
+    const docs = await DbItem.find(query);
+
+    return docs.map(i => normalizeCommonDocument(i) as IItem);
     
   }
 
