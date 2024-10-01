@@ -1,0 +1,18 @@
+<app-textbox [(value)]="modalData.name" label="Name" placeholder="Required">
+</app-textbox>
+<div class="color-swatch-control">
+  <label>Color</label>
+  <div class="color-swatch">
+    @for (color of colorTuples; track $index) {
+      <app-icon
+      class="color-item"
+      [ngClass]="{ selected: color[0] === modalData.color}"
+      icon="rectangle-history"
+      iconSize="1rem"
+      containerSize="1.5rem"
+      [paletteColor]="color[1]"
+      (click)="onColorChange(color[0])">
+      </app-icon>
+    }
+  </div>
+</div>

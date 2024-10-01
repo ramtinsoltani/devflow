@@ -7,3 +7,9 @@ export interface IResponseError {
   message: string,
   code: string
 }
+
+export interface IResponseUrlMetadata {
+  title?: string,
+  description?: string,
+  posterUrl?: string
+}

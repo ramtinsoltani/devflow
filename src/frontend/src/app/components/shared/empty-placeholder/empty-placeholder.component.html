@@ -1,0 +1,13 @@
+@if ( assetUrl ) {
+  <img class="icon" [src]="assetUrl" draggable="false">
+}
+<div class="display-text">
+  
+  @if ( title ) {
+    <div class="title">{{ title }}</div>
+  }
+  
+  @if ( message ) {
+    <p class="message">{{ message }}</p>
+  }
+</div>

@@ -28,9 +28,14 @@ export interface IRequestUpdateItem {
   tags?: ITag[]
 }
 
+export interface IRequestFetchMetadata {
+  url: string
+}
+
 export type NewCollectionRequest = Request<any, any, IRequestNewCollection>;
 export type UpdateCollectionRequest = Request<{ id: string }, any, IRequestUpdateCollection>;
 export type DeleteCollectionRequest = Request<{ id: string }>;
+export type GetItemRequest = Request<{ id: string }>;
 export type GetItemsRequest = Request<{ collectionId: string }>;
 export type NewItemRequest = Request<any, any, IRequestNewItem>;
 export type UpdateItemRequest = Request<{ id: string }, any, IRequestUpdateItem>;
@@ -38,3 +43,4 @@ export type DeleteItemRequest = Request<{ id: string }>;
 export type SearchCollectionsRequest = Request<any, any, any, { q: string }>;
 export type SearchCollectionItemsRequest = Request<{ collectionId: string }, any, any, { q: string, tags: string[] }>;
 export type SearchItemsRequest = Request<any, any, any, { q: string, tags: string[] }>;
+export type FetchMetadataRequest = Request<any, any, IRequestFetchMetadata>;

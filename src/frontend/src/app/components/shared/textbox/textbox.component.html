@@ -1,0 +1,100 @@
+@if ( label ) {
+  <label>{{ label }}</label>
+}
+
+<div class="control-container" [ngClass]="{ 'has-label': !! label, multiline: type === 'multiline' }">
+@if ( type !== 'multiline' ) {
+  
+  @if ( type === 'search' ) {
+    <app-icon
+    class="search-icon"
+    icon="magnifying-glass"
+    iconSize="1em"
+    containerSize="2.25em"
+    (click)="onSearchTrigger()">
+    </app-icon>
+  }
+  @else if ( type === 'url' ) {
+
+    @if ( ! showUrlLoading ){
+      <app-icon
+      class="link-icon"
+      [ngClass]="{ invalid: ! isUrlValid }"
+      icon="link-simple"
+      iconSize="1em"
+      containerSize="2.25em"
+      (click)="onLinkButtonClick()">
+      </app-icon>
+    }
+    @else {
+      <app-icon
+      class="loading-icon"
+      icon="spinner-third"
+      iconSize="1em"
+      containerSize="2.25em">
+      </app-icon>
+    }
+  }
+
+  @if ( withTags ) {
+    <div class="tags"
+    [ngClass]="{
+      'has-button': type === 'search' || type === 'url',
+      empty: ! tags.length
+    }" #tagsContainer>
+      @for (tag of tags; track i; let i = $index) {
+        <app-tag
+        [value]="tag.label"
+        [color]="tag.color"
+        removable
+        [monochrome]="monochromeTags"
+        monochromeTextColor="gray-3"
+        (onRemove)="onDeleteTag(i)">
+        </app-tag>
+      }
+    </div>
+  }
+
+  <input
+  #singleLineInput
+  class="textbox"
+  [ngClass]="{
+    'has-button': type === 'search' || type === 'url',
+    url: type === 'url',
+    'has-tags': tags.length,
+    'valid-url': isUrlValid && type === 'url'
+  }"
+  type="text"
+  [placeholder]="getPlaceholder()"
+  [ngModel]="value"
+  (keyup.enter)="onEnterPress()"
+  (ngModelChange)="onValueChange($event, singleLineInput)">
+
+  @if ( (type === 'search' && (value?.length || tags.length)) || (type === 'url' && showUrlClearButton) ) {
+    <app-icon
+    class="clear-icon"
+    icon="circle-xmark"
+    iconSize=".825em"
+    containerSize="2.25em"
+    (click)="onClearButtonClick()">
+    </app-icon>
+  }
+}
+@else {
+  <textarea
+  #multilineInput
+  class="textbox"
+  [ngModel]="value"
+  [placeholder]="getPlaceholder()"
+  (ngModelChange)="onValueChange($event, multilineInput)"></textarea>
+
+  @if ( multilineMaxAllowedChars ) {
+    <div class="bottom-bar">
+      <span class="char-counter"
+      [ngClass]="{
+        negative: multilineMaxAllowedChars - (value?.length || 0) < 0
+      }">{{ multilineMaxAllowedChars - (value?.length || 0) }}</span>
+    </div>
+  }
+}
+</div>

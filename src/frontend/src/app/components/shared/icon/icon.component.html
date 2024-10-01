@@ -1,0 +1,14 @@
+@if ( iconPath ) {
+  <div class="icon-container" [ngStyle]="{
+    width: containerWidth || iconWidth,
+    height: containerHeight || iconHeight,
+    mask: 'url(\'' + iconPath + '\') center no-repeat',
+    'mask-size': iconWidth + ' ' + iconHeight,
+    'background-color': color
+  }">
+    <img draggable="false" [src]="iconPath" class="icon" [ngStyle]="{
+      width: iconWidth,
+      height: iconHeight
+    }">
+  </div>
+}

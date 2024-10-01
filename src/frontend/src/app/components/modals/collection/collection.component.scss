@@ -1,0 +1,30 @@
+@import '../../../../scss/utils';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: rem(15px);
+}
+
+.color-swatch-control {
+  display: flex;
+  flex-direction: column;
+  gap: rem(10px);
+}
+
+.color-swatch {
+  display: flex;
+
+  app-icon.color-item {
+    transition: transform .15s ease-in-out, opacity .15s ease-in-out;
+    transform: scale(1);
+    opacity: .5;
+    cursor: pointer;
+
+    &:hover,
+    &.selected {
+      transform: scale(1.25);
+      opacity: 1;
+    }
+  }
+}

@@ -2,11 +2,19 @@ import { Router, Request, Response } from "express";
 import { IItem } from "../models/normalized";
 import { asyncHandler } from "../lib/async-handler";
 import { DatabaseService } from "../services/database";
-import { DeleteItemRequest, GetItemsRequest, NewItemRequest, UpdateItemRequest } from "../models/requests";
+import { DeleteItemRequest, GetItemRequest, GetItemsRequest, NewItemRequest, UpdateItemRequest } from "../models/requests";
 import { IResponseGeneralMessage } from "../models/responses";
 
 const db = new DatabaseService();
 export const ItemRouter = Router();
+
+ItemRouter.get('/item/:id', asyncHandler(async (req: GetItemRequest, res: Response<IItem>) => {
+
+  const item = await db.getItem(req.params.id);
+
+  res.json(item);
+
+}));
 
 ItemRouter.get('/items/:collectionId', asyncHandler(async (req: GetItemsRequest, res: Response<IItem[]>) => {
 

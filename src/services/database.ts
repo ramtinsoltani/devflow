@@ -29,7 +29,7 @@ export class DatabaseService {
 
   public async getCollections(): Promise<ICollection[]> {
 
-    const collections = await DbCollection.find({});
+    const collections = await DbCollection.find({}).sort({ createdAt: 1 });
 
     return collections.map(c => normalizeCommonDocument(c) as ICollection);
 
@@ -64,12 +64,26 @@ export class DatabaseService {
 
   }
 
+  public async getItem(id: string): Promise<IItem> {
+
+    if ( ! id )
+      throw new ServerError('invalid-request', 'Missing item ID!');
+
+    const item = await DbItem.findById(id);
+
+    if ( ! item )
+      throw new ServerError('not-found', `No item found with ID "${id}"!`);
+
+    return normalizeCommonDocument(item);
+
+  }
+
   public async getItems(collectionId: string): Promise<IItem[]> {
 
     if ( ! collectionId )
       throw new ServerError('invalid-request', 'Missing collection ID!');
 
-    const items = await DbItem.find({ collectionId });
+    const items = await DbItem.find({ collectionId }).sort({ createdAt: -1 });
 
     return items.map(i => normalizeCommonDocument(i));
 
@@ -82,6 +96,8 @@ export class DatabaseService {
     if ( ! collection )
       throw new ServerError('invalid-request', `Could not find collection with ID "${ data.collectionId }"!`);
 
+    data.tags = data.tags.map(t => ({ ...t, label: t.label.trim().toLowerCase() }));
+    
     const item = new DbItem(data);
 
     await item.save();
@@ -114,7 +130,7 @@ export class DatabaseService {
     if ( data.tags ) {
 
       doc.tags.splice(0, doc.tags.length);
-      doc.tags.push(...data.tags);
+      doc.tags.push(...data.tags.map(t => ({ ...t, label: t.label.trim().toLowerCase() })));
 
     }
 
@@ -176,7 +192,7 @@ export class DatabaseService {
 
     if ( tags?.length ) {
 
-      query['tags.label'] = { $in: tags.map(t => t.trim()).filter(t => t.length) };
+      query['tags.label'] = { $in: tags.map(t => t.trim().toLowerCase()).filter(t => t.length) };
 
     }
 
@@ -203,7 +219,7 @@ export class DatabaseService {
 
     if ( tags?.length ) {
 
-      query['tags.label'] = { $in: tags.map(t => t.trim()).filter(t => t.length) };
+      query['tags.label'] = { $in: tags.map(t => t.trim().toLowerCase()).filter(t => t.length) };
 
     }
 

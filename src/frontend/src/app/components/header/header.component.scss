@@ -1,0 +1,53 @@
+@import '../../../scss/utils';
+
+:host {
+  display: flex;
+  align-items: center;
+  min-height: rem(70px);
+  background-color: color(gray-2);
+  padding: 15px 25px;
+  box-shadow: 0 2px 20px color(dropshadow);
+  z-index: 2;
+  height: rem(70px);
+  max-height: rem(70px);
+}
+
+.brand {
+  min-width: rem(355px);
+  max-width: rem(355px);
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  .logo {
+    font-size: rem(30px);
+    padding-left: 26px;
+
+    .mono {
+      font-family: "PT Mono", monospace;
+      font-weight: 400;
+      font-style: normal;
+      color: color(gray-9);
+    }
+
+    .round {
+      font-family: "Comfortaa", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+      font-weight: 400;
+      color: color(gray-6);
+      transition: color .15s ease-in-out;
+    }
+  }
+}
+
+.controls {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  app-textbox {
+    width: max(50%, 600px);
+  }
+}

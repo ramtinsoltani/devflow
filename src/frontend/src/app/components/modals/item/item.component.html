@@ -1,0 +1,24 @@
+<div class="left">
+  <div class="poster"
+    [ngClass]="{ 'no-image': ! modalData.posterUrl }"
+    [ngStyle]="{ backgroundImage: 'url(' + modalData.posterUrl + ')' }">
+
+      @if ( ! modalData.posterUrl ) {
+        <app-icon icon="image-slash" iconWidth="50px"></app-icon>
+      }
+    </div>
+</div>
+<div class="right">
+  <app-textbox type="url"
+  [value]="modalData.url"
+  label="URL"
+  placeholder="Required"
+  [showUrlClearButton]="!! modalData.url.length"
+  [showUrlLoading]="isUrlFetching"
+  (onUrlClear)="onClearUrl()"
+  (onUrlSubmit)="onSubmitUrl($event)">
+  </app-textbox>
+  <app-textbox [(value)]="modalData.title" label="Title" placeholder="Required"></app-textbox>
+  <app-textbox type="multiline" [(value)]="modalData.description" label="Description" placeholder="Optional" [multilineMaxAllowedChars]="512"></app-textbox>
+  <app-textbox [(tags)]="modalData.tags" label="Tags" placeholder="Optional" withTags [previousTagsColorSequence]="originalColorSequence"></app-textbox>
+</div>

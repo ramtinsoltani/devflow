@@ -1,0 +1,37 @@
+@if ( item ) {
+  <div class="card" (click)="onCardClick()">
+    <div class="poster"
+    [ngClass]="{ 'no-image': ! item.posterUrl }"
+    [ngStyle]="{ backgroundImage: 'url(' + item.posterUrl + ')' }">
+
+      @if ( ! item.posterUrl ) {
+        <app-icon icon="image-slash" iconWidth="50px"></app-icon>
+      }
+    </div>
+    <div class="content">
+      <div class="content-header">
+        <div class="title" [title]="item.title">{{ item.title }}</div>
+        <app-icon class="edit-icon" icon="pen-to-square" iconSize=".875em" containerSize="1.25em" (click)="onEditItem($event)"></app-icon>
+      </div>
+
+      @if ( item.description ) {
+        <p class="description"
+        [ngClass]="{ 'no-tags': ! item.tags.length }"
+        [title]="item.description">
+          {{ item.description }}
+        </p>
+      }
+    </div>
+
+    @if ( item.tags.length ) {
+      <div class="tags">
+
+        @for (tag of item.tags; track $index) {
+          <div class="tag-wrapper" (click)="onTagClick(tag, $event)">
+            <app-tag [value]="tag.label" [color]="tag.color"></app-tag>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

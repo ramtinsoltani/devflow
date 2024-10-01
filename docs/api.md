@@ -15,6 +15,7 @@
 
 | Endpoint | Query Params | Route Params | Body | Response |
 |:---------|:------------:|:------------:|:----:|:--------:|
+| **GET** `/api/item/:id` | | `id` as item ID | | [Item](#item) |
 | **GET** `/api/items/:collectionId` | | `collectionId` as collection ID under which items are being read | | Array of [Item](#item) |
 | **POST** `/api/item` | | | [New Item Request](#new-item-request) | [General Message Response](#general-message-response) containing new item ID |
 | **PUT** `/api/item/:id` | | `id` as item ID | [Update Item Request](#update-item-request) | [General Message Response](#general-message-response) |
@@ -27,6 +28,12 @@
 | **GET** `/api/search/collections` | `q` as search text query | | | Array of [Collection](#collection) |
 | **GET** `/api/search/items/:collectionId` | `q` as search text query, `tags` as array of item tags | `collectionId` as collection ID under which items are be searched | | Array of [Item](#item) |
 | **GET** `/api/search/items` | `q` as search text query, `tags` as array of item tags | | | Array of [Item](#item) |
+
+### Utility Endpoints
+
+| Endpoint | Query Params | Route Params | Body | Response |
+|:---------|:------------:|:------------:|:----:|:--------:|
+| **POST** `/api/utils/metadata` | | | [Fetch URL Metadata Request](#fetch-url-metadata-request) | [URL Metadata](#url-metadata-response) |
 
 
 # Data Models
@@ -105,6 +112,16 @@ interface ResponseError {
 }
 ```
 
+### URL Metadata Response
+
+```ts
+interface URLMetadataResponse {
+  title?: string,
+  description?: string,
+  posterUrl?: string
+}
+```
+
 ---
 
 ## Requests
@@ -149,5 +166,13 @@ interface RequestUpdateItem {
   description?: string | null,
   posterUrl?: string | null,
   tags?: Tag[]
+}
+```
+
+### Fetch URL Metadata Request
+
+```ts
+interface RequestFetchURLMetadata {
+  url: string
 }
 ```

@@ -1,0 +1,42 @@
+@import '../../../../scss/utils';
+
+:host {
+  display: flex;
+  gap: 15px;
+}
+
+.left {
+  flex-shrink: 0;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: rem(15px);
+  flex: 1;
+  min-width: 1px;
+
+  app-textbox {
+    width: 100%;
+  }
+}
+
+.poster {
+  border-radius: 3px;
+  background-size: cover;
+  background-position: center;
+  width: 290px;
+  height: 160px;
+
+  &.no-image {
+    background-color: color(gray-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom-color: color(gray-2);
+
+    app-icon {
+      color: color(gray-6);
+    }
+  }
+}

@@ -1,0 +1,31 @@
+<app-textbox
+placeholder="Search collections"
+type="search"
+(onSearch)="onSearchCollections($event)"
+(onClear)="onClearCollectionsSearch()"></app-textbox>
+<app-nav-item
+class="new-collection"
+label="New Collection"
+icon="circle-plus"
+iconContainerSize="1rem"
+(click)="onNewCollection()">
+</app-nav-item>
+<div class="collections">
+  @for (collection of filteredCollections || collections; track $index) {
+    <app-nav-item
+    [routerLink]="'collection/' + collection.id"
+    #navItemLink="routerLinkActive"
+    routerLinkActive
+    [selected]="navItemLink.isActive"
+    [label]="collection.name"
+    icon="rectangle-history"
+    iconSize="1em"
+    [accentColor]="utils.getPaletteColor(collection.color)"
+    [badge]="collection.size"
+    actionIcon="pen-to-square"
+    actionIconSize=".875em"
+    actionIconHoverColor="gray-9"
+    (onAction)="onEditCollection(collection)">
+    </app-nav-item>
+  }
+</div>

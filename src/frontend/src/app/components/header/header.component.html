@@ -1,0 +1,17 @@
+<div class="brand">
+  <span class="logo">
+    <span class="mono">dev</span>
+    <span class="round" [ngStyle]="{ color: getCollectionCSSColor(currentCollectionColor) }">flow</span>
+  </span>
+</div>
+<div class="controls">
+  <app-textbox
+  type="search"
+  placeholder="Search items"
+  withTags
+  monochromeTags
+  [(value)]="queryText"
+  [(tags)]="queryTags"
+  (onSearch)="onSearch($event)"
+  (onClear)="onClearSearch()"></app-textbox>
+</div>

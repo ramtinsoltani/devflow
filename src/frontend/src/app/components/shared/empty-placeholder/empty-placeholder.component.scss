@@ -1,0 +1,36 @@
+@import '../../../../scss/utils';
+
+:host {
+  display: flex;
+  gap: rem(10px);
+  align-items: center;
+}
+
+img.icon {
+  opacity: .22;
+  flex-shrink: 0;
+  width: rem(80px);
+  height: rem(80px);
+}
+
+.display-text {
+  display: flex;
+  flex-direction: column;
+  gap: rem(4px);
+  color: color(gray-5);
+  font-family: "Patrick Hand", cursive;
+  font-weight: 400;
+  font-style: normal;
+  max-width: rem(250px);
+
+  .title {
+    font-size: rem(24px);
+  }
+  
+  .message {
+    font-size: rem(16px);
+    line-height: rem(18px);
+    padding: 0;
+    margin: 0;
+  }
+}

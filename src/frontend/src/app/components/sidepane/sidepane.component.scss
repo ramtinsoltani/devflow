@@ -1,0 +1,27 @@
+@import '../../../scss/utils';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-width: rem(350px);
+  max-width: rem(350px);
+  background-color: color(gray-2);
+  padding: 15px;
+  gap: 15px;
+  overflow-y: auto;
+}
+
+.collections {
+  font-weight: 400;
+}
+
+.new-collection {
+  font-size: rem(14px);
+  padding-top: 0;
+  padding-bottom: 0;
+  height: rem(35px);
+
+  &:hover {
+    color: color(accent-green);
+  }
+}

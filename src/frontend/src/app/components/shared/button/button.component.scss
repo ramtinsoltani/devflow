@@ -1,0 +1,55 @@
+@import '../../../../scss/utils';
+
+button {
+  appearance: none;
+  outline: none;
+  border: none;
+  border-radius: 3px;
+  font-size: rem(14px);
+  font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  padding: 10px 15px;
+  cursor: pointer;
+  color: color(accent-white);
+  transition: background-color .15s ease-in-out;
+}
+
+button.primary {
+  background-color: color(accent-blue);
+
+  &:hover:not(:disabled) {
+    background-color: color(accent-blue-secondary);
+  }
+}
+
+button.secondary {
+  background-color: color(gray-3);
+
+  &:hover:not(:disabled) {
+    background-color: color(gray-4);
+  }
+}
+
+button.success {
+  background-color: color(accent-green);
+
+  &:hover:not(:disabled) {
+    background-color: color(accent-green-secondary);
+  }
+}
+
+button.danger {
+  background-color: color(accent-red);
+
+  &:hover:not(:disabled) {
+    background-color: color(accent-red-secondary);
+  }
+}
+
+button:disabled {
+  background-color: color(gray-7) !important;
+  color: color(gray-6) !important;
+  cursor: default !important;
+}

@@ -1,0 +1,11 @@
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color .15s ease-in-out;
+}
+
+img.icon {
+  opacity: 0;
+  user-select: none;
+}

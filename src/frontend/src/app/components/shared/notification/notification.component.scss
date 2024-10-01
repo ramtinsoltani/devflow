@@ -1,0 +1,29 @@
+@import '../../../../scss/utils';
+
+:host {
+  display: flex;
+  gap: 10px;
+  border-radius: 3px;
+  pointer-events: all;
+  background-color: color(gray-2);
+  box-shadow: 0 2px 15px color(dropshadow);
+  align-items: center;
+  padding: 10px 15px;
+  width: rem(500px);
+}
+
+app-icon.error {
+  color: color(accent-red);
+}
+
+app-icon.info {
+  color: color(accent-blue);
+}
+
+p.message {
+  margin: 0;
+
+  &.error {
+    color: color(accent-red-secondary);
+  }
+}

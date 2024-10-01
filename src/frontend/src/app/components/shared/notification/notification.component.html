@@ -1,0 +1,17 @@
+<app-icon
+[ngClass]="{
+  error: type === 'error',
+  info: type === 'info'
+}"
+[icon]="type === 'error' ? 'circle-exclamation' : 'circle-info'"
+iconSize="24px"
+containerSize="32px">
+</app-icon>
+
+<p class="message"
+[ngClass]="{
+  error: type === 'error',
+  info: type === 'info'
+}">
+  {{ message }}
+</p>

@@ -1,0 +1,50 @@
+@import '../../../../scss/utils';
+
+:host {
+  display: flex;
+  flex-shrink: 0;
+  max-width: max-content;
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: rem(2px);
+  border-radius: 2px;
+  text-transform: uppercase;
+  font-size: rem(10px);
+  font-weight: 500;
+  padding: rem(2px) rem(5px);
+  cursor: inherit;
+
+  &.removable {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    padding-right: 0;
+  }
+}
+
+.button {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  cursor: pointer;
+}
+
+.tag:not(.monochrome),
+.button:not(.monochrome) {
+  color: color(tag-value-default);
+
+  &.high-contrast {
+    color: color(tag-value-contrast);
+  }
+}
+
+.tag.monochrome span,
+.button.monochrome app-icon {
+  color: var(--monochrome-color);
+}

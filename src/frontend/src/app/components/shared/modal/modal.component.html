@@ -1,0 +1,16 @@
+<div class="modal" @popInOut [ngStyle]="{ maxWidth: getModalMaxWidth(options.size) }">
+  <div class="modal-header">{{ title }}</div>
+  <div class="modal-body">
+    <ng-container #modalBody></ng-container>
+  </div>
+  <div class="modal-footer">
+    @for (button of buttons; track i; let i = $index) {
+      <app-button
+      [type]="button.type"
+      [label]="buttonPrompts.has(i) ? castToPromptButton(button).confirmationLabel : button.label"
+      [disabled]="button.boundToValidation ? ! isModalValid() : false"
+      (click)="onButtonClick(button, i)">
+      </app-button>
+    }
+  </div>
+</div>

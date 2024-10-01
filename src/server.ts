@@ -1,6 +1,7 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
+import cors from 'cors';
 import { resolve as pathResolve } from 'path';
 import { DatabaseService } from './services/database';
 import { CollectionRouter } from './routers/collection';
@@ -8,6 +9,7 @@ import { ItemRouter } from './routers/item';
 import { SearchRouter } from './routers/search';
 import { IResponseError } from './models/responses';
 import { ServerError } from './lib/error';
+import { UtilitiesRouter } from './routers/utils';
 
 dotenv.config();
 
@@ -15,12 +17,22 @@ const app: Express = express();
 const port = process.env.PORT;
 const db = new DatabaseService();
 
+app.use(cors());
 app.use(bodyParser.json());
+
+// Debug routes
+app.use((req: Request, res: Response, next: NextFunction) => {
+
+  console.log(`${req.method} ${req.originalUrl}`);
+  next();
+
+});
 
 // API routes
 app.use('/api', CollectionRouter);
 app.use('/api', ItemRouter);
 app.use('/api', SearchRouter);
+app.use('/api', UtilitiesRouter);
 
 // API 404
 app.use('/api', (req: Request, res: Response<IResponseError>) => {

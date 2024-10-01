@@ -1,0 +1,29 @@
+<div class="tag"
+[ngStyle]="{
+  backgroundColor: monochrome ? 'currentColor' : finalColor
+}"
+[ngClass]="{
+  removable,
+  monochrome,
+  'high-contrast': highContrast
+}">
+  <span [ngStyle]="{ '--monochrome-color': finalMonochromeTextColor }">
+    {{ value }}
+  </span>
+</div>
+
+@if ( removable ){
+  <div
+  class="button"
+  [ngStyle]="{
+    backgroundColor: monochrome ? 'currentColor' : finalColor
+  }"
+  [ngClass]="{
+    monochrome,
+    'high-contrast': highContrast
+  }"
+  (click)="onCloseButtonClick()">
+    <app-icon class="close-icon" icon="xmark" iconHeight=".6rem" [ngStyle]="{ '--monochrome-color': finalMonochromeTextColor }">
+    </app-icon>
+  </div>
+}

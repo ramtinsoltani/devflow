@@ -1,0 +1,38 @@
+@if ( icon ) {
+  <app-icon
+  [icon]="icon" 
+  [iconSize]="iconSize"
+  [containerSize]="iconContainerSize || iconSize"
+  [color]="finalAccentColor"></app-icon>
+}
+
+<span class="label" [ngStyle]="{
+  color: selected ? finalAccentColor : 'currentColor'
+}">{{ label }}</span>
+
+@if ( badge !== undefined && (! actionIcon || ! hovered) ) {
+  <span
+  class="badge"
+  [ngStyle]="{
+    backgroundColor: selected ? finalAccentColor : ''
+  }"
+  [ngClass]="{
+    selected,
+    'high-contrast': highContrastAccentColor
+  }">
+    {{ badge.toLocaleString() }}
+  </span>
+}
+
+@if ( actionIcon && hovered ) {
+  <app-icon
+  class="action-icon"
+  [icon]="actionIcon"
+  [iconSize]="actionIconSize"
+  [containerSize]="actionIconContainerSize || actionIconSize"
+  [color]="actionIconHovered ? finalActionIconHoverColor : 'currentColor'"
+  (mouseenter)="onActionIconMouseEnter()"
+  (mouseleave)="onActionIconMouseLeave()"
+  (click)="onActionIconClick($event)">
+  </app-icon>
+}
