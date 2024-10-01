@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, OnDestroy, inject } from '@angular/core';
 import { TextboxComponent, TextboxSearchEvent } from '../shared/textbox/textbox.component';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Color, ITag } from '@devflow/models';
 import { AppService, UtilsService } from '@devflow/services';
@@ -12,7 +12,8 @@ import { NgStyle } from '@angular/common';
   standalone: true,
   imports: [
     TextboxComponent,
-    NgStyle
+    NgStyle,
+    RouterLink
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'

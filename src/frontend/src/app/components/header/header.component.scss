@@ -22,6 +22,8 @@
   .logo {
     font-size: rem(30px);
     padding-left: 26px;
+    cursor: pointer;
+    user-select: none;
 
     .mono {
       font-family: "PT Mono", monospace;
