@@ -1,5 +1,10 @@
 import { Document, Types } from "mongoose";
 
+/**
+ * Applies general normalization to a Mongoose document and converts it to JSON object.
+ * @param doc Mongoose document
+ * @returns Normalized JSON object
+ */
 export function normalizeCommonDocument(doc: Document<any>) {
 
   const normalized: any = {

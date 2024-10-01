@@ -8,12 +8,20 @@ import { queryStringToRegex } from '../lib/utilities';
 
 export class DatabaseService {
 
+  /**
+   * Initializes the database service by connecting to MongoDB using the configuration in ".env" file.
+   */
   public async init(): Promise<void> {
 
     await mongoose.connect(`mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`);
 
   }
 
+  /**
+   * Creates a new collection.
+   * @param data New collection request object
+   * @returns New collection's ID
+   */
   public async createCollection(data: IRequestNewCollection): Promise<string> {
 
     const collection = new DbCollection({
@@ -27,6 +35,10 @@ export class DatabaseService {
 
   }
 
+  /**
+   * Reads all collections from the database.
+   * @returns An array of normalized collection objects
+   */
   public async getCollections(): Promise<ICollection[]> {
 
     const collections = await DbCollection.find({}).sort({ createdAt: 1 });
@@ -35,6 +47,11 @@ export class DatabaseService {
 
   }
 
+  /**
+   * Updates a collection in the database.
+   * @param id Collection ID
+   * @param data Update collection request object
+   */
   public async updateCollection(id: string, data: IRequestUpdateCollection): Promise<void> {
 
     if ( ! id )
@@ -49,6 +66,10 @@ export class DatabaseService {
 
   }
 
+  /**
+   * Deletes a collection from the database.
+   * @param id Collection ID
+   */
   public async deleteCollection(id: string): Promise<void> {
 
     if ( ! id )
@@ -64,6 +85,11 @@ export class DatabaseService {
 
   }
 
+  /**
+   * Reads an item from the database.
+   * @param id Item ID
+   * @returns Normalized item object
+   */
   public async getItem(id: string): Promise<IItem> {
 
     if ( ! id )
@@ -78,6 +104,11 @@ export class DatabaseService {
 
   }
 
+  /**
+   * Reads all items under a certain collection in the database.
+   * @param collectionId Collection ID
+   * @returns Array or normalized item objects
+   */
   public async getItems(collectionId: string): Promise<IItem[]> {
 
     if ( ! collectionId )
@@ -89,6 +120,11 @@ export class DatabaseService {
 
   }
   
+  /**
+   * Creates a new item under an existing collection in the database.
+   * @param data New item request object
+   * @returns ID of the newly created item
+   */
   public async createItem(data: IRequestNewItem): Promise<string> {
 
     const collection = await DbCollection.findById(data.collectionId);
@@ -108,6 +144,11 @@ export class DatabaseService {
 
   }
 
+  /**
+   * Updates an item in the database.
+   * @param id Item ID
+   * @param data Update item request object
+   */
   public async updateItem(id: string, data: IRequestUpdateItem): Promise<void> {
 
     if ( ! id )
@@ -138,6 +179,10 @@ export class DatabaseService {
 
   }
 
+  /**
+   * Deletes an item from the database.
+   * @param id Item ID
+   */
   public async deleteItem(id: string): Promise<void> {
 
     if ( ! id )
@@ -157,6 +202,11 @@ export class DatabaseService {
 
   }
 
+  /**
+   * Searches for collections in the database.
+   * @param q Text search query
+   * @returns Array of normalized collection objects
+   */
   public async searchCollections(q: string): Promise<ICollection[]> {
 
     if ( ! q?.trim().length )
@@ -169,6 +219,13 @@ export class DatabaseService {
 
   }
 
+  /**
+   * Searches for items under an existing collection in the database.
+   * @param collectionId Collection ID
+   * @param q Text search query
+   * @param tags Array of tags to include in search
+   * @returns Array of normalized item objects
+   */
   public async searchCollectionItems(collectionId: string, q?: string, tags?: string[]): Promise<IItem[]> {
 
     if ( ! collectionId )
@@ -202,6 +259,12 @@ export class DatabaseService {
 
   }
   
+  /**
+   * Searches for items across all collections in the database.
+   * @param q Text search query
+   * @param tags Array of tags to include in search
+   * @returns Array of normalized item objects
+   */
   public async searchItems(q?: string, tags?: string[]): Promise<IItem[]> {
 
     if ( ! q?.trim().length && ! tags?.length )

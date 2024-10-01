@@ -9,6 +9,7 @@
   "scripts": {
     "start": "npx ts-node src/server.ts",
     "build": "pushd ./src/frontend && npx ng build && popd",
+    "compodoc": "pushd ./src/frontend && npx compodoc -p tsconfig.doc.json -s --port 6060 && popd",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

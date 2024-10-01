@@ -1,10 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 
-export function asyncHandler(cb: Function) {
+/**
+ * Wraps async middleware with an error handler.
+ * @param middleware An async middleware
+ * @returns Express middleware
+ */
+export function asyncHandler(middleware: Function) {
 
   return (req: Request, res: Response, next: NextFunction) => {
 
-    cb(req, res, next).catch(next);
+    middleware(req, res, next).catch(next);
 
   };
 

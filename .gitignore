@@ -1,4 +1,5 @@
 node_modules
 public
 src/frontend/src/assets/icons/*
+src/frontend/documentation
 !.gitkeep

@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
+/**
+ * Coverts a text search query string to Regex to be used in search.
+ * @param q Text search query string
+ * @returns QueryStringRegex object
+ */
 export function queryStringToRegex(q: string): QueryStringRegex {
 
   const tokens = q.replace(/\s+/g, ' ').trim().toLowerCase().split(' ');
@@ -11,6 +16,11 @@ export function queryStringToRegex(q: string): QueryStringRegex {
 
 }
 
+/**
+ * Parses string array values (e.g. val1, val2, ...) in request query parameters to JS array.
+ * @param paramName Query parameter name to parse to JS array
+ * @returns Express middleware
+ */
 export function queryArrayParserMiddleware(paramName: string): (req: Request, res: Response, next: NextFunction) => void {
 
   return (req: Request, res: Response, next: NextFunction) => {

@@ -15,6 +15,7 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
     posterUrl: result['og:image'] || result['twitter:image']
   };
 
+  // Resolve poster URLs using the provided URL as base if necessary
   if ( metadata.posterUrl?.length )
     metadata.posterUrl = new URL(metadata.posterUrl, req.body.url).href;
 
