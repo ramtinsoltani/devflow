@@ -20,12 +20,15 @@ import { ItemModalComponent, ItemModalData } from '../../modals/item/item.compon
 })
 export class ItemComponent {
 
+  /** Item object */
   @Input()
   public item?: IItem;
 
+  /** Emits when item is updated */
   @Output()
   public onItemUpdate = new EventEmitter<IItem | null>();
 
+  /** Emits when item tag is clicked */
   @Output()
   public onTagFilter = new EventEmitter<TagFilterEvent>();
 
@@ -83,7 +86,9 @@ export class ItemComponent {
       }},
       { label: 'Cancel', type: 'secondary', closesModal: true }
     ],
+    // Modal data
     this.item,
+    // Modal options
     { size: ModalSize.Large });
 
   }

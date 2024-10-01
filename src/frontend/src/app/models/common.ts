@@ -8,6 +8,7 @@ export enum Color {
   White
 }
 
+/** Mapping of database Color values to CSS palette colors */
 export enum PaletteColor {
   Blue = 'accent-blue',
   Green = 'accent-green',

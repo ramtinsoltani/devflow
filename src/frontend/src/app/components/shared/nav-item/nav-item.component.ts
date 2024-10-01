@@ -21,18 +21,23 @@ export class NavItemComponent {
   public hovered: boolean = false;
   public actionIconHovered: boolean = false;
 
+  /** Enables high contrast mode between inside badge (used for light accent colors, automatically set for `Color.Yellow` and `Color.White`) */
   @Input()
   public highContrastAccentColor: boolean = false;
 
+  /** Icon name (corresponds to filenames of `/assets/icons`) */
   @Input()
   public icon?: string;
 
+  /** Icon CSS size (defaults to `1em`) */
   @Input()
   public iconSize: string = '1em';
 
+  /** Icon container CSS size (defaults to `iconSize`) */
   @Input()
   public iconContainerSize?: string;
 
+  /** Nav item accent color (defaults to `currentColor`) */
   @Input()
   public set accentColor(value: string | undefined) {
 
@@ -41,18 +46,23 @@ export class NavItemComponent {
 
   }
 
+  /** Nav item label */
   @Input()
   public label!: string;
 
+  /** Nav item badge */
   @Input()
   public badge?: string | number;
 
+  /** Indicates if current nav item is selected */
   @Input()
   public selected: boolean = false;
 
+  /** Nav item action icon (corresponds to filenames in `/assets/icons`) */
   @Input()
   public actionIcon?: string;
 
+  /** Hover color of the action icon */
   @Input()
   public set actionIconHoverColor(value: string | undefined) {
 
@@ -60,9 +70,11 @@ export class NavItemComponent {
     
   }
 
+  /** Action icon CSS size (defaults to `1em`) */
   @Input()
   public actionIconSize: string = '1em';
 
+  /** Action icon container CSS size (defaults to `actionIconSize`) */
   @Input()
   public actionIconContainerSize?: string;
 
@@ -80,6 +92,7 @@ export class NavItemComponent {
 
   }
 
+  /** Emits when action button (if any) is pressed */
   @Output()
   public onAction = new EventEmitter();
 

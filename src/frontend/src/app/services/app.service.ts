@@ -15,6 +15,9 @@ export class AppService {
     private endpoint: EndpointService
   ) { }
 
+  /**
+   * Fetches collections from the API server and emits the new result from `collection$` observable.
+   */
   public async fetchCollections(): Promise<void> {
 
     try {
@@ -30,6 +33,11 @@ export class AppService {
 
   }
 
+  /**
+   * Updates a collection size.
+   * @param collectionId Collection ID
+   * @param newSize New collection size
+   */
   public updateCollectionSize(collectionId: string, newSize: number): void {
 
     const collection = this._collections$.getValue().find(c => c.id === collectionId);
@@ -43,6 +51,11 @@ export class AppService {
 
   }
 
+  /**
+   * Returns the current size of a collection.
+   * @param collectionId Collection ID
+   * @returns Collection size
+   */
   public getCollectionSize(collectionId: string): number {
 
     const collection = this._collections$.getValue().find(c => c.id === collectionId);
@@ -54,6 +67,11 @@ export class AppService {
 
   }
 
+  /**
+   * Returns the Color value of a collection (or `null` if not found).
+   * @param collectionId Collection ID
+   * @returns Color value or `null`
+   */
   public getCollectionColor(collectionId: string): Color | null {
 
     return this._collections$.getValue()?.find(c => c.id === collectionId)?.color ?? null;

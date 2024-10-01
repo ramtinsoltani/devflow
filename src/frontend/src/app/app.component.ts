@@ -27,6 +27,7 @@ export class AppComponent {
     private notifications: NotificationService
   ) {
 
+    // Dynamically create modals when modal service emits
     this.modals.onOpenModal.subscribe(modalDef => {
 
       const ref = this.modalsContainer.createComponent(ModalComponent);
@@ -41,6 +42,7 @@ export class AppComponent {
       if ( modalDef.options )
         ref.setInput('options', modalDef.options);
 
+      // Destroy modal on modal's close event
       const sub = ref.instance.onModalClose.subscribe(() => {
 
         const index = this.modalsContainer.indexOf(ref.hostView);
@@ -55,6 +57,7 @@ export class AppComponent {
 
     });
 
+    // Create notifications when the service emits
     this.notifications.onNotification.subscribe(notificationDef => {
 
       const ref = this.notificationsContainer.createComponent(NotificationComponent);
@@ -62,6 +65,7 @@ export class AppComponent {
       ref.setInput('type', notificationDef.type);
       ref.setInput('message', notificationDef.message);
 
+      // Destroy notification when its event emits
       const sub = ref.instance.onDestroy.subscribe(() => {
 
         if ( sub && ! sub.closed )

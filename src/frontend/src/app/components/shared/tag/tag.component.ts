@@ -21,9 +21,11 @@ export class TagComponent {
   public finalMonochromeTextColor: string = 'currentColor';
   public highContrast: boolean = false;
 
+  /** Tag label */
   @Input()
   public value!: string;
 
+  /** Tag color */
   @Input()
   public set color(value: Color) {
 
@@ -32,9 +34,11 @@ export class TagComponent {
 
   }
 
+  /** If true, tag will be rendered in monochrome, ignoring its color */
   @Input({ transform: booleanAttribute })
   public monochrome: boolean = false;
 
+  /** The text color to use when `monochrome` is true */
   @Input()
   public set monochromeTextColor(value: string) {
 
@@ -42,9 +46,11 @@ export class TagComponent {
 
   }
 
+  /** Determines if an X button should be displayed on hover to allow the tag to be deleted */
   @Input({ transform: booleanAttribute })
   public removable: boolean = false;
 
+  /** Emits when tag is deleted (when `removable` is true) */
   @Output()
   public onRemove = new EventEmitter<void>();
 

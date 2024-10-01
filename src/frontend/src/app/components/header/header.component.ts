@@ -29,35 +29,42 @@ export class HeaderComponent implements OnDestroy {
     private utils: UtilsService
   ) {
 
+    // Subscribe to route query parameter changes
     this.subscriptions.push(this.route.queryParamMap.subscribe(queryParams => {
 
       const url = this.router.parseUrl(this.router.url);
       
       url.queryParams = {};
       
+      // If not in search route, exit
       if ( url.toString() !== '/search' )
         return;
 
       const q = queryParams.get('q');
       const tags = queryParams.get('tags');
 
+      // Set query text from route query params
       if ( q )
         this.queryText = q;
 
+      // Set tags from route query params
       if ( tags?.split(',').length )
         this.queryTags = tags.split(',').map(label => ({ label, color: Color.Blue }));
 
     }));
 
+    // Subscribe to router navigation changes
     this.subscriptions.push(this.router.events.subscribe(event => {
 
       if ( event instanceof NavigationEnd ) {
 
+        // Read selected collection color
         if ( event.url.startsWith('/collection/') )
           this.currentCollectionColor = this.app.getCollectionColor(event.url.replace('/collection/', ''));
         else
           this.currentCollectionColor = null;
 
+        // Set favicon based on collection color
         let faviconPath = `/favicon.ico`;
 
         if ( this.currentCollectionColor !== null )

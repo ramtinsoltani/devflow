@@ -34,6 +34,7 @@ export class CollectionModalComponent implements GenericModalComponent, OnModalO
 
   ngOnInit(): void {
     
+    // Populate color tuples [Color, PaletteColor value]
     const colorTuples: any = Object.entries(Color).slice(0, Object.keys(Color).length / 2);
 
     for ( let i = 0; i < colorTuples.length; i++ ) {

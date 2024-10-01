@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { NotificationService } from '@devflow/services';
 import { catchError, throwError } from 'rxjs';
 
+/** Intercepts all HTTP responses and creates error notifications when requests fail. */
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
   const notifications = inject(NotificationService);

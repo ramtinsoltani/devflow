@@ -9,6 +9,10 @@ export class NotificationService {
 
   constructor() { }
 
+  /**
+   * Creates a new notification.
+   * @param def Notification definition
+   */
   public create(def: NotificationDef): void {
 
     this.onNotification.emit(def);

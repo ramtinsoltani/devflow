@@ -13,6 +13,10 @@ export class EndpointService {
     private http: HttpClient
   ) { }
 
+  /**
+   * Reads all existing collections.
+   * @returns An array of collections
+   */
   public getCollections(): Promise<ICollection[]> {
 
     return lastValueFrom(this.http.get<ICollection[]>(
@@ -21,6 +25,11 @@ export class EndpointService {
 
   }
 
+  /**
+   * Creates a new collection.
+   * @param data New collection request object
+   * @returns General message response with `data` as the newly created collection ID
+   */
   public createCollection(data: INewCollectionRequest): Promise<IGeneralMessageResponse<string>> {
 
     return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
@@ -30,6 +39,12 @@ export class EndpointService {
 
   }
 
+  /**
+   * Updates an existing collection.
+   * @param collectionId Collection ID
+   * @param data Update collection request object
+   * @returns General message response
+   */
   public updateCollection(collectionId: string, data: Partial<IUpdateCollectionRequest>): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
@@ -39,6 +54,11 @@ export class EndpointService {
 
   }
 
+  /**
+   * Deletes an existing collection.
+   * @param collectionId Collection ID
+   * @returns 
+   */
   public deleteCollection(collectionId: string): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
@@ -47,6 +67,11 @@ export class EndpointService {
 
   }
 
+  /**
+   * Reads an existing item.
+   * @param id Item ID
+   * @returns Item object
+   */
   public getItem(id: string): Promise<IItem> {
 
     return lastValueFrom(this.http.get<IItem>(
@@ -55,6 +80,11 @@ export class EndpointService {
 
   }
 
+  /**
+   * Reads all items under an existing collection.
+   * @param collectionId Collection ID
+   * @returns Array of item objects
+   */
   public getItems(collectionId: string): Promise<IItem[]> {
 
     return lastValueFrom(this.http.get<IItem[]>(
@@ -63,6 +93,11 @@ export class EndpointService {
 
   }
 
+  /**
+   * Creates a new item under an existing collection.
+   * @param data New item request object
+   * @returns General message response with `data` as the newly created item ID
+   */
   public createItem(data: INewItemRequest): Promise<IGeneralMessageResponse<string>> {
 
     return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
@@ -72,6 +107,12 @@ export class EndpointService {
 
   }
 
+  /**
+   * Updates an existing item.
+   * @param itemId Item ID
+   * @param data Update item request object
+   * @returns General message response
+   */
   public updateItem(itemId: string, data: IUpdateItemRequest): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
@@ -81,6 +122,11 @@ export class EndpointService {
 
   }
 
+  /**
+   * Deletes an item.
+   * @param itemId Item ID
+   * @returns General message response
+   */
   public deleteItem(itemId: string): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
@@ -89,7 +135,16 @@ export class EndpointService {
 
   }
 
+  /**
+   * Searches collections.
+   * @returns Array of found collection objects
+   */
   public searchCollections(): Promise<ICollection[]>;
+  /**
+   * Searches collections.
+   * @param q Text search query
+   * @returns Array of found collection objects
+   */
   public searchCollections(q: string): Promise<ICollection[]>;
   public searchCollections(q?: string): Promise<ICollection[]> {
 
@@ -104,10 +159,41 @@ export class EndpointService {
 
   }
 
+  /**
+   * Searches items inside an existing collection.
+   * @param collectionId Collection ID
+   * @returns Array of found item objects
+   */
   public searchCollectionItems(collectionId: string): Promise<IItem[]>;
+  /**
+   * Searches items inside an existing collection.
+   * @param collectionId Collection ID
+   * @param q Text search query
+   * @returns Array of found item objects
+   */
   public searchCollectionItems(collectionId: string, q: string): Promise<IItem[]>;
+  /**
+   * Searches items inside an existing collection.
+   * @param collectionId Collection ID
+   * @param tags Array of tags to include in search
+   * @returns Array of found item objects
+   */
   public searchCollectionItems(collectionId: string, tags: string[]): Promise<IItem[]>;
+  /**
+   * Searches items inside an existing collection.
+   * @param collectionId Collection ID
+   * @param q Text search query
+   * @param tags Array of tags to include in search
+   * @returns Array of found item objects
+   */
   public searchCollectionItems(collectionId: string, q: string, tags: string[]): Promise<IItem[]>;
+  /**
+   * Searches items inside an existing collection.
+   * @param collectionId Collection ID
+   * @param q Text search query
+   * @param tags Array of tags to include in search
+   * @returns Array of found item objects
+   */
   public searchCollectionItems(collectionId: string, q?: string, tags?: string[]): Promise<IItem[]>;
   public searchCollectionItems(collectionId: string, param1?: string | string[], param2?: string[]): Promise<IItem[]> {
 
@@ -128,10 +214,36 @@ export class EndpointService {
 
   }
 
+  /**
+   * Searches items across all collections.
+   * @return Array of found item objects
+   */
   public searchItems(): Promise<IItem[]>;
+  /**
+   * Searches items across all collections.
+   * @param q Text search query
+   * @return Array of found item objects
+   */
   public searchItems(q: string): Promise<IItem[]>;
+  /**
+   * Searches items across all collections.
+   * @param tags Array of tags to include in search
+   * @return Array of found item objects
+   */
   public searchItems(tags: string[]): Promise<IItem[]>;
+  /**
+   * Searches items across all collections.
+   * @param q Text search query
+   * @param tags Array of tags to include in search
+   * @return Array of found item objects
+   */
   public searchItems(q: string, tags: string[]): Promise<IItem[]>;
+  /**
+   * Searches items across all collections.
+   * @param q Text search query
+   * @param tags Array of tags to include in search
+   * @return Array of found item objects
+   */
   public searchItems(q?: string, tags?: string[]): Promise<IItem[]>;
   public searchItems(param1?: string | string[], param2?: string[]): Promise<IItem[]> {
 
@@ -152,6 +264,11 @@ export class EndpointService {
 
   }
 
+  /**
+   * Fetches the metadata tags of the given URL.
+   * @param url A valid URL
+   * @returns URL metadata object
+   */
   public fetchMetadata(url: string): Promise<IURLMetadataResponse> {
 
     return lastValueFrom(this.http.post<any>(

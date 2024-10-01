@@ -35,6 +35,7 @@ export class SearchResultsComponent implements OnDestroy {
       const q = queryParams.get('q') || undefined;
       const tags = queryParams.get('tags')?.split(',').map(t => t.trim().toLowerCase());
 
+      // Navigate to landing page if there are no search queries defined
       if ( ! q && ! tags ) {
         
         this.router.navigate(['/']);
@@ -67,8 +68,10 @@ export class SearchResultsComponent implements OnDestroy {
 
   public onTagFilter(collectionId: string, event: TagFilterEvent): void {
 
+    // If CTRL/CMD key was held down, filter by tag in its collection view
     if ( event.ctrlKey )
       this.router.navigate([`/collection/${collectionId}`], { queryParams: { tags: event.tag }});
+    // Otherwise, filter in global search (current view)
     else
       this.router.navigate([], { relativeTo: this.route, queryParams: { tags: event.tag }});
 

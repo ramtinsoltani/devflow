@@ -6,7 +6,6 @@ export * from './sidepane/sidepane.component';
 export * from './shared/item/item.component';
 export * from './shared/textbox/textbox.component';
 export * from './shared/modal/modal.component';
-export * from './shared/loading-spinner/loading-spinner.component';
 export * from './shared/tag/tag.component';
 export * from './shared/button/button.component';
 export * from './shared/nav-item/nav-item.component';

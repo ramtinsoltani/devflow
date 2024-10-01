@@ -19,8 +19,10 @@ import { IconComponent } from '../../shared/icon/icon.component';
 })
 export class ItemModalComponent implements GenericModalComponent, OnModalInit, OnModalOutput, OnModalValidation {
 
+  /** Holds the last URL metadata that was fetched in this modal (if any) */
   private latestMetadata?: IURLMetadataResponse;
   public isUrlFetching: boolean = false;
+  /** Holds the color sequence of tags when modal opened */
   public originalColorSequence: Color[] = [];
 
   @Input()
@@ -37,6 +39,7 @@ export class ItemModalComponent implements GenericModalComponent, OnModalInit, O
 
   onModalInit(): void {
     
+    // Resolve the last color sequence of item tags (to not repeat tag colors when editing existing items, unless the sequence is restarted)
     this.originalColorSequence = this.utils.resolveLastColorSequenceFromTags(this.modalData.tags);
   }
 
@@ -69,12 +72,15 @@ export class ItemModalComponent implements GenericModalComponent, OnModalInit, O
     this.modalData.url = url;
     this.isUrlFetching = true;
 
+    // Fetch URL metadata
     this.endpoint.fetchMetadata(url)
     .then(metadata => {
 
+      // Only overwrite title if it was not touched from the last fetched metadata (if any)
       if ( metadata.title && (! this.latestMetadata?.title || this.modalData.title === this.latestMetadata?.title) )
         this.modalData.title = metadata.title;
 
+      // Only overwrite description if it was not touched from the last fetched metadata (if any)
       if ( metadata.description && (! this.latestMetadata?.description || this.modalData.description === this.latestMetadata?.description) )
         this.modalData.description = metadata.description;
 

@@ -11,6 +11,7 @@ export class EmptyPlaceholderComponent {
 
   public assetUrl?: string;
 
+  /** Asset filename to display in placeholder */
   @Input()
   public set assetFilename(filename: string) {
 
@@ -19,9 +20,11 @@ export class EmptyPlaceholderComponent {
 
   }
 
+  /** Placeholder title */
   @Input()
   public title?: string;
 
+  /** Placeholder message */
   @Input()
   public message?: string;
 

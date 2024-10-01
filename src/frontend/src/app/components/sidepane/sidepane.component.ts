@@ -39,6 +39,7 @@ export class SidepaneComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     
+    // Subscribe to collections list in the app service
     this.subscriptions.push(this.app.collection$.subscribe(newValue => this.collections = newValue));
     
   }
@@ -65,6 +66,7 @@ export class SidepaneComponent implements OnInit, AfterViewInit, OnDestroy {
           return this.app.fetchCollections();
 
         })
+        // Navigate to newly created collection
         .then(() => this.router.navigate(['/collection/' + newCollectionId]))
         .catch(error => console.error(error));
 
@@ -83,6 +85,7 @@ export class SidepaneComponent implements OnInit, AfterViewInit, OnDestroy {
         .then(() => this.app.fetchCollections())
         .then(() => {
 
+          // If current route is the deleted collection, navigate to landing page
           const url = this.router.parseUrl(this.router.url);
 
           if ( url.toString() === `/collection/${collection.id}` )
@@ -100,7 +103,9 @@ export class SidepaneComponent implements OnInit, AfterViewInit, OnDestroy {
 
       }},
       { label: 'Cancel', type: 'secondary', closesModal: true }
-    ], {
+    ],
+    // Modal data
+    {
       name: collection.name,
       color: collection.color
     });

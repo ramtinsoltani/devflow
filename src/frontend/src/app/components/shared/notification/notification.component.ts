@@ -36,12 +36,15 @@ export class NotificationComponent implements OnInit {
   @HostBinding('@fadeInOut')
   public fadeInOut: boolean = true;
 
+  /** Notification type */
   @Input()
   public type!: NotificationDef['type'];
 
+  /** Notification message */
   @Input()
   public message!: string;
 
+  /** Emits when notification should be destroyed */
   @Output()
   public onDestroy = new EventEmitter<void>();
 
