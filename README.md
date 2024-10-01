@@ -31,13 +31,20 @@
 
 ## Windows
 
-  1. Go to `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup`
-  2. Create a file with `.bat` extension with the following content (follow the instructions of comments):
+  1. Create `run.bat` at project root with the following content (follow the instructions of comments):
       ```bat
       REM Replace PATH_TO_REPO with the path to this repo on disk
       cd PATH_TO_REPO
       npm start
       ```
+  2. Go to `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup`
+  3. Create a file with `.vbs` extension with the following content (follow the instructions of comments):
+      ```vbs
+      'Replace PATH_TO_REPO with the path to this repo on disk
+      CreateObject("Wscript.Shell").Run "PATH_TO_REPO\run.bat", 0, True
+      ```
+
+> The `run.bat` file will start the server and the `.vbs` file in startup directory will launch the `.bat` file while hiding the command line.
 
 # Frontend Documentation
 
