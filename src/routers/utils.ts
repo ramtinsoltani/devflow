@@ -8,7 +8,7 @@ export const UtilitiesRouter = Router();
 
 UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRequest, res: Response<IResponseUrlMetadata>) => {
 
-  const result = await urlMetadata(req.body.url);
+  const result = await urlMetadata(req.body.url, { mode: 'same-origin' });
   const metadata: IResponseUrlMetadata = {
     title: result['og:title'] || result['twitter:title'] || result.title,
     description: result['od:description'] || result['twitter:description'] || result.description,
