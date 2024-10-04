@@ -9,6 +9,12 @@ export const UtilitiesRouter = Router();
 
 UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRequest, res: Response<IResponseUrlMetadata>) => {
 
+  const urlMetadataOptions: urlMetadata.Options = {
+    mode: 'same-origin',
+    descriptionLength: 512,
+    timeout: 5000
+  };
+
   let result: urlMetadata.Result | undefined;
   let originResult: urlMetadata.Result | undefined;
   let urlError: Error | undefined;
@@ -17,7 +23,7 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
   try {
 
     // Get URL metadata
-    result = await urlMetadata(req.body.url, { mode: 'same-origin' });
+    result = await urlMetadata(req.body.url, urlMetadataOptions);
 
   }
   catch (error) {
@@ -30,7 +36,7 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
   try {
 
     // Get URL's origin metadata
-    originResult = await urlMetadata(new URL(req.body.url).origin, { mode: 'same-origin' });
+    originResult = await urlMetadata(new URL(req.body.url).origin, urlMetadataOptions);
 
   }
   catch (error) {
@@ -51,9 +57,23 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
     metadata.description = result['od:description'] || result['twitter:description'] || result.description;
     metadata.posterUrl = result['og:image'] || result['twitter:image'];
 
-    // Handle multiple images
-    if ( metadata.posterUrl?.includes(',') )
-      metadata.posterUrl = metadata.posterUrl.split(',')[0];
+    // Validate poster URL
+    try {
+
+      // Resolve poster URLs using the provided URL as base if necessary
+      if ( metadata.posterUrl?.length )
+        metadata.posterUrl = new URL(metadata.posterUrl, req.body.url).href;
+
+      // Handle multiple posters
+      metadata.posterUrl = metadata.posterUrl?.replaceAll(',http', '\nhttp').split('\n')[0]
+
+    }
+    catch (error) {
+
+      console.warn('Invalid poster URL:', metadata.posterUrl);
+      metadata.posterUrl = undefined;
+
+    }
 
   }
 
@@ -63,10 +83,6 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
     metadata.originUrl = new URL(req.body.url).origin;
 
   }
-
-  // Resolve poster URLs using the provided URL as base if necessary
-  if ( metadata.posterUrl?.length )
-    metadata.posterUrl = new URL(metadata.posterUrl, req.body.url).href;
 
   // Find best favicon
   const favicons: { svg?: string, png: { url: string, size: number }[], ico?: string } = {

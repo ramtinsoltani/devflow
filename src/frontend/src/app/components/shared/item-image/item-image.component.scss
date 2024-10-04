@@ -8,7 +8,8 @@
   background-color: color(gray-3);
 
   img.poster-image {
-    object-fit: cover center;
+    object-fit: cover;
+    object-position: center;
     user-select: none;
     border-radius: 3px;
     width: 100%;
