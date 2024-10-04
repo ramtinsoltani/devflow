@@ -57,15 +57,18 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
     metadata.description = result['od:description'] || result['twitter:description'] || result.description;
     metadata.posterUrl = result['og:image'] || result['twitter:image'];
 
-    // Validate poster URL
+    // Sanitize poster URL
     try {
+
+      if ( ! metadata.posterUrl?.trim() )
+        metadata.posterUrl = undefined;
 
       // Resolve poster URLs using the provided URL as base if necessary
       if ( metadata.posterUrl?.length )
         metadata.posterUrl = new URL(metadata.posterUrl, req.body.url).href;
 
       // Handle multiple posters
-      metadata.posterUrl = metadata.posterUrl?.replaceAll(',http', '\nhttp').split('\n')[0]
+      metadata.posterUrl = metadata.posterUrl?.replaceAll(',http', '\nhttp').split('\n')[0];
 
     }
     catch (error) {
