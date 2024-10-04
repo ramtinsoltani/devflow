@@ -1,0 +1,6 @@
+<input #checkbox type="checkbox" [id]="idString" [(disabled)]="disabled" [checked]="checked" (change)="checkedChange.emit(checkbox.checked)">
+<label [for]="idString">{{ label }}</label>
+
+@if ( checked ) {
+  <app-icon class="checkmark" icon="check" iconSize=".625rem" containerSize=".875rem"></app-icon>
+}

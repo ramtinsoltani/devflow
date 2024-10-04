@@ -11,5 +11,8 @@ export interface IResponseError {
 export interface IResponseUrlMetadata {
   title?: string,
   description?: string,
-  posterUrl?: string
+  posterUrl?: string,
+  originTitle?: string,
+  originUrl?: string,
+  favicon?: string
 }

@@ -15,6 +15,7 @@ The following FontAwesome icons are in use in this project in SVG format:
 | link-simple | Classic | Solid | ⭐️ Pro | https://fontawesome.com/icons/link-simple?f=classic&s=solid |
 | circle-exclamation | Classic | Solid | ✅ Free | https://fontawesome.com/icons/circle-exclamation?f=classic&s=solid |
 | circle-info | Classic | Solid | ✅ Free | https://fontawesome.com/icons/circle-info?f=classic&s=solid |
+| check | Classic | Solid | ✅ Free | https://fontawesome.com/icons/check?f=classic&s=solid |
 
 > FontAwesome version 6.4.0 web
 

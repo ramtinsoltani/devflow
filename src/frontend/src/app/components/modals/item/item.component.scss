@@ -6,6 +6,9 @@
 }
 
 .left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   flex-shrink: 0;
 }
 
@@ -18,25 +21,5 @@
 
   app-textbox {
     width: 100%;
-  }
-}
-
-.poster {
-  border-radius: 3px;
-  background-size: cover;
-  background-position: center;
-  width: 290px;
-  height: 160px;
-
-  &.no-image {
-    background-color: color(gray-3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom-color: color(gray-2);
-
-    app-icon {
-      color: color(gray-6);
-    }
   }
 }

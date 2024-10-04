@@ -18,5 +18,9 @@ export interface IItem extends ICommonDocument {
   url: string,
   description?: string,
   posterUrl?: string,
-  tags: ITag[]
+  tags: ITag[],
+  originTitle?: string,
+  originUrl?: string,
+  favicon?: string,
+  forceAltLayout: boolean
 }

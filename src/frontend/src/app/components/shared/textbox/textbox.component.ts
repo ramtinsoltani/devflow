@@ -5,7 +5,7 @@ import { Color, ITag } from '@devflow/models';
 import { UtilsService } from '@devflow/services';
 import { IconComponent } from '../icon/icon.component';
 import { TagComponent } from '../tag/tag.component';
-import { isURL } from 'validator';
+import isURL from 'validator/es/lib/isURL';
 
 @Component({
   selector: 'app-textbox',

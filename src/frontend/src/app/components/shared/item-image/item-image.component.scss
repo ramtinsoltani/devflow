@@ -1,0 +1,70 @@
+@import '../../../../scss/utils';
+
+.poster {
+  display: flex;
+  border-radius: 3px;
+  width: 290px;
+  height: 160px;
+  background-color: color(gray-3);
+
+  img.poster-image {
+    object-fit: cover center;
+    user-select: none;
+    border-radius: 3px;
+    width: 100%;
+    height: 100%;
+  }
+
+  &.no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.broken-image {
+      border-bottom-color: color(gray-2);
+
+      app-icon {
+        color: color(gray-6);
+      }
+    }
+    
+    &.generated-layout {
+      padding: 15px;
+      gap: 10px;
+
+      .favicon {
+        width: rem(32px);
+        height: rem(32px);
+        flex-shrink: 0;
+        background-size: cover;
+        background-position: center;
+        border-radius: 3px;
+        user-select: none;
+      }
+
+      .url-data {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+
+        .title {
+          font-size: rem(16px);
+          font-weight: 500;
+          color: color(gray-9);
+        }
+
+        .href {
+          font-size: rem(12px);
+          color: color(gray-8);
+        }
+
+        .title,
+        .href {
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+      }
+    }
+  }
+}

@@ -24,6 +24,10 @@ app.use(bodyParser.json());
 app.use((req: Request, res: Response, next: NextFunction) => {
 
   console.log(`${req.method} ${req.originalUrl}`);
+
+  if ( req.method !== 'GET' && req.body )
+    console.log(req.body);
+  
   next();
 
 });

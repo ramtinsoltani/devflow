@@ -1,13 +1,14 @@
 @if ( item ) {
   <div class="card" (click)="onCardClick()">
-    <div class="poster"
-    [ngClass]="{ 'no-image': ! item.posterUrl }"
-    [ngStyle]="{ backgroundImage: 'url(' + item.posterUrl + ')' }">
-
-      @if ( ! item.posterUrl ) {
-        <app-icon icon="image-slash" iconWidth="50px"></app-icon>
-      }
-    </div>
+    <app-item-image
+    [posterUrl]="item.posterUrl"
+    [title]="item.originTitle"
+    [url]="item.originUrl"
+    [favicon]="item.favicon"
+    [collectionColor]="collectionColor"
+    [forceGeneratedLayout]="item.forceAltLayout"
+    [bright]="hovered">
+    </app-item-image>
     <div class="content">
       <div class="content-header">
         <div class="title" [title]="item.title">{{ item.title }}</div>

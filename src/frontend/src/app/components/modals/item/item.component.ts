@@ -2,8 +2,11 @@ import { Component, Input } from '@angular/core';
 import { NgClass, NgStyle } from '@angular/common';
 import { Color, ITag } from '@devflow/models';
 import { EndpointService, GenericModalComponent, IURLMetadataResponse, OnModalInit, OnModalOutput, OnModalValidation, UtilsService } from '@devflow/services';
+import { cloneDeep } from 'lodash-es';
 import { TextboxComponent } from '../../shared/textbox/textbox.component';
 import { IconComponent } from '../../shared/icon/icon.component';
+import { ItemImageComponent } from '../../shared/item-image/item-image.component';
+import { CheckboxComponent } from '../../shared/checkbox/checkbox.component';
 
 @Component({
   selector: 'app-item-modal',
@@ -11,8 +14,10 @@ import { IconComponent } from '../../shared/icon/icon.component';
   imports: [
     TextboxComponent,
     IconComponent,
+    ItemImageComponent,
+    CheckboxComponent,
     NgClass,
-    NgStyle
+    NgStyle,
   ],
   templateUrl: './item.component.html',
   styleUrl: './item.component.scss'
@@ -20,16 +25,21 @@ import { IconComponent } from '../../shared/icon/icon.component';
 export class ItemModalComponent implements GenericModalComponent, OnModalInit, OnModalOutput, OnModalValidation {
 
   /** Holds the last URL metadata that was fetched in this modal (if any) */
-  private latestMetadata?: IURLMetadataResponse;
+  public latestMetadata?: IURLMetadataResponse;
   public isUrlFetching: boolean = false;
   /** Holds the color sequence of tags when modal opened */
   public originalColorSequence: Color[] = [];
+  /** Indicates if generated poster layout should be forced */
+  public forceGeneratedPosterLayout: boolean = false;
+  public forceGeneratedPosterLayoutOptionDisabled = true;
 
   @Input()
   public modalData: ItemModalData = {
     title: '',
     url: '',
-    tags: []
+    tags: [],
+    forceAltLayout: false,
+    collectionColor: Color.Blue
   };
 
   constructor(
@@ -41,11 +51,28 @@ export class ItemModalComponent implements GenericModalComponent, OnModalInit, O
     
     // Resolve the last color sequence of item tags (to not repeat tag colors when editing existing items, unless the sequence is restarted)
     this.originalColorSequence = this.utils.resolveLastColorSequenceFromTags(this.modalData.tags);
+
+    this.forceGeneratedPosterLayout = this.modalData.forceAltLayout;
+
+    const generatedLayoutCriteria: boolean = !! this.modalData.originTitle && !! this.modalData.originUrl && !! this.modalData.favicon;
+
+    this.forceGeneratedPosterLayoutOptionDisabled = ! (generatedLayoutCriteria && this.modalData.posterUrl);
+
   }
 
-  onModalOutput(): ItemModalData {
+  onModalOutput(): ItemModalOutput {
 
-    return this.modalData;
+    return {
+      title: this.modalData.title,
+      description: this.modalData.description,
+      tags: cloneDeep(this.modalData.tags),
+      posterUrl: this.modalData.posterUrl,
+      url: this.modalData.url,
+      originTitle: this.latestMetadata?.originTitle || this.modalData.originTitle,
+      originUrl: this.latestMetadata?.originUrl || this.modalData.originUrl,
+      favicon: this.latestMetadata?.favicon || this.modalData.favicon,
+      forceAltLayout: this.forceGeneratedPosterLayout
+    };
     
   }
 
@@ -84,8 +111,12 @@ export class ItemModalComponent implements GenericModalComponent, OnModalInit, O
       if ( metadata.description && (! this.latestMetadata?.description || this.modalData.description === this.latestMetadata?.description) )
         this.modalData.description = metadata.description;
 
-      if ( metadata.posterUrl )
-        this.modalData.posterUrl = metadata.posterUrl;
+      this.modalData.posterUrl = metadata.posterUrl;
+
+      const generatedLayoutCriteria: boolean = !! metadata.originTitle && !! metadata.originUrl && !! metadata.favicon;
+      
+      this.forceGeneratedPosterLayoutOptionDisabled = ! (generatedLayoutCriteria && metadata.posterUrl);
+      this.forceGeneratedPosterLayout = ! metadata.posterUrl && generatedLayoutCriteria;
 
       this.latestMetadata = metadata;
 
@@ -102,5 +133,22 @@ export interface ItemModalData {
   description?: string,
   tags: ITag[],
   posterUrl?: string,
-  url: string
+  url: string,
+  originTitle?: string,
+  originUrl?: string,
+  favicon?: string,
+  forceAltLayout: boolean,
+  collectionColor: Color
+}
+
+export interface ItemModalOutput {
+  title: string,
+  description?: string,
+  tags: ITag[],
+  posterUrl?: string,
+  url: string,
+  originTitle?: string,
+  originUrl?: string,
+  favicon?: string,
+  forceAltLayout: boolean
 }

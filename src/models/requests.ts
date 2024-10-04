@@ -17,7 +17,11 @@ export interface IRequestNewItem {
   url: string,
   description?: string,
   posterUrl?: string,
-  tags: ITag[]
+  tags: ITag[],
+  originTitle?: string,
+  originUrl?: string,
+  favicon?: string,
+  forceAltLayout: boolean
 }
 
 export interface IRequestUpdateItem {
@@ -25,7 +29,11 @@ export interface IRequestUpdateItem {
   url?: string,
   description?: string | null,
   posterUrl?: string | null,
-  tags?: ITag[]
+  tags?: ITag[],
+  originTitle?: string | null,
+  originUrl?: string | null,
+  favicon?: string | null,
+  forceAltLayout: boolean
 }
 
 export interface IRequestFetchMetadata {

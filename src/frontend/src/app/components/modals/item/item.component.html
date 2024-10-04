@@ -1,12 +1,17 @@
 <div class="left">
-  <div class="poster"
-    [ngClass]="{ 'no-image': ! modalData.posterUrl }"
-    [ngStyle]="{ backgroundImage: 'url(' + modalData.posterUrl + ')' }">
-
-      @if ( ! modalData.posterUrl ) {
-        <app-icon icon="image-slash" iconWidth="50px"></app-icon>
-      }
-    </div>
+  <app-item-image
+  [posterUrl]="latestMetadata?.posterUrl || modalData.posterUrl"
+  [title]="latestMetadata?.originTitle || modalData.originTitle"
+  [url]="latestMetadata?.originUrl || modalData.originUrl"
+  [favicon]="latestMetadata?.favicon || modalData.favicon"
+  [collectionColor]="modalData.collectionColor"
+  [forceGeneratedLayout]="forceGeneratedPosterLayout">
+  </app-item-image>
+  <app-checkbox
+  [(checked)]="forceGeneratedPosterLayout"
+  [disabled]="forceGeneratedPosterLayoutOptionDisabled"
+  label="Use alternative layout">
+  </app-checkbox>
 </div>
 <div class="right">
   <app-textbox type="url"

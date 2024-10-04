@@ -9,28 +9,119 @@ export const UtilitiesRouter = Router();
 
 UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRequest, res: Response<IResponseUrlMetadata>) => {
 
-  let result!: urlMetadata.Result;
+  let result: urlMetadata.Result | undefined;
+  let originResult: urlMetadata.Result | undefined;
+  let urlError: Error | undefined;
+  let originError: Error | undefined;
 
   try {
 
+    // Get URL metadata
     result = await urlMetadata(req.body.url, { mode: 'same-origin' });
 
   }
   catch (error) {
 
-    throw new ServerError('internal', `Could not fetch URL metadata: "${(error as Error).message}"`);
+    console.warn('URL metadata fetch failed:', error);
+    urlError = error as Error;
 
   }
 
-  const metadata: IResponseUrlMetadata = {
-    title: result['og:title'] || result['twitter:title'] || result.title,
-    description: result['od:description'] || result['twitter:description'] || result.description,
-    posterUrl: result['og:image'] || result['twitter:image']
-  };
+  try {
+
+    // Get URL's origin metadata
+    originResult = await urlMetadata(new URL(req.body.url).origin, { mode: 'same-origin' });
+
+  }
+  catch (error) {
+
+    console.warn('Origin URL metadata fetch failed:', error);
+    originError = error as Error;
+
+  }
+
+  if ( urlError && originError )
+    throw new ServerError('internal', `Fetching URL metadata resulted in error: ${urlError.message === originError.message ? urlError.message : [urlError.message, originError.message].join(', ')}`);
+
+  const metadata: IResponseUrlMetadata = {};
+
+  if ( result ) {
+
+    metadata.title = result['og:title'] || result['twitter:title'] || result.title;
+    metadata.description = result['od:description'] || result['twitter:description'] || result.description;
+    metadata.posterUrl = result['og:image'] || result['twitter:image'];
+
+    // Handle multiple images
+    if ( metadata.posterUrl?.includes(',') )
+      metadata.posterUrl = metadata.posterUrl.split(',')[0];
+
+  }
+
+  if ( originResult ) {
+
+    metadata.originTitle = originResult['og:title'] || originResult['twitter:title'] || originResult.title;
+    metadata.originUrl = new URL(req.body.url).origin;
+
+  }
 
   // Resolve poster URLs using the provided URL as base if necessary
   if ( metadata.posterUrl?.length )
     metadata.posterUrl = new URL(metadata.posterUrl, req.body.url).href;
+
+  // Find best favicon
+  const favicons: { svg?: string, png: { url: string, size: number }[], ico?: string } = {
+    png: []
+  };
+
+  for ( const icon of originResult?.favicons || [] ) {
+
+    let url!: URL;
+
+    if ( ! icon.rel?.includes('icon') || typeof icon.href !== 'string' )
+      continue;
+
+    try {
+
+      url = new URL(icon.href, metadata.originUrl);
+
+    }
+    catch (error) {
+
+      continue;
+
+    }
+
+    if ( ! favicons.svg && (icon.type === 'image/svg+xml' || (! icon.type && url.pathname.endsWith('.svg'))) )
+      favicons.svg = url.href;
+
+    // Push all PNGs into array
+    if ( icon.type === 'image/png' || (! icon.type && url.pathname.endsWith('.png')) )
+      favicons.png.push({ url: url.href, size: parseInt(icon.sizes?.match(/^(?<width>\d+)x\d+$/i)?.groups?.width || 0) });
+
+    if ( ! favicons.ico && (icon.type === 'image/x-icon' || (! icon.type && url.pathname.endsWith('.ico'))) )
+      favicons.ico = url.href;
+
+  }
+
+  // Pick best PNG (128px size and above or the size closest to 128px)
+  let bestPNG: string | undefined = undefined;
+
+  favicons.png.sort();
+
+  for ( const png of favicons.png ) {
+
+    if ( png.size >= 128 ) {
+
+      bestPNG = png.url;
+      break;
+
+    }
+
+    bestPNG = png.url;
+
+  }
+
+  metadata.favicon = favicons.svg || bestPNG || favicons.ico;
 
   res.json(metadata);
 

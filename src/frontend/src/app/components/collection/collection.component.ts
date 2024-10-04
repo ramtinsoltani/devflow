@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { ItemComponent, TagFilterEvent } from '../shared/item/item.component';
 import { NavItemComponent } from '../shared/nav-item/nav-item.component';
 import { TextboxComponent, TextboxSearchEvent } from '../shared/textbox/textbox.component';
-import { ItemModalComponent, ItemModalData } from '../modals/item/item.component';
+import { ItemModalComponent, ItemModalData, ItemModalOutput } from '../modals/item/item.component';
 import { EmptyPlaceholderComponent } from '../shared/empty-placeholder/empty-placeholder.component';
 import { NgClass } from '@angular/common';
 
@@ -126,8 +126,8 @@ export class CollectionComponent implements OnDestroy {
 
   public onNewItem(): void {
 
-    this.modals.openModal('New Item', ItemModalComponent, [
-      { label: 'Create', type: 'success', closesModal: true, boundToValidation: true, callback: (modalOutput: ItemModalData) => {
+    this.modals.openModal<ItemModalData>('New Item', ItemModalComponent, [
+      { label: 'Create', type: 'success', closesModal: true, boundToValidation: true, callback: (modalOutput: ItemModalOutput) => {
 
         this.endpoint.createItem({
           collectionId: this.collectionId,
@@ -135,7 +135,11 @@ export class CollectionComponent implements OnDestroy {
           description: modalOutput.description,
           url: modalOutput.url,
           posterUrl: modalOutput.posterUrl,
-          tags: modalOutput.tags
+          tags: modalOutput.tags,
+          originTitle: modalOutput.originTitle,
+          originUrl: modalOutput.originUrl,
+          favicon: modalOutput.favicon,
+          forceAltLayout: modalOutput.forceAltLayout
         })
         .then(res => this.endpoint.getItem(res.data))
         .then(newItem => {
@@ -149,8 +153,14 @@ export class CollectionComponent implements OnDestroy {
       }},
       { label: 'Cancel', type: 'secondary', closesModal: true }
     ],
-    // No modal data
-    undefined,
+    // Modal data
+    {
+      title: '',
+      url: '',
+      tags: [],
+      forceAltLayout: false,
+      collectionColor: this.app.getCollectionColor(this.collectionId) as Color
+    },
     // Modal options
     { size: ModalSize.Large });
 

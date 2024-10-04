@@ -88,6 +88,39 @@ export const ItemSchema = new Schema({
       message: () => `Tags exceed the maximum allowed size!`
     },
     index: true
+  },
+  originTitle: {
+    type: String,
+    maxLength: 128
+  },
+  originUrl: {
+    type: String,
+    maxLength: 256,
+    validate: {
+      validator: (v: string) => isURL(v, {
+        protocols: ['http', 'https'],
+        require_protocol: true,
+        require_valid_protocol: true
+      }),
+      message: () => 'Origin URL is not a valid URL!'
+    }
+  },
+  favicon: {
+    type: String,
+    maxLength: 256,
+    validate: {
+      validator: (v: string) => isURL(v, {
+        protocols: ['http', 'https'],
+        require_protocol: true,
+        require_valid_protocol: true
+      }),
+      message: () => 'Favicon is not a valid URL!'
+    }
+  },
+  forceAltLayout: {
+    type: Boolean,
+    required: true,
+    default: false
   }
 }, {
   timestamps: true

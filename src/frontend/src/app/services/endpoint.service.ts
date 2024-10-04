@@ -296,7 +296,11 @@ export interface INewItemRequest {
   url: string,
   description?: string,
   posterUrl?: string,
-  tags: ITag[]
+  tags: ITag[],
+  originTitle?: string,
+  originUrl?: string,
+  favicon?: string,
+  forceAltLayout: boolean
 }
 
 export interface IUpdateItemRequest {
@@ -304,7 +308,11 @@ export interface IUpdateItemRequest {
   url?: string,
   description?: string | null,
   posterUrl?: string | null,
-  tags?: ITag[]
+  tags?: ITag[],
+  originTitle?: string | null,
+  originUrl?: string | null,
+  favicon?: string | null,
+  forceAltLayout: boolean
 }
 
 export interface IGeneralMessageResponse<T=undefined> {
@@ -320,7 +328,10 @@ export interface IErrorResponse {
 export interface IURLMetadataResponse {
   title?: string,
   description?: string,
-  posterUrl?: string
+  posterUrl?: string,
+  originTitle?: string,
+  originUrl?: string,
+  favicon?: string
 }
 
 export interface HttpErrorResponse<T=IErrorResponse> extends GenericHttpErrorResponse {

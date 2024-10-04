@@ -136,6 +136,11 @@ app-icon.loading-icon {
   }
 }
 
+label {
+  font-size: rem(12px);
+  font-weight: 500;
+}
+
 @keyframes spinning {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

@@ -1,0 +1,57 @@
+@import '../../../../scss/utils';
+
+:host {
+  display: flex;
+  gap: rem(8px);
+  align-items: center;
+}
+
+label {
+  font-size: rem(14px);
+  cursor: pointer;
+}
+
+input[type=checkbox] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  appearance: none;
+  border: none;
+  outline: none;
+  width: rem(14px);
+  height: rem(14px);
+  margin: 0;
+  border-radius: 3px;
+  background-color: color(gray-3);
+  cursor: pointer;
+  transition: background-color .15s ease-in-out;
+
+  &:hover:not(:checked):not(:disabled) {
+    background-color: color(gray-4);
+  }
+
+  &:checked {
+    background-color: color(accent-blue);
+    transition: none;
+  }
+
+  &:disabled {
+    background-color: color(gray-7);
+
+    & + label {
+      color: color(gray-6);
+    }
+  }
+
+  &:disabled,
+  &:disabled + label {
+    cursor: default;
+  }
+}
+
+.checkmark {
+  position: absolute;
+  color: color(gray-9);
+  pointer-events: none;
+}

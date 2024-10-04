@@ -168,6 +168,17 @@ export class DatabaseService {
     if ( data.posterUrl ) doc.posterUrl = data.posterUrl;
     else if ( data.posterUrl === null ) doc.posterUrl = undefined;
 
+    if ( data.originTitle ) doc.originTitle = data.originTitle;
+    else if ( data.originTitle === null ) doc.originTitle = undefined;
+
+    if ( data.originUrl ) doc.originUrl = data.originUrl;
+    else if ( data.originUrl === null ) doc.originUrl = undefined;
+
+    if ( data.favicon ) doc.favicon = data.favicon;
+    else if ( data.favicon === null ) doc.favicon = undefined;
+
+    doc.forceAltLayout = data.forceAltLayout;
+
     if ( data.tags ) {
 
       doc.tags.splice(0, doc.tags.length);
