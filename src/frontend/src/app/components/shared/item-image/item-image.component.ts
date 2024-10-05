@@ -26,7 +26,10 @@ export class ItemImageComponent {
     private utils: UtilsService
   ) { }
 
-  @Input()
+  @Input({ transform: booleanAttribute })
+  public fullRoundedCorners: boolean = false;
+
+  @Input({ transform: booleanAttribute })
   public bright: boolean = false;
 
   @Input()
@@ -84,7 +87,7 @@ export class ItemImageComponent {
    */
   public shouldDisplayGeneratedLayout(): boolean { 
 
-    return this.forceGeneratedLayout || (! this.posterImageUrl && !! this.title && !! this.url && !! this.favicon);
+    return this.forceGeneratedLayout || (! this.posterImageUrl && !! this.title && !! this.url);
 
   }
   

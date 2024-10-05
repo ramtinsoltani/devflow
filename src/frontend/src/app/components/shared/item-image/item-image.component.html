@@ -1,8 +1,9 @@
 <div class="poster"
 [ngClass]="{
   'no-image': forceGeneratedLayout || ! posterImageUrl || brokenPosterImage,
-  'broken-image': posterImageUrl && brokenPosterImage,
-  'generated-layout': shouldDisplayGeneratedLayout()
+  'broken-image': (! posterImageUrl || brokenPosterImage) && ! shouldDisplayGeneratedLayout(),
+  'generated-layout': shouldDisplayGeneratedLayout(),
+  'full-rounded-corners': fullRoundedCorners
 }"
 [ngStyle]="{
   background: shouldDisplayGeneratedLayout() ? getCollectionColorGradient() : 'var(--color-gray-3)'
@@ -12,12 +13,19 @@
     <img class="poster-image" [src]="posterImageUrl" draggable="false" (error)="onImageLoadingError()">
   }
   @else if ( shouldDisplayGeneratedLayout() ) {
-    <div class="favicon" [ngStyle]="{
-      backgroundImage: 'url(' + favicon + ')'
-    }"></div>
+    
+    @if ( favicon ) {
+      <div class="favicon" [ngStyle]="{
+        backgroundImage: 'url(' + favicon + ')'
+      }"></div>
+    }
+    @else {
+      <app-icon icon="globe" iconSize="1.75rem" paletteColor="gray-8">
+      </app-icon>
+    }
     <div class="url-data">
-      <span class="title">{{ title }}</span>
-      <span class="href">{{ url }}</span>
+      <span class="title" [title]="title">{{ title }}</span>
+      <span class="href" [title]="url">{{ url }}</span>
     </div>
   }
   @else {

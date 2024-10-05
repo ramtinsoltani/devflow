@@ -10,9 +10,13 @@ export const UtilitiesRouter = Router();
 UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRequest, res: Response<IResponseUrlMetadata>) => {
 
   const urlMetadataOptions: urlMetadata.Options = {
-    mode: 'same-origin',
+    mode: 'cors',
     descriptionLength: 512,
-    timeout: 5000
+    timeout: 5000,
+    requestHeaders: {
+      'Origin': new URL(req.body.url).origin,
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'
+    }
   };
 
   let result: urlMetadata.Result | undefined;
@@ -82,7 +86,7 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
 
   if ( originResult ) {
 
-    metadata.originTitle = originResult['og:title'] || originResult['twitter:title'] || originResult.title;
+    metadata.originTitle = originResult['og:site_name'] || originResult['og:title'] || originResult['twitter:title'] || originResult.title;
     metadata.originUrl = new URL(req.body.url).origin;
 
   }
@@ -140,7 +144,7 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
 
   }
 
-  metadata.favicon = favicons.svg || bestPNG || favicons.ico;
+  metadata.favicon = favicons.svg || bestPNG || favicons.ico || new URL(req.body.url).origin + '/favicon.ico';
 
   res.json(metadata);
 

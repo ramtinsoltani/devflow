@@ -54,7 +54,7 @@ export class ItemModalComponent implements GenericModalComponent, OnModalInit, O
 
     this.forceGeneratedPosterLayout = this.modalData.forceAltLayout;
 
-    const generatedLayoutCriteria: boolean = !! this.modalData.originTitle && !! this.modalData.originUrl && !! this.modalData.favicon;
+    const generatedLayoutCriteria: boolean = !! this.modalData.originTitle && !! this.modalData.originUrl;
 
     this.forceGeneratedPosterLayoutOptionDisabled = ! (generatedLayoutCriteria && this.modalData.posterUrl);
 
@@ -113,7 +113,7 @@ export class ItemModalComponent implements GenericModalComponent, OnModalInit, O
 
       this.modalData.posterUrl = metadata.posterUrl;
 
-      const generatedLayoutCriteria: boolean = !! metadata.originTitle && !! metadata.originUrl && !! metadata.favicon;
+      const generatedLayoutCriteria: boolean = !! metadata.originTitle && !! metadata.originUrl;
       
       this.forceGeneratedPosterLayoutOptionDisabled = ! (generatedLayoutCriteria && metadata.posterUrl);
       this.forceGeneratedPosterLayout = ! metadata.posterUrl && generatedLayoutCriteria;
