@@ -19,7 +19,7 @@
   3. Search for **Run Shell Script** and select it
   4. Write the following code inside the script (follow the instructions of comments):
       ```bash
-      # Add the path to NodeJS installation in PATH
+      # Add the path to NodeJS installation in PATH (parent directory)
       # You can obtain the path from a terminal using "where node"
       export PATH=/opt/homebrew/bin:$PATH
       # Replace PATH_TO_REPO with the path to this repo on disk
@@ -27,7 +27,7 @@
       npm start
       ```
   5. Save the application on disk
-  6. Go to **System Preferences / General / Login Items** and the created app.
+  6. Go to **System Preferences / General / Login Items** and add the created app.
 
 ## Windows
 
