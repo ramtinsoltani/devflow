@@ -1,65 +1,59 @@
 import { Router, Response } from "express";
 import { asyncHandler } from "../lib/async-handler";
 import { FetchMetadataRequest } from "../models/requests";
-import urlMetadata from "url-metadata";
 import { IResponseUrlMetadata } from "../models/responses";
 import { ServerError } from "../lib/error";
+import { getLinkPreview } from "link-preview-js";
 
 export const UtilitiesRouter = Router();
 
 UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRequest, res: Response<IResponseUrlMetadata>) => {
 
-  const urlMetadataOptions: urlMetadata.Options = {
-    mode: 'cors',
-    descriptionLength: 512,
-    timeout: 5000,
-    requestHeaders: {
-      'Origin': new URL(req.body.url).origin,
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'
-    }
+  const previewOptions: any = {
+    headers: {
+      'user-agent': 'google-bot',
+      origin: new URL(req.body.url).origin
+    },
+    followRedirects: 'follow'
   };
+  
+  const previewResults = await Promise.allSettled([
+    // Link preview
+    getLinkPreview(req.body.url, previewOptions),
+    // Link's origin preview
+    getLinkPreview(new URL(req.body.url).origin, previewOptions)
+  ]);
 
-  let result: urlMetadata.Result | undefined;
-  let originResult: urlMetadata.Result | undefined;
-  let urlError: Error | undefined;
-  let originError: Error | undefined;
+  // Show warnings for each failed preview fetch
+  for ( const result of previewResults ) {
 
-  try {
-
-    // Get URL metadata
-    result = await urlMetadata(req.body.url, urlMetadataOptions);
-
-  }
-  catch (error) {
-
-    console.warn('URL metadata fetch failed:', error);
-    urlError = error as Error;
+    if ( result.status === 'rejected' )
+      console.warn('URL metadata fetch failed:', result.reason);
 
   }
 
-  try {
+  const result = previewResults[0].status === 'fulfilled' ? previewResults[0].value as LinkPreviewResult : null;
+  const originResult = previewResults[1].status === 'fulfilled' ? previewResults[1].value as LinkPreviewResult : null;
 
-    // Get URL's origin metadata
-    originResult = await urlMetadata(new URL(req.body.url).origin, urlMetadataOptions);
+  // If both failed, throw error
+  if ( previewResults.reduce((a, b) => a && b.status === 'rejected', true) ) {
+
+    throw new ServerError('internal', `Fetching URL metadata resulted in error: ${
+      (previewResults[0] as PromiseRejectedResult).reason.message === (previewResults[1] as PromiseRejectedResult).reason.message ?
+        (previewResults[0] as PromiseRejectedResult).reason.message :
+        [(previewResults[0] as PromiseRejectedResult).reason.message, (previewResults[1] as PromiseRejectedResult).reason.message].join(', ')
+    }`);
 
   }
-  catch (error) {
-
-    console.warn('Origin URL metadata fetch failed:', error);
-    originError = error as Error;
-
-  }
-
-  if ( urlError && originError )
-    throw new ServerError('internal', `Fetching URL metadata resulted in error: ${urlError.message === originError.message ? urlError.message : [urlError.message, originError.message].join(', ')}`);
 
   const metadata: IResponseUrlMetadata = {};
 
+  // Read link preview
   if ( result ) {
 
-    metadata.title = result['og:title'] || result['twitter:title'] || result.title;
-    metadata.description = result['od:description'] || result['twitter:description'] || result.description;
-    metadata.posterUrl = result['og:image'] || result['twitter:image'];
+    metadata.title = result.title || result.siteName;
+    metadata.description = result.description;
+    metadata.posterUrl = result.images?.at(0);
 
     // Sanitize poster URL
     try {
@@ -84,28 +78,26 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
 
   }
 
+  // Read origin link preview
   if ( originResult ) {
 
-    metadata.originTitle = originResult['og:site_name'] || originResult['og:title'] || originResult['twitter:title'] || originResult.title;
+    metadata.originTitle = originResult.siteName || originResult.title;
     metadata.originUrl = new URL(req.body.url).origin;
 
   }
 
-  // Find best favicon
+  // Find the best favicon
   const favicons: { svg?: string, png: { url: string, size: number }[], ico?: string } = {
     png: []
   };
-
-  for ( const icon of originResult?.favicons || [] ) {
+  
+  for ( const icon of (result || originResult || {}).favicons || [] ) {
 
     let url!: URL;
 
-    if ( ! icon.rel?.includes('icon') || typeof icon.href !== 'string' )
-      continue;
-
     try {
 
-      url = new URL(icon.href, metadata.originUrl);
+      url = new URL(icon, metadata.originUrl);
 
     }
     catch (error) {
@@ -114,14 +106,14 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
 
     }
 
-    if ( ! favicons.svg && (icon.type === 'image/svg+xml' || (! icon.type && url.pathname.endsWith('.svg'))) )
+    if ( ! favicons.svg && url.pathname.endsWith('.svg') )
       favicons.svg = url.href;
 
     // Push all PNGs into array
-    if ( icon.type === 'image/png' || (! icon.type && url.pathname.endsWith('.png')) )
-      favicons.png.push({ url: url.href, size: parseInt(icon.sizes?.match(/^(?<width>\d+)x\d+$/i)?.groups?.width || 0) });
+    if ( url.pathname.endsWith('.png') )
+      favicons.png.push({ url: url.href, size: parseInt(url.pathname.match(/(?<size>\d+)/i)?.groups?.size || '0') });
 
-    if ( ! favicons.ico && (icon.type === 'image/x-icon' || (! icon.type && url.pathname.endsWith('.ico'))) )
+    if ( ! favicons.ico && url.pathname.endsWith('.ico') )
       favicons.ico = url.href;
 
   }
@@ -129,7 +121,7 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
   // Pick best PNG (128px size and above or the size closest to 128px)
   let bestPNG: string | undefined = undefined;
 
-  favicons.png.sort();
+  favicons.png.sort((a, b) => b.size - a.size);
 
   for ( const png of favicons.png ) {
 
@@ -149,3 +141,16 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
   res.json(metadata);
 
 }));
+
+interface LinkPreviewResult {
+  url: string,
+  title?: string,
+  siteName?: string,
+  description?: string,
+  images?: string[],
+  mediaType?: string,
+  contentType?: string,
+  charset?: string
+  videos?: string[],
+  favicons?: string[]
+}

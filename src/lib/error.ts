@@ -27,10 +27,16 @@ export class ServerError extends Error {
     if ( error instanceof ServerError )
       return error;
 
-    if ( ! error.code && error.name === 'ValidationError' )
-      return new ServerError('validation', error.message);
+    let serverError: ServerError;
 
-    return new ServerError(error.code || 'unknown', error.message);
+    if ( ! error.code && error.name === 'ValidationError' )
+      serverError = new ServerError('validation', error.message);
+    else
+      serverError = new ServerError(error.code || 'unknown', error.message);
+
+    serverError.stack = error.stack;
+
+    return serverError;
 
   }
 
