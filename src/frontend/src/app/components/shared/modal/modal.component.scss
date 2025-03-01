@@ -12,7 +12,7 @@
   top: 0;
   left: 0;
   z-index: 500;
-  background-color: palette(backdrop);
+  background-color: utils.color(backdrop);
   backdrop-filter: blur(10px);
   padding: 80px 40px;
   overflow-y: auto;
@@ -21,9 +21,9 @@
 .modal {
   width: 100%;
   max-width: 500px;
-  background-color: palette(gray-2);
+  background-color: utils.color(gray-2);
   border-radius: 3px;
-  box-shadow: 0 8px 20px palette(dropshadow);
+  box-shadow: 0 8px 20px utils.color(dropshadow);
   display: flex;
   flex-direction: column;
 }
@@ -32,11 +32,11 @@
   display: flex;
   align-items: center;
   width: 100%;
-  height: to-rem(50px);
-  font-size: to-rem(20px);
+  height: utils.rem(50px);
+  font-size: utils.rem(20px);
   padding: 0 20px;
   border-radius: 3px 3px 0 0;
-  background-color: palette(gray-3);
+  background-color: utils.color(gray-3);
 }
 
 .modal-body {

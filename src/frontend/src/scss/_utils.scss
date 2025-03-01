@@ -1,9 +1,9 @@
 @use './palette';
 
-@function to-rem($value) {
+@function rem($value) {
   @return calc($value / 16px) + rem;
 }
 
-@function palette($key) {
+@function color($key) {
   @return var(--color-#{$key});
 }

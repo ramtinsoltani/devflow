@@ -12,6 +12,6 @@ body {
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;
-  background-color: palette(gray-1);
-  color: palette(gray-8);
+  background-color: utils.color(gray-1);
+  color: utils.color(gray-8);
 }

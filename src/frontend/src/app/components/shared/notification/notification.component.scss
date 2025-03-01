@@ -5,25 +5,25 @@
   gap: 10px;
   border-radius: 3px;
   pointer-events: all;
-  background-color: palette(gray-2);
-  box-shadow: 0 2px 15px palette(dropshadow);
+  background-color: utils.color(gray-2);
+  box-shadow: 0 2px 15px utils.color(dropshadow);
   align-items: center;
   padding: 10px 15px;
-  width: to-rem(500px);
+  width: utils.rem(500px);
 }
 
 app-icon.error {
-  color: palette(accent-red);
+  color: utils.color(accent-red);
 }
 
 app-icon.info {
-  color: palette(accent-blue);
+  color: utils.color(accent-blue);
 }
 
 p.message {
   margin: 0;
 
   &.error {
-    color: palette(accent-red-secondary);
+    color: utils.color(accent-red-secondary);
   }
 }

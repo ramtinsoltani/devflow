@@ -2,12 +2,12 @@
 
 :host {
   display: flex;
-  gap: to-rem(8px);
+  gap: utils.rem(8px);
   align-items: center;
 }
 
 label {
-  font-size: to-rem(14px);
+  font-size: utils.rem(14px);
   cursor: pointer;
 }
 
@@ -19,28 +19,28 @@ input[type=checkbox] {
   appearance: none;
   border: none;
   outline: none;
-  width: to-rem(14px);
-  height: to-rem(14px);
+  width: utils.rem(14px);
+  height: utils.rem(14px);
   margin: 0;
   border-radius: 3px;
-  background-color: palette(gray-3);
+  background-color: utils.color(gray-3);
   cursor: pointer;
   transition: background-color .15s ease-in-out;
 
   &:hover:not(:checked):not(:disabled) {
-    background-color: palette(gray-4);
+    background-color: utils.color(gray-4);
   }
 
   &:checked {
-    background-color: palette(accent-blue);
+    background-color: utils.color(accent-blue);
     transition: none;
   }
 
   &:disabled {
-    background-color: palette(gray-7);
+    background-color: utils.color(gray-7);
 
     & + label {
-      color: palette(gray-6);
+      color: utils.color(gray-6);
     }
   }
 
@@ -52,6 +52,6 @@ input[type=checkbox] {
 
 .checkmark {
   position: absolute;
-  color: palette(gray-9);
+  color: utils.color(gray-9);
   pointer-events: none;
 }

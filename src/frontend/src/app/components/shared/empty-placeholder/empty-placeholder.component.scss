@@ -2,34 +2,34 @@
 
 :host {
   display: flex;
-  gap: to-rem(10px);
+  gap: utils.rem(10px);
   align-items: center;
 }
 
 img.icon {
   opacity: .22;
   flex-shrink: 0;
-  width: to-rem(80px);
-  height: to-rem(80px);
+  width: utils.rem(80px);
+  height: utils.rem(80px);
 }
 
 .display-text {
   display: flex;
   flex-direction: column;
-  gap: to-rem(4px);
-  color: palette(gray-5);
+  gap: utils.rem(4px);
+  color: utils.color(gray-5);
   font-family: "Patrick Hand", cursive;
   font-weight: 400;
   font-style: normal;
-  max-width: to-rem(250px);
+  max-width: utils.rem(250px);
 
   .title {
-    font-size: to-rem(24px);
+    font-size: utils.rem(24px);
   }
   
   .message {
-    font-size: to-rem(16px);
-    line-height: to-rem(18px);
+    font-size: utils.rem(16px);
+    line-height: utils.rem(18px);
     padding: 0;
     margin: 0;
   }

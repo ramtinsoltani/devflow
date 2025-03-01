@@ -9,7 +9,7 @@
 .main {
   display: flex;
   flex: 1;
-  max-height: calc(100vh - to-rem(70px));
+  max-height: calc(100vh - utils.rem(70px));
 }
 
 .content {

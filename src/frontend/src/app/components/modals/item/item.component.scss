@@ -15,7 +15,7 @@
 .right {
   display: flex;
   flex-direction: column;
-  gap: to-rem(15px);
+  gap: utils.rem(15px);
   flex: 1;
   min-width: 1px;
 

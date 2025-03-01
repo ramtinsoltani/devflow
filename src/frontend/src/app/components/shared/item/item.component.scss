@@ -1,9 +1,9 @@
 @use '../../../../scss/utils';
 
 :host:hover .card {
-  background-color: palette(gray-3);
+  background-color: utils.color(gray-3);
   transform: scale(1.05);
-  box-shadow: 0 10px 20px palette(dropshadow);
+  box-shadow: 0 10px 20px utils.color(dropshadow);
 
   app-icon.edit-icon {
     display: initial !important;
@@ -16,7 +16,7 @@
   height: 100%;
   border-radius: 3px;
   width: 290px;
-  background-color: palette(gray-2);
+  background-color: utils.color(gray-2);
   transition: background-color .15s ease-in-out, transform .15s ease-in-out, box-shadow .15s ease-in-out;
   cursor: pointer;
 }
@@ -31,14 +31,14 @@
   border-bottom: 1px solid transparent;
 
   &.no-image {
-    background-color: palette(gray-3);
+    background-color: utils.color(gray-3);
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom-color: palette(gray-2);
+    border-bottom-color: utils.color(gray-2);
 
     app-icon {
-      color: palette(gray-6);
+      color: utils.color(gray-6);
     }
   }
 }
@@ -48,7 +48,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  color: palette(gray-9);
+  color: utils.color(gray-9);
 
   .content-header {
     display: flex;
@@ -66,25 +66,25 @@
     app-icon.edit-icon {
       flex-shrink: 0;
       cursor: pointer;
-      color: palette(gray-8);
+      color: utils.color(gray-8);
       transition: color .15s ease-in-out;
       display: none;
 
       &:hover {
-        color: palette(gray-9);
+        color: utils.color(gray-9);
       }
     }
   }
 
   p.description {
     margin: 0;
-    color: palette(gray-8);
+    color: utils.color(gray-8);
     display: -webkit-box;
     -webkit-box-orient: vertical;
     line-clamp: 5;
     -webkit-line-clamp: 5;
     overflow: hidden;
-    font-size: to-rem(15px);
+    font-size: utils.rem(15px);
 
 
     &.no-tags {

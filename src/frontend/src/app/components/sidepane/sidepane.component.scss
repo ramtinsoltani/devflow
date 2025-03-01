@@ -3,9 +3,9 @@
 :host {
   display: flex;
   flex-direction: column;
-  min-width: to-rem(350px);
-  max-width: to-rem(350px);
-  background-color: palette(gray-2);
+  min-width: utils.rem(350px);
+  max-width: utils.rem(350px);
+  background-color: utils.color(gray-2);
   padding: 15px;
   gap: 15px;
   overflow-y: auto;
@@ -16,12 +16,12 @@
 }
 
 .new-collection {
-  font-size: to-rem(14px);
+  font-size: utils.rem(14px);
   padding-top: 0;
   padding-bottom: 0;
-  height: to-rem(35px);
+  height: utils.rem(35px);
 
   &:hover {
-    color: palette(accent-green);
+    color: utils.color(accent-green);
   }
 }

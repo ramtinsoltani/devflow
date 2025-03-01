@@ -3,13 +3,13 @@
 :host {
   display: flex;
   flex-direction: column;
-  gap: to-rem(15px);
+  gap: utils.rem(15px);
 }
 
 .color-swatch-control {
   display: flex;
   flex-direction: column;
-  gap: to-rem(10px);
+  gap: utils.rem(10px);
 }
 
 .color-swatch {

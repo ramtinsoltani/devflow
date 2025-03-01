@@ -3,24 +3,24 @@
 :host {
   display: flex;
   align-items: center;
-  min-height: to-rem(70px);
-  background-color: palette(gray-2);
+  min-height: utils.rem(70px);
+  background-color: utils.color(gray-2);
   padding: 15px 25px;
-  box-shadow: 0 2px 20px palette(dropshadow);
+  box-shadow: 0 2px 20px utils.color(dropshadow);
   z-index: 2;
-  height: to-rem(70px);
-  max-height: to-rem(70px);
+  height: utils.rem(70px);
+  max-height: utils.rem(70px);
 }
 
 .brand {
-  min-width: to-rem(355px);
-  max-width: to-rem(355px);
+  min-width: utils.rem(355px);
+  max-width: utils.rem(355px);
   height: 100%;
   display: flex;
   align-items: center;
 
   .logo {
-    font-size: to-rem(30px);
+    font-size: utils.rem(30px);
     padding-left: 26px;
     cursor: pointer;
     user-select: none;
@@ -29,7 +29,7 @@
       font-family: "PT Mono", monospace;
       font-weight: 400;
       font-style: normal;
-      color: palette(gray-9);
+      color: utils.color(gray-9);
     }
 
     .round {
@@ -37,7 +37,7 @@
       font-optical-sizing: auto;
       font-style: normal;
       font-weight: 400;
-      color: palette(gray-6);
+      color: utils.color(gray-6);
       transition: color .15s ease-in-out;
     }
   }

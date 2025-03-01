@@ -5,51 +5,51 @@ button {
   outline: none;
   border: none;
   border-radius: 3px;
-  font-size: to-rem(14px);
+  font-size: utils.rem(14px);
   font-family: "Rubik", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
   padding: 10px 15px;
   cursor: pointer;
-  color: palette(accent-white);
+  color: utils.color(accent-white);
   transition: background-color .15s ease-in-out;
 }
 
 button.primary {
-  background-color: palette(accent-blue);
+  background-color: utils.color(accent-blue);
 
   &:hover:not(:disabled) {
-    background-color: palette(accent-blue-secondary);
+    background-color: utils.color(accent-blue-secondary);
   }
 }
 
 button.secondary {
-  background-color: palette(gray-3);
+  background-color: utils.color(gray-3);
 
   &:hover:not(:disabled) {
-    background-color: palette(gray-4);
+    background-color: utils.color(gray-4);
   }
 }
 
 button.success {
-  background-color: palette(accent-green);
+  background-color: utils.color(accent-green);
 
   &:hover:not(:disabled) {
-    background-color: palette(accent-green-secondary);
+    background-color: utils.color(accent-green-secondary);
   }
 }
 
 button.danger {
-  background-color: palette(accent-red);
+  background-color: utils.color(accent-red);
 
   &:hover:not(:disabled) {
-    background-color: palette(accent-red-secondary);
+    background-color: utils.color(accent-red-secondary);
   }
 }
 
 button:disabled {
-  background-color: palette(gray-7) !important;
-  color: palette(gray-6) !important;
+  background-color: utils.color(gray-7) !important;
+  color: utils.color(gray-6) !important;
   cursor: default !important;
 }

@@ -19,13 +19,13 @@
   }
 
   .new-item {
-    font-size: to-rem(14px);
+    font-size: utils.rem(14px);
     flex-shrink: 0;
     padding-top: 0;
     padding-bottom: 0;
 
     &:hover {
-      color: palette(accent-green);
+      color: utils.color(accent-green);
     }
   }
 }

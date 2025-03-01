@@ -6,7 +6,7 @@
   border-top-right-radius: 3px;
   width: 290px;
   height: 160px;
-  background-color: palette(gray-3);
+  background-color: utils.color(gray-3);
   border-bottom: 1px solid transparent;
 
   img.poster-image {
@@ -30,10 +30,10 @@
     justify-content: center;
 
     &.broken-image {
-      border-bottom-color: palette(gray-2);
+      border-bottom-color: utils.color(gray-2);
 
       app-icon {
-        color: palette(gray-6);
+        color: utils.color(gray-6);
       }
     }
     
@@ -42,8 +42,8 @@
       gap: 10px;
 
       .favicon {
-        width: to-rem(32px);
-        height: to-rem(32px);
+        width: utils.rem(32px);
+        height: utils.rem(32px);
         flex-shrink: 0;
         background-size: cover;
         background-position: center;
@@ -61,14 +61,14 @@
         min-width: 0;
 
         .title {
-          font-size: to-rem(16px);
+          font-size: utils.rem(16px);
           font-weight: 500;
-          color: palette(gray-9);
+          color: utils.color(gray-9);
         }
 
         .href {
-          font-size: to-rem(12px);
-          color: palette(gray-8);
+          font-size: utils.rem(12px);
+          color: utils.color(gray-8);
         }
 
         .title,
