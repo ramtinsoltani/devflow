@@ -5,15 +5,14 @@ import { IconComponent } from '../icon/icon.component';
 import { NgClass, NgStyle } from '@angular/common';
 
 @Component({
-  selector: 'app-tag',
-  standalone: true,
-  imports: [
-    IconComponent,
-    NgStyle,
-    NgClass
-  ],
-  templateUrl: './tag.component.html',
-  styleUrl: './tag.component.scss'
+    selector: 'app-tag',
+    imports: [
+        IconComponent,
+        NgStyle,
+        NgClass
+    ],
+    templateUrl: './tag.component.html',
+    styleUrl: './tag.component.scss'
 })
 export class TagComponent {
 

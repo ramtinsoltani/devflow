@@ -8,17 +8,16 @@ import { ItemModalComponent, ItemModalData, ItemModalOutput } from '../../modals
 import { ItemImageComponent } from '../item-image/item-image.component';
 
 @Component({
-  selector: 'app-item',
-  standalone: true,
-  imports: [
-    NgClass,
-    NgStyle,
-    IconComponent,
-    TagComponent,
-    ItemImageComponent
-  ],
-  templateUrl: './item.component.html',
-  styleUrl: './item.component.scss'
+    selector: 'app-item',
+    imports: [
+        NgClass,
+        NgStyle,
+        IconComponent,
+        TagComponent,
+        ItemImageComponent
+    ],
+    templateUrl: './item.component.html',
+    styleUrl: './item.component.scss'
 })
 export class ItemComponent implements OnInit {
 

@@ -9,18 +9,17 @@ import { ItemImageComponent } from '../../shared/item-image/item-image.component
 import { CheckboxComponent } from '../../shared/checkbox/checkbox.component';
 
 @Component({
-  selector: 'app-item-modal',
-  standalone: true,
-  imports: [
-    TextboxComponent,
-    IconComponent,
-    ItemImageComponent,
-    CheckboxComponent,
-    NgClass,
-    NgStyle,
-  ],
-  templateUrl: './item.component.html',
-  styleUrl: './item.component.scss'
+    selector: 'app-item-modal',
+    imports: [
+        TextboxComponent,
+        IconComponent,
+        ItemImageComponent,
+        CheckboxComponent,
+        NgClass,
+        NgStyle,
+    ],
+    templateUrl: './item.component.html',
+    styleUrl: './item.component.scss'
 })
 export class ItemModalComponent implements GenericModalComponent, OnModalInit, OnModalOutput, OnModalValidation {
 

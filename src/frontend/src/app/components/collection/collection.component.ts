@@ -11,17 +11,16 @@ import { EmptyPlaceholderComponent } from '../shared/empty-placeholder/empty-pla
 import { NgClass } from '@angular/common';
 
 @Component({
-  selector: 'app-collection',
-  standalone: true,
-  imports: [
-    ItemComponent,
-    NavItemComponent,
-    TextboxComponent,
-    EmptyPlaceholderComponent,
-    NgClass
-  ],
-  templateUrl: './collection.component.html',
-  styleUrl: './collection.component.scss'
+    selector: 'app-collection',
+    imports: [
+        ItemComponent,
+        NavItemComponent,
+        TextboxComponent,
+        EmptyPlaceholderComponent,
+        NgClass
+    ],
+    templateUrl: './collection.component.html',
+    styleUrl: './collection.component.scss'
 })
 export class CollectionComponent implements OnDestroy {
 

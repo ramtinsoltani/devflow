@@ -4,15 +4,14 @@ import { NgStyle, NgClass } from '@angular/common';
 import { PaletteColor } from '@devflow/models';
 
 @Component({
-  selector: 'app-nav-item',
-  standalone: true,
-  imports: [
-    IconComponent,
-    NgStyle,
-    NgClass
-  ],
-  templateUrl: './nav-item.component.html',
-  styleUrl: './nav-item.component.scss'
+    selector: 'app-nav-item',
+    imports: [
+        IconComponent,
+        NgStyle,
+        NgClass
+    ],
+    templateUrl: './nav-item.component.html',
+    styleUrl: './nav-item.component.scss'
 })
 export class NavItemComponent {
 

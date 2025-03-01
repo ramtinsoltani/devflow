@@ -4,15 +4,14 @@ import { HeaderComponent, SidepaneComponent, ModalComponent, NotificationCompone
 import { ModalService, NotificationService } from './services';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    HeaderComponent,
-    SidepaneComponent
-  ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [
+        RouterOutlet,
+        HeaderComponent,
+        SidepaneComponent
+    ],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {
 

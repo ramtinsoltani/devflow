@@ -2,13 +2,12 @@ import { booleanAttribute, Component, EventEmitter, Input, Output } from '@angul
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
-  selector: 'app-checkbox',
-  standalone: true,
-  imports: [
-    IconComponent
-  ],
-  templateUrl: './checkbox.component.html',
-  styleUrl: './checkbox.component.scss'
+    selector: 'app-checkbox',
+    imports: [
+        IconComponent
+    ],
+    templateUrl: './checkbox.component.html',
+    styleUrl: './checkbox.component.scss'
 })
 export class CheckboxComponent {
 

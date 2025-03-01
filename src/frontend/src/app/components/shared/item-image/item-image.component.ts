@@ -5,15 +5,14 @@ import { UtilsService } from '@devflow/services';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
-  selector: 'app-item-image',
-  standalone: true,
-  imports: [
-    NgClass,
-    NgStyle,
-    IconComponent
-  ],
-  templateUrl: './item-image.component.html',
-  styleUrl: './item-image.component.scss'
+    selector: 'app-item-image',
+    imports: [
+        NgClass,
+        NgStyle,
+        IconComponent
+    ],
+    templateUrl: './item-image.component.html',
+    styleUrl: './item-image.component.scss'
 })
 export class ItemImageComponent {
 

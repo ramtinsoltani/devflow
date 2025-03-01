@@ -5,31 +5,30 @@ import { NgClass } from '@angular/common';
 import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
-  selector: 'app-notification',
-  standalone: true,
-  imports: [
-    IconComponent,
-    NgClass
-  ],
-  animations: [
-    trigger('fadeInOut', [
-      transition(':enter', [
-        style({
-          opacity: 0
-        }),
-        animate('.15s ease-in-out', style({
-          opacity: 1
-        }))
-      ]),
-      transition(':leave', [
-        animate('.15s ease-in-out', style({
-          opacity: 0
-        }))
-      ])
-    ])
-  ],
-  templateUrl: './notification.component.html',
-  styleUrl: './notification.component.scss'
+    selector: 'app-notification',
+    imports: [
+        IconComponent,
+        NgClass
+    ],
+    animations: [
+        trigger('fadeInOut', [
+            transition(':enter', [
+                style({
+                    opacity: 0
+                }),
+                animate('.15s ease-in-out', style({
+                    opacity: 1
+                }))
+            ]),
+            transition(':leave', [
+                animate('.15s ease-in-out', style({
+                    opacity: 0
+                }))
+            ])
+        ])
+    ],
+    templateUrl: './notification.component.html',
+    styleUrl: './notification.component.scss'
 })
 export class NotificationComponent implements OnInit {
 

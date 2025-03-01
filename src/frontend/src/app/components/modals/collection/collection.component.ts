@@ -7,16 +7,15 @@ import { IconComponent } from '../../shared/icon/icon.component';
 import { NgClass } from '@angular/common';
 
 @Component({
-  selector: 'app-collection-modal',
-  standalone: true,
-  imports: [
-    FormsModule,
-    TextboxComponent,
-    IconComponent,
-    NgClass
-  ],
-  templateUrl: './collection.component.html',
-  styleUrl: './collection.component.scss'
+    selector: 'app-collection-modal',
+    imports: [
+        FormsModule,
+        TextboxComponent,
+        IconComponent,
+        NgClass
+    ],
+    templateUrl: './collection.component.html',
+    styleUrl: './collection.component.scss'
 })
 export class CollectionModalComponent implements GenericModalComponent, OnModalOutput, OnModalValidation, OnInit {
 

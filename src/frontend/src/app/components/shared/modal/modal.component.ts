@@ -6,40 +6,39 @@ import { animate, animateChild, style, transition, trigger, query } from '@angul
 import { cloneDeep } from 'lodash-es';
 
 @Component({
-  selector: 'app-modal',
-  standalone: true,
-  imports: [
-    ButtonComponent,
-    NgStyle
-  ],
-  animations: [
-    trigger('fadeInOut', [
-      transition(':leave', [
-        query('.modal', [
-          animateChild()
+    selector: 'app-modal',
+    imports: [
+        ButtonComponent,
+        NgStyle
+    ],
+    animations: [
+        trigger('fadeInOut', [
+            transition(':leave', [
+                query('.modal', [
+                    animateChild()
+                ]),
+                animate('.075s ease-in-out', style({ opacity: 0 }))
+            ]),
+            transition(':enter', [
+                style({ opacity: 0 }),
+                animate('.075s ease-in-out', style({ opacity: 1 })),
+                query('.modal', [
+                    animateChild()
+                ])
+            ])
         ]),
-        animate('.075s ease-in-out', style({ opacity: 0 }))
-      ]),
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('.075s ease-in-out', style({ opacity: 1 })),
-        query('.modal', [
-          animateChild()
+        trigger('popInOut', [
+            transition(':leave', [
+                animate('.15s ease-in-out', style({ transform: 'scale(0)' }))
+            ]),
+            transition(':enter', [
+                style({ transform: 'scale(0)' }),
+                animate('.15s ease-in-out', style({ transform: 'scale(1)' }))
+            ])
         ])
-      ])
-    ]),
-    trigger('popInOut', [
-      transition(':leave', [
-        animate('.15s ease-in-out', style({ transform: 'scale(0)' }))
-      ]),
-      transition(':enter', [
-        style({ transform: 'scale(0)' }),
-        animate('.15s ease-in-out', style({ transform: 'scale(1)' }))
-      ])
-    ])
-  ],
-  templateUrl: './modal.component.html',
-  styleUrl: './modal.component.scss'
+    ],
+    templateUrl: './modal.component.html',
+    styleUrl: './modal.component.scss'
 })
 export class ModalComponent implements OnInit {
 

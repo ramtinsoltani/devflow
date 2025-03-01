@@ -8,15 +8,14 @@ import { EmptyPlaceholderComponent } from '../shared/empty-placeholder/empty-pla
 import { NgClass } from '@angular/common';
 
 @Component({
-  selector: 'app-search-results',
-  standalone: true,
-  imports: [
-    ItemComponent,
-    EmptyPlaceholderComponent,
-    NgClass
-  ],
-  templateUrl: './search-results.component.html',
-  styleUrl: './search-results.component.scss'
+    selector: 'app-search-results',
+    imports: [
+        ItemComponent,
+        EmptyPlaceholderComponent,
+        NgClass
+    ],
+    templateUrl: './search-results.component.html',
+    styleUrl: './search-results.component.scss'
 })
 export class SearchResultsComponent implements OnDestroy {
 

@@ -9,17 +9,16 @@ import { TextboxComponent, TextboxSearchEvent } from '../shared/textbox/textbox.
 import { CollectionModalComponent, CollectionModalData } from '../modals/collection/collection.component';
 
 @Component({
-  selector: 'app-sidepane',
-  standalone: true,
-  imports: [
-    IconComponent,
-    NavItemComponent,
-    TextboxComponent,
-    RouterLink,
-    RouterLinkActive
-  ],
-  templateUrl: './sidepane.component.html',
-  styleUrl: './sidepane.component.scss'
+    selector: 'app-sidepane',
+    imports: [
+        IconComponent,
+        NavItemComponent,
+        TextboxComponent,
+        RouterLink,
+        RouterLinkActive
+    ],
+    templateUrl: './sidepane.component.html',
+    styleUrl: './sidepane.component.scss'
 })
 export class SidepaneComponent implements OnInit, AfterViewInit, OnDestroy {
 

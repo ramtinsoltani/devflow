@@ -8,15 +8,14 @@ import { AppService, UtilsService } from '@devflow/services';
 import { NgStyle } from '@angular/common';
 
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [
-    TextboxComponent,
-    NgStyle,
-    RouterLink
-  ],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+    selector: 'app-header',
+    imports: [
+        TextboxComponent,
+        NgStyle,
+        RouterLink
+    ],
+    templateUrl: './header.component.html',
+    styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnDestroy {
 

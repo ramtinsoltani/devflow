@@ -1,11 +1,10 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-empty-placeholder',
-  standalone: true,
-  imports: [],
-  templateUrl: './empty-placeholder.component.html',
-  styleUrl: './empty-placeholder.component.scss'
+    selector: 'app-empty-placeholder',
+    imports: [],
+    templateUrl: './empty-placeholder.component.html',
+    styleUrl: './empty-placeholder.component.scss'
 })
 export class EmptyPlaceholderComponent {
 

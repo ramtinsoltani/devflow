@@ -8,16 +8,15 @@ import { TagComponent } from '../tag/tag.component';
 import isURL from 'validator/es/lib/isURL';
 
 @Component({
-  selector: 'app-textbox',
-  standalone: true,
-  imports: [
-    NgClass,
-    IconComponent,
-    FormsModule,
-    TagComponent
-  ],
-  templateUrl: './textbox.component.html',
-  styleUrl: './textbox.component.scss'
+    selector: 'app-textbox',
+    imports: [
+        NgClass,
+        IconComponent,
+        FormsModule,
+        TagComponent
+    ],
+    templateUrl: './textbox.component.html',
+    styleUrl: './textbox.component.scss'
 })
 export class TextboxComponent implements OnInit {
 
