@@ -1,4 +1,4 @@
-@import '../scss/utils';
+@use '../scss/utils';
 
 :host {
   display: flex;
@@ -9,7 +9,7 @@
 .main {
   display: flex;
   flex: 1;
-  max-height: calc(100vh - rem(70px));
+  max-height: calc(100vh - to-rem(70px));
 }
 
 .content {

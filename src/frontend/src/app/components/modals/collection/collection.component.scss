@@ -1,15 +1,15 @@
-@import '../../../../scss/utils';
+@use '../../../../scss/utils';
 
 :host {
   display: flex;
   flex-direction: column;
-  gap: rem(15px);
+  gap: to-rem(15px);
 }
 
 .color-swatch-control {
   display: flex;
   flex-direction: column;
-  gap: rem(10px);
+  gap: to-rem(10px);
 }
 
 .color-swatch {

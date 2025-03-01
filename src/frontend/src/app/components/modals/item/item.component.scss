@@ -1,4 +1,4 @@
-@import '../../../../scss/utils';
+@use '../../../../scss/utils';
 
 :host {
   display: flex;
@@ -15,7 +15,7 @@
 .right {
   display: flex;
   flex-direction: column;
-  gap: rem(15px);
+  gap: to-rem(15px);
   flex: 1;
   min-width: 1px;
 

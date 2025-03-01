@@ -1,4 +1,4 @@
-@import './scss/utils';
+@use './scss/utils';
 
 * {
   box-sizing: border-box;
@@ -12,6 +12,6 @@ body {
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;
-  background-color: color(gray-1);
-  color: color(gray-8);
+  background-color: palette(gray-1);
+  color: palette(gray-8);
 }

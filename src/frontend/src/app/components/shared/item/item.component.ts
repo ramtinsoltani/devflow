@@ -11,7 +11,6 @@ import { ItemImageComponent } from '../item-image/item-image.component';
     selector: 'app-item',
     imports: [
         NgClass,
-        NgStyle,
         IconComponent,
         TagComponent,
         ItemImageComponent

@@ -11,7 +11,6 @@ import { CollectionModalComponent, CollectionModalData } from '../modals/collect
 @Component({
     selector: 'app-sidepane',
     imports: [
-        IconComponent,
         NavItemComponent,
         TextboxComponent,
         RouterLink,

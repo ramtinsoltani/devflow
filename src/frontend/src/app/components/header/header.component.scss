@@ -1,26 +1,26 @@
-@import '../../../scss/utils';
+@use '../../../scss/utils';
 
 :host {
   display: flex;
   align-items: center;
-  min-height: rem(70px);
-  background-color: color(gray-2);
+  min-height: to-rem(70px);
+  background-color: palette(gray-2);
   padding: 15px 25px;
-  box-shadow: 0 2px 20px color(dropshadow);
+  box-shadow: 0 2px 20px palette(dropshadow);
   z-index: 2;
-  height: rem(70px);
-  max-height: rem(70px);
+  height: to-rem(70px);
+  max-height: to-rem(70px);
 }
 
 .brand {
-  min-width: rem(355px);
-  max-width: rem(355px);
+  min-width: to-rem(355px);
+  max-width: to-rem(355px);
   height: 100%;
   display: flex;
   align-items: center;
 
   .logo {
-    font-size: rem(30px);
+    font-size: to-rem(30px);
     padding-left: 26px;
     cursor: pointer;
     user-select: none;
@@ -29,7 +29,7 @@
       font-family: "PT Mono", monospace;
       font-weight: 400;
       font-style: normal;
-      color: color(gray-9);
+      color: palette(gray-9);
     }
 
     .round {
@@ -37,7 +37,7 @@
       font-optical-sizing: auto;
       font-style: normal;
       font-weight: 400;
-      color: color(gray-6);
+      color: palette(gray-6);
       transition: color .15s ease-in-out;
     }
   }

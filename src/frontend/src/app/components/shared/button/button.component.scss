@@ -1,55 +1,55 @@
-@import '../../../../scss/utils';
+@use '../../../../scss/utils';
 
 button {
   appearance: none;
   outline: none;
   border: none;
   border-radius: 3px;
-  font-size: rem(14px);
+  font-size: to-rem(14px);
   font-family: "Rubik", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
   padding: 10px 15px;
   cursor: pointer;
-  color: color(accent-white);
+  color: palette(accent-white);
   transition: background-color .15s ease-in-out;
 }
 
 button.primary {
-  background-color: color(accent-blue);
+  background-color: palette(accent-blue);
 
   &:hover:not(:disabled) {
-    background-color: color(accent-blue-secondary);
+    background-color: palette(accent-blue-secondary);
   }
 }
 
 button.secondary {
-  background-color: color(gray-3);
+  background-color: palette(gray-3);
 
   &:hover:not(:disabled) {
-    background-color: color(gray-4);
+    background-color: palette(gray-4);
   }
 }
 
 button.success {
-  background-color: color(accent-green);
+  background-color: palette(accent-green);
 
   &:hover:not(:disabled) {
-    background-color: color(accent-green-secondary);
+    background-color: palette(accent-green-secondary);
   }
 }
 
 button.danger {
-  background-color: color(accent-red);
+  background-color: palette(accent-red);
 
   &:hover:not(:disabled) {
-    background-color: color(accent-red-secondary);
+    background-color: palette(accent-red-secondary);
   }
 }
 
 button:disabled {
-  background-color: color(gray-7) !important;
-  color: color(gray-6) !important;
+  background-color: palette(gray-7) !important;
+  color: palette(gray-6) !important;
   cursor: default !important;
 }

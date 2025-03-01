@@ -12,11 +12,8 @@ import { CheckboxComponent } from '../../shared/checkbox/checkbox.component';
     selector: 'app-item-modal',
     imports: [
         TextboxComponent,
-        IconComponent,
         ItemImageComponent,
-        CheckboxComponent,
-        NgClass,
-        NgStyle,
+        CheckboxComponent
     ],
     templateUrl: './item.component.html',
     styleUrl: './item.component.scss'

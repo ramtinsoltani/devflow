@@ -1,11 +1,11 @@
-@import '../../../scss/utils';
+@use '../../../scss/utils';
 
 :host {
   display: flex;
   flex-direction: column;
-  min-width: rem(350px);
-  max-width: rem(350px);
-  background-color: color(gray-2);
+  min-width: to-rem(350px);
+  max-width: to-rem(350px);
+  background-color: palette(gray-2);
   padding: 15px;
   gap: 15px;
   overflow-y: auto;
@@ -16,12 +16,12 @@
 }
 
 .new-collection {
-  font-size: rem(14px);
+  font-size: to-rem(14px);
   padding-top: 0;
   padding-bottom: 0;
-  height: rem(35px);
+  height: to-rem(35px);
 
   &:hover {
-    color: color(accent-green);
+    color: palette(accent-green);
   }
 }

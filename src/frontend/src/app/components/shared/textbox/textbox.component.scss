@@ -1,11 +1,11 @@
-@import '../../../../scss/utils';
+@use '../../../../scss/utils';
 
 .control-container {
   position: relative;
   display: flex;
-  height: rem(35px);
+  height: to-rem(35px);
   border-radius: 3px;
-  background-color: color(gray-3);
+  background-color: palette(gray-3);
   transition: background-color .15s ease-in-out;
 
   &.multiline {
@@ -14,7 +14,7 @@
   }
 
   &.has-label {
-    margin-top: rem(5px);
+    margin-top: to-rem(5px);
   }
 
   &:has(.textbox:not(.has-button).has-tags) {
@@ -32,11 +32,11 @@
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;
-  color: color(gray-9);
+  color: palette(gray-9);
   background-color: transparent;
 
   &.valid-url {
-    color: color(accent-blue);
+    color: palette(accent-blue);
   }
 
   &:not(.has-tags):not(.has-button) {
@@ -44,13 +44,13 @@
   }
 
   &::placeholder {
-    color: color(gray-6);
+    color: palette(gray-6);
   }
 
 }
 
 textarea.textbox {
-  height: rem(125px);
+  height: to-rem(125px);
   resize: none;
   padding: 8px 10px !important;
 }
@@ -61,12 +61,12 @@ textarea.textbox {
   padding: 8px 10px;
 
   .char-counter {
-    font-size: rem(12px);
-    color: color(gray-6);
+    font-size: to-rem(12px);
+    color: palette(gray-6);
     transition: color .15s ease-in-out;
 
     &.negative {
-      color: color(accent-red);
+      color: palette(accent-red);
     }
   }
 }
@@ -75,11 +75,11 @@ app-icon.search-icon,
 app-icon.link-icon,
 app-icon.clear-icon {
   cursor: pointer;
-  color: color(gray-6);
+  color: palette(gray-6);
   transition: color .15s ease-in-out;
 
   &:hover:not(.invalid) {
-    color: color(gray-9);
+    color: palette(gray-9);
   }
 
   &.invalid {
@@ -89,7 +89,7 @@ app-icon.clear-icon {
 
 app-icon.link-icon:hover:not(.invalid),
 app-icon.loading-icon {
-  color: color(accent-blue);
+  color: palette(accent-blue);
 }
 
 app-icon.loading-icon {
@@ -105,7 +105,7 @@ app-icon.loading-icon {
 .control-container:has(.textbox:hover),
 .control-container:has(.textbox:focus),
 .control-container:has(.tags:hover) {
-  background-color: color(gray-4);
+  background-color: palette(gray-4);
 }
 
 .tags {
@@ -128,7 +128,7 @@ app-icon.loading-icon {
   }
 
   &.has-button {
-    left: rem(36px);
+    left: to-rem(36px);
   }
 
   &.empty {
@@ -137,7 +137,7 @@ app-icon.loading-icon {
 }
 
 label {
-  font-size: rem(12px);
+  font-size: to-rem(12px);
   font-weight: 500;
 }
 
