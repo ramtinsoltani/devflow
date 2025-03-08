@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Color, ICollection } from '@devflow/models';
+import { Color, ICollection, ISpace } from '@devflow/models';
 import { EndpointService } from './endpoint.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -9,20 +9,38 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class AppService {
 
   private _collections$ = new BehaviorSubject<ICollection[]>([]);
+  private _spaces$ = new BehaviorSubject<ISpace[]>([]);
   public readonly collection$ = new Observable<ICollection[]>(observer => this._collections$.subscribe(v => observer.next(v)).unsubscribe);
+  public readonly spaces$ = new Observable<ISpace[]>(observer => this._spaces$.subscribe(v => observer.next(v)).unsubscribe);
 
   constructor(
     private endpoint: EndpointService
   ) { }
 
+  public async fetchSpaces(): Promise<void> {
+
+    try {
+      
+      this._spaces$.next(await this.endpoint.getSpaces());
+
+    }
+    catch (error) {
+
+      throw error;
+
+    }
+
+  }
+
   /**
    * Fetches collections from the API server and emits the new result from `collection$` observable.
+   * @param spaceId Space ID
    */
-  public async fetchCollections(): Promise<void> {
+  public async fetchCollections(spaceId: string): Promise<void> {
 
     try {
 
-      this._collections$.next(await this.endpoint.getCollections());
+      this._collections$.next(await this.endpoint.getCollections(spaceId));
 
     }
     catch (error) {

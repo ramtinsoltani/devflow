@@ -1,4 +1,4 @@
-import { NgClass, NgStyle } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Component, Input, Output, HostListener, EventEmitter, OnInit } from '@angular/core';
 import { Color, IItem, ITag } from '@devflow/models';
 import { AppService, EndpointService, ModalService, ModalSize } from '@devflow/services';
@@ -6,6 +6,7 @@ import { IconComponent } from '../icon/icon.component';
 import { TagComponent } from '../tag/tag.component';
 import { ItemModalComponent, ItemModalData, ItemModalOutput } from '../../modals/item/item.component';
 import { ItemImageComponent } from '../item-image/item-image.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-item',
@@ -20,6 +21,7 @@ import { ItemImageComponent } from '../item-image/item-image.component';
 })
 export class ItemComponent implements OnInit {
 
+  public spaceId!: string;
   public collectionColor: Color = Color.Blue;
   public hovered: boolean = false;
 
@@ -68,11 +70,13 @@ export class ItemComponent implements OnInit {
   constructor(
     private modals: ModalService,
     private endpoint: EndpointService,
-    private app: AppService
+    private app: AppService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
     
+    this.spaceId = this.route.snapshot.paramMap.get('spaceId') as string;
     this.collectionColor = this.app.getCollectionColor(this.item?.collectionId as string) || Color.Blue;
   
   }
@@ -81,13 +85,13 @@ export class ItemComponent implements OnInit {
 
     event.stopImmediatePropagation();
 
-    if ( ! this.item )
+    if ( ! this.item || ! this.spaceId )
       return;
 
     this.modals.openModal<ItemModalData>('Edit Item', ItemModalComponent, [
       { label: 'Delete', type: 'danger', closesModal: true, promptsConfirmation: true, confirmationLabel: 'Proceed?', callback: () => {
 
-        this.endpoint.deleteItem((this.item as IItem).id)
+        this.endpoint.deleteItem(this.spaceId, (this.item as IItem).id)
         .then(() => this.onItemUpdate.emit(null))
         .then(() => this.app.updateCollectionSize((this.item as IItem).collectionId, this.app.getCollectionSize((this.item as IItem).collectionId) - 1))
         .catch(error => console.error(error));
@@ -95,7 +99,7 @@ export class ItemComponent implements OnInit {
       }},
       { label: 'Update', type: 'primary', closesModal: true, boundToValidation: true, callback: (modalOutput: ItemModalOutput) => {
 
-        this.endpoint.updateItem((this.item as IItem).id, {
+        this.endpoint.updateItem(this.spaceId, (this.item as IItem).id, {
           title: modalOutput.title,
           url: modalOutput.url,
           tags: modalOutput.tags,
@@ -106,7 +110,7 @@ export class ItemComponent implements OnInit {
           favicon: modalOutput.favicon || (this.item?.favicon ? null : undefined),
           forceAltLayout: modalOutput.forceAltLayout
         })
-        .then(() => this.endpoint.getItem((this.item as IItem).id))
+        .then(() => this.endpoint.getItem(this.spaceId, (this.item as IItem).id))
         .then(updatedItem => this.onItemUpdate.emit(updatedItem))
         .catch(error => console.error(error));
 

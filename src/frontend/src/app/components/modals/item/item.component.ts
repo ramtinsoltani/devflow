@@ -1,10 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { NgClass, NgStyle } from '@angular/common';
 import { Color, ITag } from '@devflow/models';
 import { EndpointService, GenericModalComponent, IURLMetadataResponse, OnModalInit, OnModalOutput, OnModalValidation, UtilsService } from '@devflow/services';
 import { cloneDeep } from 'lodash-es';
 import { TextboxComponent } from '../../shared/textbox/textbox.component';
-import { IconComponent } from '../../shared/icon/icon.component';
 import { ItemImageComponent } from '../../shared/item-image/item-image.component';
 import { CheckboxComponent } from '../../shared/checkbox/checkbox.component';
 

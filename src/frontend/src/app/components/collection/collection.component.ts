@@ -25,6 +25,7 @@ import { NgClass } from '@angular/common';
 export class CollectionComponent implements OnDestroy {
 
   private subscriptions: Subscription[] = [];
+  private spaceId!: string;
   private collectionId!: string;
 
   public items: IItem[] = [];
@@ -41,14 +42,16 @@ export class CollectionComponent implements OnDestroy {
     // Subscribe to route param changes
     this.subscriptions.push(this.route.paramMap.subscribe(params => {
 
-      const collectionId = params.get('id');
+      const spaceId = params.get('spaceId');
+      const collectionId = params.get('collectionId');
 
       // Load collection data based on ID
-      if ( collectionId ) {
+      if ( spaceId && collectionId ) {
 
+        this.spaceId = spaceId;
         this.collectionId = collectionId;
 
-        this.endpoint.getItems(collectionId)
+        this.endpoint.getItems(spaceId, collectionId)
         .then(items => this.items = items)
         .catch(error => console.error(error));
 
@@ -78,7 +81,7 @@ export class CollectionComponent implements OnDestroy {
 
       }
 
-      this.endpoint.searchCollectionItems(this.collectionId, q || undefined, tags?.split(','))
+      this.endpoint.searchCollectionItems(this.spaceId, this.collectionId, q || undefined, tags?.split(','))
       .then(items => this.filteredItems = items)
       .catch(error => console.error(error));
 
@@ -128,7 +131,7 @@ export class CollectionComponent implements OnDestroy {
     this.modals.openModal<ItemModalData>('New Item', ItemModalComponent, [
       { label: 'Create', type: 'success', closesModal: true, boundToValidation: true, callback: (modalOutput: ItemModalOutput) => {
 
-        this.endpoint.createItem({
+        this.endpoint.createItem(this.spaceId, {
           collectionId: this.collectionId,
           title: modalOutput.title,
           description: modalOutput.description,
@@ -140,7 +143,7 @@ export class CollectionComponent implements OnDestroy {
           favicon: modalOutput.favicon,
           forceAltLayout: modalOutput.forceAltLayout
         })
-        .then(res => this.endpoint.getItem(res.data))
+        .then(res => this.endpoint.getItem(this.spaceId, res.data))
         .then(newItem => {
 
           this.items.unshift(newItem);

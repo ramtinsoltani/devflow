@@ -3,3 +3,4 @@ export * from './endpoint.service';
 export * from './modal.service';
 export * from './utils.service';
 export * from './notification.service';
+export * from './auth.service';

@@ -11,11 +11,27 @@
   overflow-y: auto;
 }
 
-.collections {
+.nav-back {
+  padding: 8px 0 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: utils.rem(15px);
+  font-weight: 500;
+  cursor: pointer;
+
+  span.space-name {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.items {
   font-weight: 400;
 }
 
-.new-collection {
+.new-item {
   font-size: utils.rem(14px);
   padding-top: 0;
   padding-bottom: 0;

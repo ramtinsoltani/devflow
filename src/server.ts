@@ -10,12 +10,26 @@ import { SearchRouter } from './routers/search';
 import { IResponseError } from './models/responses';
 import { ServerError } from './lib/error';
 import { UtilitiesRouter } from './routers/utils';
+import { SpaceRouter } from './routers/space';
+import { ValidatorService } from './services/validator';
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
-const db = new DatabaseService();
+
+// Services
+declare global {
+  var services: {
+    db: DatabaseService,
+    validator: ValidatorService
+  };
+}
+
+globalThis.services = {
+  db: new DatabaseService(),
+  validator: new ValidatorService()
+};
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -23,16 +37,21 @@ app.use(bodyParser.json());
 // Debug routes
 app.use((req: Request, res: Response, next: NextFunction) => {
 
-  console.log(`${req.method} ${req.originalUrl}`);
+  if ( process.env.DEBUG_ROUTES?.toLowerCase() === 'true' ) {
 
-  if ( req.method !== 'GET' && req.body )
-    console.log(req.body);
+    console.log(`${req.method} ${req.originalUrl}`);
+
+    if ( req.method !== 'GET' && req.body )
+      console.log(req.body);
+
+  }
   
   next();
 
 });
 
 // API routes
+app.use('/api', SpaceRouter);
 app.use('/api', CollectionRouter);
 app.use('/api', ItemRouter);
 app.use('/api', SearchRouter);
@@ -82,7 +101,7 @@ app.listen(port, async () => {
 
   try {
 
-    await db.init();
+    await services.db.init();
 
   }
   catch (error) {
@@ -91,7 +110,21 @@ app.listen(port, async () => {
     console.error(error);
 
   }
+
+  console.log('Initializing additional services...');
+
+  try {
+
+    await services.validator.init();
+
+  }
+  catch (error) {
+
+    console.error('Error initializing validator service!');
+    console.error(error);
+
+  }
   
-  console.log(`Server started on port ${port}...`);
+  console.log(`Server started on port ${port}`);
 
 });

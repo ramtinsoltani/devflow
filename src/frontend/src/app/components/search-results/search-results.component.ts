@@ -8,14 +8,14 @@ import { EmptyPlaceholderComponent } from '../shared/empty-placeholder/empty-pla
 import { NgClass } from '@angular/common';
 
 @Component({
-    selector: 'app-search-results',
-    imports: [
-        ItemComponent,
-        EmptyPlaceholderComponent,
-        NgClass
-    ],
-    templateUrl: './search-results.component.html',
-    styleUrl: './search-results.component.scss'
+  selector: 'app-search-results',
+  imports: [
+    ItemComponent,
+    EmptyPlaceholderComponent,
+    NgClass
+  ],
+  templateUrl: './search-results.component.html',
+  styleUrl: './search-results.component.scss'
 })
 export class SearchResultsComponent implements OnDestroy {
 
@@ -33,17 +33,18 @@ export class SearchResultsComponent implements OnDestroy {
 
       const q = queryParams.get('q') || undefined;
       const tags = queryParams.get('tags')?.split(',').map(t => t.trim().toLowerCase());
+      const spaceId = this.route.snapshot.paramMap.get('spaceId');
 
-      // Navigate to landing page if there are no search queries defined
-      if ( ! q && ! tags ) {
+      // Navigate to space page if there are no search queries defined
+      if ( (! q && ! tags) || ! spaceId ) {
         
-        this.router.navigate(['/']);
+        this.router.navigate(['/' + spaceId]);
 
         return;
 
       }
 
-      this.endpoint.searchItems(q, tags)
+      this.endpoint.searchItems(spaceId, q, tags)
       .then(items => this.filteredItems = items)
       .catch(error => console.error(error));
 

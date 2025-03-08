@@ -5,13 +5,15 @@
   </span>
 </div>
 <div class="controls">
-  <app-textbox
-  type="search"
-  placeholder="Search items"
-  withTags
-  monochromeTags
-  [(value)]="queryText"
-  [(tags)]="queryTags"
-  (onSearch)="onSearch($event)"
-  (onClear)="onClearSearch()"></app-textbox>
+  @if ( spaceSelected ) {
+    <app-textbox
+    type="search"
+    placeholder="Search items"
+    withTags
+    monochromeTags
+    [(value)]="queryText"
+    [(tags)]="queryTags"
+    (onSearch)="onSearch($event)"
+    (onClear)="onClearSearch()"></app-textbox>
+  }
 </div>

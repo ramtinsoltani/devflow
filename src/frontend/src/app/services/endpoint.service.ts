@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse as GenericHttpErrorResponse, HttpParams } from '@angular/common/http';
-import { ICollection, Color, ITag, IItem } from '@devflow/models';
+import { ICollection, Color, ITag, IItem, ISpace } from '@devflow/models';
 import { lastValueFrom } from 'rxjs';
 import { environment } from '../environment';
 
@@ -14,26 +14,82 @@ export class EndpointService {
   ) { }
 
   /**
+   * Reads all existing spaces.
+   * @returns An array of spaces
+   */
+  public getSpaces(): Promise<ISpace[]> {
+
+    return lastValueFrom(this.http.get<ISpace[]>(
+      `${environment.apiBaseUrl}/spaces`
+    ));
+
+  }
+
+  /**
+   * Creates a new space.
+   * @param data New space request object
+   * @returns General message response with `data` as the newly created space ID
+   */
+  public createSpace(data: INewSpaceRequest): Promise<IGeneralMessageResponse<string>> {
+
+    return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
+      `${environment.apiBaseUrl}/space`,
+      data
+    ));
+
+  }
+
+  /**
+   * Updates an existing space.
+   * @param spaceId Space ID
+   * @param data Update space request object
+   * @returns General message response
+   */
+  public updateSpace(spaceId: string, data: Partial<IUpdateSpaceRequest>): Promise<IGeneralMessageResponse> {
+
+    return lastValueFrom(this.http.put<IGeneralMessageResponse>(
+      `${environment.apiBaseUrl}/space/${spaceId}`,
+      data
+    ));
+
+  }
+
+  /**
+   * Deletes an existing space.
+   * @param spaceId Space ID
+   * @returns General message response
+   */
+  public deleteSpace(spaceId: string): Promise<IGeneralMessageResponse> {
+
+    return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
+      `${environment.apiBaseUrl}/space/${spaceId}`
+    ));
+
+  }
+
+  /**
    * Reads all existing collections.
+   * @param spaceId Space ID
    * @returns An array of collections
    */
-  public getCollections(): Promise<ICollection[]> {
+  public getCollections(spaceId: string): Promise<ICollection[]> {
 
     return lastValueFrom(this.http.get<ICollection[]>(
-      environment.apiBaseUrl + '/collections'
+      `${environment.apiBaseUrl}/${spaceId}/collections`
     ));
 
   }
 
   /**
    * Creates a new collection.
+   * @param spaceId Space ID
    * @param data New collection request object
    * @returns General message response with `data` as the newly created collection ID
    */
-  public createCollection(data: INewCollectionRequest): Promise<IGeneralMessageResponse<string>> {
+  public createCollection(spaceId: string, data: INewCollectionRequest): Promise<IGeneralMessageResponse<string>> {
 
     return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
-      environment.apiBaseUrl + '/collection',
+      `${environment.apiBaseUrl}/${spaceId}/collection`,
       data
     ));
 
@@ -41,14 +97,15 @@ export class EndpointService {
 
   /**
    * Updates an existing collection.
+   * @param spaceId Space ID
    * @param collectionId Collection ID
    * @param data Update collection request object
    * @returns General message response
    */
-  public updateCollection(collectionId: string, data: Partial<IUpdateCollectionRequest>): Promise<IGeneralMessageResponse> {
+  public updateCollection(spaceId: string, collectionId: string, data: Partial<IUpdateCollectionRequest>): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
-      environment.apiBaseUrl + '/collection/' + collectionId,
+      `${environment.apiBaseUrl}/${spaceId}/collection/${collectionId}`,
       data
     ));
 
@@ -56,52 +113,56 @@ export class EndpointService {
 
   /**
    * Deletes an existing collection.
+   * @param spaceId Space ID
    * @param collectionId Collection ID
    * @returns 
    */
-  public deleteCollection(collectionId: string): Promise<IGeneralMessageResponse> {
+  public deleteCollection(spaceId: string, collectionId: string): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
-      environment.apiBaseUrl + '/collection/' + collectionId
+      `${environment.apiBaseUrl}/${spaceId}/collection/${collectionId}`
     ));
 
   }
 
   /**
    * Reads an existing item.
+   * @param spaceId Space ID
    * @param id Item ID
    * @returns Item object
    */
-  public getItem(id: string): Promise<IItem> {
+  public getItem(spaceId: string, id: string): Promise<IItem> {
 
     return lastValueFrom(this.http.get<IItem>(
-      environment.apiBaseUrl + '/item/' + id
+      `${environment.apiBaseUrl}/${spaceId}/item/${id}`
     ));
 
   }
 
   /**
    * Reads all items under an existing collection.
+   * @param spaceId Space ID
    * @param collectionId Collection ID
    * @returns Array of item objects
    */
-  public getItems(collectionId: string): Promise<IItem[]> {
+  public getItems(spaceId: string, collectionId: string): Promise<IItem[]> {
 
     return lastValueFrom(this.http.get<IItem[]>(
-      environment.apiBaseUrl + '/items/' + collectionId
+      `${environment.apiBaseUrl}/${spaceId}/items/${collectionId}`
     ));
 
   }
 
   /**
    * Creates a new item under an existing collection.
+   * @param spaceId Space ID
    * @param data New item request object
    * @returns General message response with `data` as the newly created item ID
    */
-  public createItem(data: INewItemRequest): Promise<IGeneralMessageResponse<string>> {
+  public createItem(spaceId: string, data: INewItemRequest): Promise<IGeneralMessageResponse<string>> {
 
     return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
-      environment.apiBaseUrl + '/item',
+      `${environment.apiBaseUrl}/${spaceId}/item`,
       data
     ));
 
@@ -109,14 +170,15 @@ export class EndpointService {
 
   /**
    * Updates an existing item.
+   * @param spaceId Space ID
    * @param itemId Item ID
    * @param data Update item request object
    * @returns General message response
    */
-  public updateItem(itemId: string, data: IUpdateItemRequest): Promise<IGeneralMessageResponse> {
+  public updateItem(spaceId: string, itemId: string, data: IUpdateItemRequest): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
-      environment.apiBaseUrl + '/item/' + itemId,
+      `${environment.apiBaseUrl}/${spaceId}/item/${itemId}`,
       data
     ));
 
@@ -124,36 +186,63 @@ export class EndpointService {
 
   /**
    * Deletes an item.
+   * @param spaceId Space ID
    * @param itemId Item ID
    * @returns General message response
    */
-  public deleteItem(itemId: string): Promise<IGeneralMessageResponse> {
+  public deleteItem(spaceId: string, itemId: string): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
-      environment.apiBaseUrl + '/item/' + itemId
+      `${environment.apiBaseUrl}/${spaceId}/item/${itemId}`
+    ));
+
+  }
+
+  /**
+   * Searches spaces.
+   * @returns Array of found space objects
+   */
+  public searchSpaces(): Promise<ISpace[]>;
+  /**
+   * Searches spaces.
+   * @param q Text search query
+   * @returns Array of found space objects
+   */
+  public searchSpaces(q: string): Promise<ISpace[]>;
+  public searchSpaces(q?: string): Promise<ISpace[]> {
+
+    let params = new HttpParams();
+
+    if ( q ) params = params.set('q', q);
+
+    return lastValueFrom(this.http.get<ISpace[]>(
+      `${environment.apiBaseUrl}/search/spaces`,
+      { params }
     ));
 
   }
 
   /**
    * Searches collections.
+   * @param spaceId Space ID
    * @returns Array of found collection objects
    */
-  public searchCollections(): Promise<ICollection[]>;
+  public searchCollections(spaceId: string): Promise<ICollection[]>;
   /**
    * Searches collections.
+   * @param spaceId Space ID
    * @param q Text search query
    * @returns Array of found collection objects
    */
-  public searchCollections(q: string): Promise<ICollection[]>;
-  public searchCollections(q?: string): Promise<ICollection[]> {
+  public searchCollections(spaceId: string, q: string): Promise<ICollection[]>;
+  public searchCollections(spaceId: string, q?: string): Promise<ICollection[]> {
 
     let params = new HttpParams();
 
     if ( q ) params = params.set('q', q);
 
     return lastValueFrom(this.http.get<ICollection[]>(
-      environment.apiBaseUrl + '/search/collections',
+      `${environment.apiBaseUrl}/${spaceId}/search/collections`,
       { params }
     ));
 
@@ -161,41 +250,46 @@ export class EndpointService {
 
   /**
    * Searches items inside an existing collection.
+   * @param spaceId Space ID
    * @param collectionId Collection ID
    * @returns Array of found item objects
    */
-  public searchCollectionItems(collectionId: string): Promise<IItem[]>;
+  public searchCollectionItems(spaceId: string, collectionId: string): Promise<IItem[]>;
   /**
    * Searches items inside an existing collection.
+   * @param spaceId Space ID
    * @param collectionId Collection ID
    * @param q Text search query
    * @returns Array of found item objects
    */
-  public searchCollectionItems(collectionId: string, q: string): Promise<IItem[]>;
+  public searchCollectionItems(spaceId: string, collectionId: string, q: string): Promise<IItem[]>;
   /**
    * Searches items inside an existing collection.
+   * @param spaceId Space ID
    * @param collectionId Collection ID
    * @param tags Array of tags to include in search
    * @returns Array of found item objects
    */
-  public searchCollectionItems(collectionId: string, tags: string[]): Promise<IItem[]>;
+  public searchCollectionItems(spaceId: string, collectionId: string, tags: string[]): Promise<IItem[]>;
   /**
    * Searches items inside an existing collection.
-   * @param collectionId Collection ID
-   * @param q Text search query
-   * @param tags Array of tags to include in search
-   * @returns Array of found item objects
-   */
-  public searchCollectionItems(collectionId: string, q: string, tags: string[]): Promise<IItem[]>;
-  /**
-   * Searches items inside an existing collection.
+   * @param spaceId Space ID
    * @param collectionId Collection ID
    * @param q Text search query
    * @param tags Array of tags to include in search
    * @returns Array of found item objects
    */
-  public searchCollectionItems(collectionId: string, q?: string, tags?: string[]): Promise<IItem[]>;
-  public searchCollectionItems(collectionId: string, param1?: string | string[], param2?: string[]): Promise<IItem[]> {
+  public searchCollectionItems(spaceId: string, collectionId: string, q: string, tags: string[]): Promise<IItem[]>;
+  /**
+   * Searches items inside an existing collection.
+   * @param spaceId Space ID
+   * @param collectionId Collection ID
+   * @param q Text search query
+   * @param tags Array of tags to include in search
+   * @returns Array of found item objects
+   */
+  public searchCollectionItems(spaceId: string, collectionId: string, q?: string, tags?: string[]): Promise<IItem[]>;
+  public searchCollectionItems(spaceId: string, collectionId: string, param1?: string | string[], param2?: string[]): Promise<IItem[]> {
 
     let params = new HttpParams();
 
@@ -208,7 +302,7 @@ export class EndpointService {
       params = params.append('tags', param2.join(','));
 
     return lastValueFrom(this.http.get<IItem[]>(
-      environment.apiBaseUrl + '/search/items/' + collectionId,
+      `${environment.apiBaseUrl}/${spaceId}/${collectionId}/search/items`,
       { params }
     ));
 
@@ -216,36 +310,41 @@ export class EndpointService {
 
   /**
    * Searches items across all collections.
+   * @param spaceId Space ID
    * @return Array of found item objects
    */
-  public searchItems(): Promise<IItem[]>;
+  public searchItems(spaceId: string): Promise<IItem[]>;
   /**
    * Searches items across all collections.
+   * @param spaceId Space ID
    * @param q Text search query
    * @return Array of found item objects
    */
-  public searchItems(q: string): Promise<IItem[]>;
+  public searchItems(spaceId: string, q: string): Promise<IItem[]>;
   /**
    * Searches items across all collections.
+   * @param spaceId Space ID
    * @param tags Array of tags to include in search
    * @return Array of found item objects
    */
-  public searchItems(tags: string[]): Promise<IItem[]>;
+  public searchItems(spaceId: string, tags: string[]): Promise<IItem[]>;
   /**
    * Searches items across all collections.
-   * @param q Text search query
-   * @param tags Array of tags to include in search
-   * @return Array of found item objects
-   */
-  public searchItems(q: string, tags: string[]): Promise<IItem[]>;
-  /**
-   * Searches items across all collections.
+   * @param spaceId Space ID
    * @param q Text search query
    * @param tags Array of tags to include in search
    * @return Array of found item objects
    */
-  public searchItems(q?: string, tags?: string[]): Promise<IItem[]>;
-  public searchItems(param1?: string | string[], param2?: string[]): Promise<IItem[]> {
+  public searchItems(spaceId: string, q: string, tags: string[]): Promise<IItem[]>;
+  /**
+   * Searches items across all collections.
+   * @param spaceId Space ID
+   * @param q Text search query
+   * @param tags Array of tags to include in search
+   * @return Array of found item objects
+   */
+  public searchItems(spaceId: string, q?: string, tags?: string[]): Promise<IItem[]>;
+  public searchItems(spaceId: string, param1?: string | string[], param2?: string[]): Promise<IItem[]> {
 
     let params = new HttpParams();
 
@@ -258,7 +357,7 @@ export class EndpointService {
       params = params.append('tags', param2.join(','));
 
     return lastValueFrom(this.http.get<IItem[]>(
-      environment.apiBaseUrl + '/search/items',
+      `${environment.apiBaseUrl}/${spaceId}/search/items`,
       { params }
     ));
 
@@ -278,6 +377,14 @@ export class EndpointService {
 
   }
 
+}
+
+export interface INewSpaceRequest {
+  name: string
+}
+
+export interface IUpdateSpaceRequest {
+  name: string
 }
 
 export interface INewCollectionRequest {

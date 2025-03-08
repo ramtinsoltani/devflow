@@ -1,32 +1,33 @@
-import { Router, Request, Response } from "express";
+import { Router, Response } from "express";
 import { IItem } from "../models/normalized";
 import { asyncHandler } from "../lib/async-handler";
-import { DatabaseService } from "../services/database";
 import { DeleteItemRequest, GetItemRequest, GetItemsRequest, NewItemRequest, UpdateItemRequest } from "../models/requests";
 import { IResponseGeneralMessage } from "../models/responses";
+import { ValidatorSchema } from "../services/validator";
 
-const db = new DatabaseService();
 export const ItemRouter = Router();
 
-ItemRouter.get('/item/:id', asyncHandler(async (req: GetItemRequest, res: Response<IItem>) => {
+ItemRouter.get('/:spaceId/item/:id', asyncHandler(async (req: GetItemRequest, res: Response<IItem>) => {
 
-  const item = await db.getItem(req.params.id);
+  const item = await services.db.getItem(req.params.spaceId, req.params.id);
 
   res.json(item);
 
 }));
 
-ItemRouter.get('/items/:collectionId', asyncHandler(async (req: GetItemsRequest, res: Response<IItem[]>) => {
+ItemRouter.get('/:spaceId/items/:collectionId', asyncHandler(async (req: GetItemsRequest, res: Response<IItem[]>) => {
 
-  const items = await db.getItems(req.params.collectionId);
+  const items = await services.db.getItems(req.params.spaceId, req.params.collectionId);
 
   res.json(items);
   
 }));
 
-ItemRouter.post('/item', asyncHandler(async (req: NewItemRequest, res: Response<IResponseGeneralMessage<string>>) => {
+ItemRouter.post('/:spaceId/item', asyncHandler(async (req: NewItemRequest, res: Response<IResponseGeneralMessage<string>>) => {
 
-  const id = await db.createItem(req.body);
+  services.validator.validate(req.body, ValidatorSchema.RequestNewItem);
+
+  const id = await services.db.createItem(req.params.spaceId, req.body);
 
   res.json({
     message: 'Item created successfully',
@@ -35,9 +36,11 @@ ItemRouter.post('/item', asyncHandler(async (req: NewItemRequest, res: Response<
 
 }));
 
-ItemRouter.put('/item/:id', asyncHandler(async (req: UpdateItemRequest, res: Response<IResponseGeneralMessage>) => {
+ItemRouter.put('/:spaceId/item/:id', asyncHandler(async (req: UpdateItemRequest, res: Response<IResponseGeneralMessage>) => {
 
-  await db.updateItem(req.params.id, req.body);
+  services.validator.validate(req.body, ValidatorSchema.RequestUpdateItem);
+
+  await services.db.updateItem(req.params.spaceId, req.params.id, req.body);
 
   res.json({
     message: 'Updated item successfully'
@@ -45,9 +48,9 @@ ItemRouter.put('/item/:id', asyncHandler(async (req: UpdateItemRequest, res: Res
 
 }));
 
-ItemRouter.delete('/item/:id', asyncHandler(async (req: DeleteItemRequest, res: Response<IResponseGeneralMessage>) => {
+ItemRouter.delete('/:spaceId/item/:id', asyncHandler(async (req: DeleteItemRequest, res: Response<IResponseGeneralMessage>) => {
 
-  await db.deleteItem(req.params.id);
+  await services.db.deleteItem(req.params.spaceId, req.params.id);
 
   res.json({
     message: 'Item deleted successfully'

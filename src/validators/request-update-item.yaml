@@ -1,0 +1,59 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+additionalProperties: false
+properties:
+  title:
+    type: string
+    maxLength: 128
+    minLength: 1
+    required: false
+  url:
+    type: string
+    maxLength: 256
+    minLength: 1
+    required: false
+  description:
+    type: string
+    maxLength: 512
+    minLength: 1
+    required: false
+  posterUrl:
+    type: string
+    maxLength: 256
+    minLength: 1
+    required: false
+  tags:
+    type: array
+    required: false
+    items:
+      type: object
+      additionalProperties: false
+      properties:
+        label:
+          type: string
+          required: true
+          minLength: 1
+          maxLength: 256
+        color:
+          type: number
+          min: 0
+          max: 6
+          required: true
+  originTitle:
+    type: string
+    maxLength: 128
+    minLength: 1
+    required: false
+  originUrl:
+    type: string
+    maxLength: 256
+    minLength: 1
+    required: false
+  favicon:
+    type: string
+    minLength: 1
+    maxLength: 256
+    required: false
+  forceAltLayout:
+    type: boolean
+    required: true

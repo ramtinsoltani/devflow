@@ -20,6 +20,7 @@ export interface ICommonDocument {
 }
 
 export interface IItem extends ICommonDocument {
+  spaceId: string,
   collectionId: string,
   title: string,
   url: string,
@@ -29,7 +30,12 @@ export interface IItem extends ICommonDocument {
 }
 
 export interface ICollection extends ICommonDocument {
+  spaceId: string,
   name: string,
   color: Color,
   size: number
+}
+
+export interface ISpace extends ICommonDocument {
+  name: string
 }

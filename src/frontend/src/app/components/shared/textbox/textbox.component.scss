@@ -72,6 +72,11 @@ textarea.textbox {
 }
 
 app-icon.search-icon,
+app-icon.link-icon {
+  padding-left: utils.rem(5px);
+}
+
+app-icon.search-icon,
 app-icon.link-icon,
 app-icon.clear-icon {
   cursor: pointer;

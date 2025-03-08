@@ -1,32 +1,68 @@
-<app-textbox
-placeholder="Search collections"
-type="search"
-(onSearch)="onSearchCollections($event)"
-(onClear)="onClearCollectionsSearch()"></app-textbox>
-<app-nav-item
-class="new-collection"
-label="New Collection"
-icon="circle-plus"
-iconContainerSize="1rem"
-(click)="onNewCollection()">
-</app-nav-item>
-<div class="collections">
-  @for (collection of filteredCollections || collections; track $index) {
-    <app-nav-item
-    [routerLink]="'collection/' + collection.id"
-    [state]="{ collectionName: collection.name }"
-    #navItemLink="routerLinkActive"
-    routerLinkActive
-    [selected]="navItemLink.isActive"
-    [label]="collection.name"
-    icon="rectangle-history"
-    iconSize="1em"
-    [accentColor]="utils.getPaletteColor(collection.color)"
-    [badge]="collection.size"
-    actionIcon="pen-to-square"
-    actionIconSize=".875em"
-    actionIconHoverColor="gray-9"
-    (onAction)="onEditCollection(collection)">
-    </app-nav-item>
-  }
-</div>
+@if ( ! selectedSpace ) {
+  <app-textbox
+  placeholder="Search spaces"
+  type="search"
+  (onSearch)="onSearchSpaces($event)"
+  (onClear)="onClearSpacesSearch()"></app-textbox>
+  <app-nav-item
+  class="new-item"
+  label="New Space"
+  icon="circle-plus"
+  iconContainerSize="1rem"
+  (click)="onNewSpace()">
+  </app-nav-item>
+  <div class="items">
+    @for (space of filteredSpaces || spaces; track $index) {
+      <app-nav-item
+      [label]="space.name"
+      actionIcon="pen-to-square"
+      actionIconSize=".875em"
+      actionIconHoverColor="gray-9"
+      (click)="onSelectSpace(space)"
+      (onAction)="onEditSpace(space)">
+      </app-nav-item>
+    }
+  </div>
+}
+@else {
+  <div class="nav-back"
+  (click)="onDeselectSpace()">
+    <app-icon
+    icon="chevron-left"
+    iconSize="1em">
+    </app-icon>
+    <span class="space-name">{{ selectedSpace.name }}</span>
+  </div>
+  <app-textbox
+  placeholder="Search collections"
+  type="search"
+  (onSearch)="onSearchCollections($event)"
+  (onClear)="onClearCollectionsSearch()"></app-textbox>
+  <app-nav-item
+  class="new-item"
+  label="New Collection"
+  icon="circle-plus"
+  iconContainerSize="1rem"
+  (click)="onNewCollection()">
+  </app-nav-item>
+  <div class="items">
+    @for (collection of filteredCollections || collections; track $index) {
+      <app-nav-item
+      [routerLink]="selectedSpace.id + '/' + collection.id"
+      [state]="{ spaceName: selectedSpace.id, collectionName: collection.name }"
+      #navItemLink="routerLinkActive"
+      routerLinkActive
+      [selected]="navItemLink.isActive"
+      [label]="collection.name"
+      icon="rectangle-history"
+      iconSize="1em"
+      [accentColor]="utils.getPaletteColor(collection.color)"
+      [badge]="collection.size"
+      actionIcon="pen-to-square"
+      actionIconSize=".875em"
+      actionIconHoverColor="gray-9"
+      (onAction)="onEditCollection(collection)">
+      </app-nav-item>
+    }
+  </div>
+}

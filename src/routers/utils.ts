@@ -4,10 +4,13 @@ import { FetchMetadataRequest } from "../models/requests";
 import { IResponseUrlMetadata } from "../models/responses";
 import { ServerError } from "../lib/error";
 import { getLinkPreview } from "link-preview-js";
+import { ValidatorSchema } from "../services/validator";
 
 export const UtilitiesRouter = Router();
 
 UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRequest, res: Response<IResponseUrlMetadata>) => {
+
+  services.validator.validate(req.body, ValidatorSchema.RequestFetchMetadata);
 
   const previewOptions: any = {
     headers: {
