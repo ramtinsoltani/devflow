@@ -17,6 +17,7 @@ The following FontAwesome icons are in use in this project in SVG format:
 | circle-info | Classic | Solid | ✅ Free | https://fontawesome.com/icons/circle-info?f=classic&s=solid |
 | check | Classic | Solid | ✅ Free | https://fontawesome.com/icons/check?f=classic&s=solid |
 | globe | Classic | Regular | ⭐️ Pro | https://fontawesome.com/icons/globe?f=classic&s=regular |
+| chevron-left | Classic | Solid | ✅ Free | https://fontawesome.com/icons/chevron-left?f=classic&s=solid |
 
 > FontAwesome version 6.4.0 web
 

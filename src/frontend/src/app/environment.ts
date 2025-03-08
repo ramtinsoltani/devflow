@@ -1,11 +1,11 @@
 export const environment = {
   apiBaseUrl: 'http://localhost:6002/api',
   firebase: {
-    apiKey: "AIzaSyCeQNaOQ2mi6mCwC4hjiN0dPbsF40LfH24",
-    authDomain: "devflow-86b1f.firebaseapp.com",
-    projectId: "devflow-86b1f",
-    storageBucket: "devflow-86b1f.firebasestorage.app",
-    messagingSenderId: "1091664727950",
-    appId: "1:1091664727950:web:112c46ff75432fd6d9dedf"
+    apiKey: import.meta.env['NG_APP_FIREBASE_API_KEY'],
+    authDomain: import.meta.env['NG_APP_FIREBASE_AUTH_DOMAIN'],
+    projectId: import.meta.env['NG_APP_FIREBASE_PROJECT_ID'],
+    storageBucket: import.meta.env['NG_APP_FIREBASE_STORAGE_BUCKET'],
+    messagingSenderId: import.meta.env['NG_APP_FIREBASE_MESSAGING_SENDER_ID'],
+    appId: import.meta.env['NG_APP_FIREBASE_APP_ID']
   }
 };
