@@ -1,6 +1,7 @@
 import { Color, ITag } from '@devflow/models';
 
 export interface ICommonDocument {
+  owner: string,
   id: string,
   updatedAt: number,
   createdAt: number
