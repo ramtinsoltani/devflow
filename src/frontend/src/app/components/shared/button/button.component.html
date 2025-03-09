@@ -1,1 +1,11 @@
-<button class="{{ type }}" type="button" (click)="onButtonClick()" [disabled]="disabled">{{ label }}</button>
+<button class="{{ type }}" type="button" (click)="onButtonClick()" [disabled]="disabled">
+  @if ( icon ) {
+    <app-icon
+    [icon]="icon"
+    [iconSize]="iconSize"
+    [containerSize]="iconContainerSize"
+    color="currentColor">
+    </app-icon>
+  }
+  {{ label }}
+</button>

@@ -1,17 +1,17 @@
-import { Component, Input, Output, HostListener, EventEmitter } from '@angular/core';
+import { Component, Input, Output, HostListener, EventEmitter, booleanAttribute } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
 import { NgStyle, NgClass } from '@angular/common';
 import { PaletteColor } from '@devflow/models';
 
 @Component({
-    selector: 'app-nav-item',
-    imports: [
-        IconComponent,
-        NgStyle,
-        NgClass
-    ],
-    templateUrl: './nav-item.component.html',
-    styleUrl: './nav-item.component.scss'
+  selector: 'app-nav-item',
+  imports: [
+    IconComponent,
+    NgStyle,
+    NgClass
+  ],
+  templateUrl: './nav-item.component.html',
+  styleUrl: './nav-item.component.scss'
 })
 export class NavItemComponent {
 
@@ -35,6 +35,10 @@ export class NavItemComponent {
   /** Icon container CSS size (defaults to `iconSize`) */
   @Input()
   public iconContainerSize?: string;
+
+  /** Whether to force the accent color to be applied when the item is not selected or not. */
+  @Input({ transform: booleanAttribute })
+  public forceAccentColor: boolean = false;
 
   /** Nav item accent color (defaults to `currentColor`) */
   @Input()

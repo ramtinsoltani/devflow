@@ -1,5 +1,10 @@
+import { DecodedIdToken } from 'firebase-admin/auth';
 import { Color, ITag } from './normalized';
 import { Request } from 'express';
+
+export interface AuthorizedRequest<P = any, ResBody = any, ReqBody = any, ReqQuery = any> extends Request<P, ResBody, ReqBody, ReqQuery> {
+  token: DecodedIdToken
+}
 
 export interface IRequestNewSpace {
   name: string
@@ -48,20 +53,20 @@ export interface IRequestFetchMetadata {
   url: string
 }
 
-export type NewSpaceRequest = Request<any, any, IRequestNewSpace>;
-export type UpdateSpaceRequest = Request<{ id: string }, any, IRequestUpdateSpace>;
-export type DeleteSpaceRequest = Request<{ id: string }>;
-export type GetCollectionsRequest = Request<{ spaceId: string }>;
-export type NewCollectionRequest = Request<{ spaceId: string }, any, IRequestNewCollection>;
-export type UpdateCollectionRequest = Request<{ spaceId: string, id: string }, any, IRequestUpdateCollection>;
-export type DeleteCollectionRequest = Request<{ spaceId: string, id: string }>;
-export type GetItemRequest = Request<{ spaceId: string, id: string }>;
-export type GetItemsRequest = Request<{ spaceId: string, collectionId: string }>;
-export type NewItemRequest = Request<{ spaceId: string }, any, IRequestNewItem>;
-export type UpdateItemRequest = Request<{ spaceId: string, id: string }, any, IRequestUpdateItem>;
-export type DeleteItemRequest = Request<{ spaceId: string, id: string }>;
-export type SearchSpacesRequest = Request<any, any, any, { q: string }>;
-export type SearchCollectionsRequest = Request<{ spaceId: string }, any, any, { q: string }>;
-export type SearchCollectionItemsRequest = Request<{ spaceId: string, collectionId: string }, any, any, { q: string, tags: string[] }>;
-export type SearchItemsRequest = Request<{ spaceId: string }, any, any, { q: string, tags: string[] }>;
-export type FetchMetadataRequest = Request<any, any, IRequestFetchMetadata>;
+export type NewSpaceRequest = AuthorizedRequest<any, any, IRequestNewSpace>;
+export type UpdateSpaceRequest = AuthorizedRequest<{ id: string }, any, IRequestUpdateSpace>;
+export type DeleteSpaceRequest = AuthorizedRequest<{ id: string }>;
+export type GetCollectionsRequest = AuthorizedRequest<{ spaceId: string }>;
+export type NewCollectionRequest = AuthorizedRequest<{ spaceId: string }, any, IRequestNewCollection>;
+export type UpdateCollectionRequest = AuthorizedRequest<{ spaceId: string, id: string }, any, IRequestUpdateCollection>;
+export type DeleteCollectionRequest = AuthorizedRequest<{ spaceId: string, id: string }>;
+export type GetItemRequest = AuthorizedRequest<{ spaceId: string, id: string }>;
+export type GetItemsRequest = AuthorizedRequest<{ spaceId: string, collectionId: string }>;
+export type NewItemRequest = AuthorizedRequest<{ spaceId: string }, any, IRequestNewItem>;
+export type UpdateItemRequest = AuthorizedRequest<{ spaceId: string, id: string }, any, IRequestUpdateItem>;
+export type DeleteItemRequest = AuthorizedRequest<{ spaceId: string, id: string }>;
+export type SearchSpacesRequest = AuthorizedRequest<any, any, any, { q: string }>;
+export type SearchCollectionsRequest = AuthorizedRequest<{ spaceId: string }, any, any, { q: string }>;
+export type SearchCollectionItemsRequest = AuthorizedRequest<{ spaceId: string, collectionId: string }, any, any, { q: string, tags: string[] }>;
+export type SearchItemsRequest = AuthorizedRequest<{ spaceId: string }, any, any, { q: string, tags: string[] }>;
+export type FetchMetadataRequest = AuthorizedRequest<any, any, IRequestFetchMetadata>;

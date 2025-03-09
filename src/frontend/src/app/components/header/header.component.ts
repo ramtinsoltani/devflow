@@ -8,14 +8,14 @@ import { AppService, UtilsService } from '@devflow/services';
 import { NgStyle } from '@angular/common';
 
 @Component({
-    selector: 'app-header',
-    imports: [
-        TextboxComponent,
-        NgStyle,
-        RouterLink
-    ],
-    templateUrl: './header.component.html',
-    styleUrl: './header.component.scss'
+  selector: 'app-header',
+  imports: [
+    TextboxComponent,
+    NgStyle,
+    RouterLink
+  ],
+  templateUrl: './header.component.html',
+  styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnDestroy {
 
@@ -64,6 +64,13 @@ export class HeaderComponent implements OnDestroy {
         this.spaceSelected = event.snapshot.paramMap.has('spaceId');
         this.urlSpaceId = event.snapshot.paramMap.get('spaceId') || undefined;
         this.urlCollectionId = event.snapshot.paramMap.get('collectionId') || undefined;
+
+        if ( ! this.spaceSelected ) {
+
+          this.queryTags = [];
+          this.queryText = '';
+
+        }
 
         this.updateColors();
 

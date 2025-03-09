@@ -9,13 +9,8 @@
   2. Check [FontAwesome Icons](./docs/fontawesome-icons.md) to setup FontAwesome for the frontend icons to work.
   3. Create a Firebase project with Authentication enabled (Google as OAuth provider), then:
     1. Generate your web credentials (for the frontend)
-    2. Create `src/frontend/.env` file and map your credential key/values to the following list and save the file:
-      - `NG_APP_FIREBASE_API_KEY`
-      - `NG_APP_FIREBASE_AUTH_DOMAIN`
-      - `NG_APP_FIREBASE_PROJECT_ID`
-      - `NG_APP_FIREBASE_STORAGE_BUCKET`
-      - `NG_APP_FIREBASE_MESSAGING_SENDER_ID`
-      - `NG_APP_FIREBASE_APP_ID`
+    2. Create `src/frontend/.env` file and save your firebase config object (e.g. web credentials) as a stringified JSON as `NG_APP_FIREBASE_CONFIG`
+    3. Alternatively, you can skip `.env` file and set `NG_APP_FIREBASE_CONFIG` as a system-wide environment variable (useful for when the app is running on a server)
   4. From the project root, run `npm run build` to build the frontend application.
   5. Run `npm start` to start the service on http://localhost:6002 (if configuration was not changed in step 1).
 

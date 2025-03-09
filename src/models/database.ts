@@ -12,6 +12,11 @@ const ColorSubSchema = {
 };
 
 export const SpaceSchema = new Schema({
+  owner: {
+    type: String,
+    required: true,
+    index: true
+  },
   name: {
     type: String,
     required: true,
@@ -22,9 +27,17 @@ export const SpaceSchema = new Schema({
   timestamps: true
 });
 
+// Compound indexing
+SpaceSchema.index({ _id: 1, owner: 1 });
+
 export const DbSpace = model('Space', SpaceSchema);
 
 export const CollectionSchema = new Schema({
+  owner: {
+    type: String,
+    required: true,
+    index: true
+  },
   spaceId: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -48,11 +61,17 @@ export const CollectionSchema = new Schema({
 });
 
 // Compound indexing
-CollectionSchema.index({ _id: 1, spaceId: 1 });
+CollectionSchema.index({ owner: 1, spaceId: 1 });
+CollectionSchema.index({ _id: 1, spaceId: 1, owner: 1 });
 
 export const DbCollection = model('Collection', CollectionSchema);
 
 export const ItemSchema = new Schema({
+  owner: {
+    type: String,
+    required: true,
+    index: true
+  },
   spaceId: {
     type: Schema.Types.ObjectId,
     required: true,
@@ -153,7 +172,8 @@ export const ItemSchema = new Schema({
 });
 
 // Compound indexing
-ItemSchema.index({ _id: 1, spaceId: 1 });
-ItemSchema.index({ collectionId: 1, spaceId: 1 });
+ItemSchema.index({ spaceId: 1, owner: 1 });
+ItemSchema.index({ _id: 1, spaceId: 1, owner: 1 });
+ItemSchema.index({ collectionId: 1, spaceId: 1, owner: 1 });
 
 export const DbItem = model('Item', ItemSchema);

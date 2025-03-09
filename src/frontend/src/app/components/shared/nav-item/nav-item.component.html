@@ -7,7 +7,7 @@
 }
 
 <span class="label" [ngStyle]="{
-  color: selected ? finalAccentColor : 'currentColor'
+  color: selected || forceAccentColor ? finalAccentColor : 'currentColor'
 }">{{ label }}</span>
 
 @if ( badge !== undefined && (! actionIcon || ! hovered) ) {

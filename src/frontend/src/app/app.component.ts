@@ -1,19 +1,22 @@
 import { Component, ViewContainerRef, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent, SidepaneComponent, ModalComponent, NotificationComponent } from '@devflow/components';
-import { ModalService, NotificationService } from './services';
+import { AuthService, ModalService, NotificationService } from './services';
+import { User } from 'firebase/auth';
 
 @Component({
-    selector: 'app-root',
-    imports: [
-        RouterOutlet,
-        HeaderComponent,
-        SidepaneComponent
-    ],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+  selector: 'app-root',
+  imports: [
+    RouterOutlet,
+    HeaderComponent,
+    SidepaneComponent
+  ],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss'
 })
 export class AppComponent {
+
+  public currentUser?: User;
 
   @ViewChild('modalsContainer', { read: ViewContainerRef })
   private modalsContainer!: ViewContainerRef;
@@ -23,8 +26,11 @@ export class AppComponent {
 
   constructor(
     private modals: ModalService,
-    private notifications: NotificationService
+    private notifications: NotificationService,
+    private auth: AuthService
   ) {
+
+    this.auth.onAuthStateChanged$.subscribe(user => this.currentUser = user || undefined);
 
     // Dynamically create modals when modal service emits
     this.modals.onOpenModal.subscribe(modalDef => {

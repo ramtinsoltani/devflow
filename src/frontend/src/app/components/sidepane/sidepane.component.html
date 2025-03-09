@@ -23,6 +23,12 @@
       </app-nav-item>
     }
   </div>
+  <app-nav-item
+  label="Logout"
+  forceAccentColor
+  accentColor="accent-red"
+  (click)="onLogout()">
+  </app-nav-item>
 }
 @else {
   <div class="nav-back"
@@ -65,4 +71,10 @@
       </app-nav-item>
     }
   </div>
+  <app-nav-item
+    label="Logout"
+    accentColor="accent-red"
+    forceAccentColor
+    (click)="onLogout()">
+    </app-nav-item>
 }

@@ -46,6 +46,7 @@ export class ServerError extends Error {
 const errorCodeToStatusCode: any = {
   'invalid-request': 400,
   validation: 400,
+  unauthorized: 403,
   'not-found': 404,
   'internal': 500,
   unknown: 500

@@ -10,8 +10,22 @@ export class AppService {
 
   private _collections$ = new BehaviorSubject<ICollection[]>([]);
   private _spaces$ = new BehaviorSubject<ISpace[]>([]);
-  public readonly collection$ = new Observable<ICollection[]>(observer => this._collections$.subscribe(v => observer.next(v)).unsubscribe);
-  public readonly spaces$ = new Observable<ISpace[]>(observer => this._spaces$.subscribe(v => observer.next(v)).unsubscribe);
+  
+  public readonly collection$ = new Observable<ICollection[]>(observer => {
+
+    const sub = this._collections$.subscribe(v => observer.next(v));
+
+    return sub.unsubscribe.bind(sub);
+
+  });
+
+  public readonly spaces$ = new Observable<ISpace[]>(observer => {
+
+    const sub = this._spaces$.subscribe(v => observer.next(v));
+
+    return sub.unsubscribe.bind(sub);
+
+  });
 
   constructor(
     private endpoint: EndpointService

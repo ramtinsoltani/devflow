@@ -2,10 +2,11 @@ import YAML from 'yaml';
 import { promisify } from 'node:util';
 import { readFile } from 'node:fs';
 import { resolve } from 'node:path';
-import { Schema, ValidationError, Validator, ValidatorResultError } from 'jsonschema';
+import { Schema, ValidationError, Validator } from 'jsonschema';
 import { ServerError } from '../lib/error';
+import { Service } from './common';
 
-export class ValidatorService {
+export class ValidatorService implements Service {
 
   /** Cached validator schemas */
   private schemas = new Map<ValidatorSchema, Schema>();

@@ -12,6 +12,8 @@ import { ServerError } from './lib/error';
 import { UtilitiesRouter } from './routers/utils';
 import { SpaceRouter } from './routers/space';
 import { ValidatorService } from './services/validator';
+import { AuthService } from './services/auth';
+import { Service } from './services/common';
 
 dotenv.config();
 
@@ -22,13 +24,15 @@ const port = process.env.PORT;
 declare global {
   var services: {
     db: DatabaseService,
-    validator: ValidatorService
+    validator: ValidatorService,
+    auth: AuthService
   };
 }
 
 globalThis.services = {
   db: new DatabaseService(),
-  validator: new ValidatorService()
+  validator: new ValidatorService(),
+  auth: new AuthService()
 };
 
 app.use(cors());
@@ -97,31 +101,19 @@ app.use((error: ServerError, req: Request, res: Response<IResponseError>, next: 
 
 app.listen(port, async () => {
 
-  console.log('Connecting to database...');
+  // Initialize the services
+  for ( const serviceName in services ) {
 
-  try {
+    try {
 
-    await services.db.init();
+      await ((services as any)[serviceName] as Service).init();
 
-  }
-  catch (error) {
+    }
+    catch (error) {
 
-    console.error('Error connecting to database!');
-    console.error(error);
+      return console.error(`Failed to initialize service ${serviceName}!\n`, error);
 
-  }
-
-  console.log('Initializing additional services...');
-
-  try {
-
-    await services.validator.init();
-
-  }
-  catch (error) {
-
-    console.error('Error initializing validator service!');
-    console.error(error);
+    }
 
   }
   

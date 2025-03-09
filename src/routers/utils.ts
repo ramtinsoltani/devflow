@@ -1,12 +1,16 @@
 import { Router, Response } from "express";
-import { asyncHandler } from "../lib/async-handler";
+import { asyncHandler } from "../lib/middleware/async-handler";
 import { FetchMetadataRequest } from "../models/requests";
 import { IResponseUrlMetadata } from "../models/responses";
 import { ServerError } from "../lib/error";
 import { getLinkPreview } from "link-preview-js";
 import { ValidatorSchema } from "../services/validator";
+import { protectedRoute } from "../lib/middleware/auth";
 
 export const UtilitiesRouter = Router();
+
+// Make all routes protected
+UtilitiesRouter.use(protectedRoute);
 
 UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRequest, res: Response<IResponseUrlMetadata>) => {
 

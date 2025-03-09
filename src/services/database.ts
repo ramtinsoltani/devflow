@@ -5,8 +5,10 @@ import { ICollection, IItem, ISpace } from '../models/normalized';
 import { normalizeCommonDocument } from '../lib/normalizer';
 import { ServerError } from '../lib/error';
 import { queryStringToRegex } from '../lib/utilities';
+import { Service } from './common';
+import { DecodedIdToken } from 'firebase-admin/auth';
 
-export class DatabaseService {
+export class DatabaseService implements Service {
 
   /**
    * Initializes the database service by connecting to MongoDB using the configuration in ".env" file.
@@ -19,12 +21,14 @@ export class DatabaseService {
 
   /**
    * Creates a new space.
+   * @param token The decoded token of an authorized user
    * @param data New space request object
    * @returns New space's ID
    */
-  public async createSpace(data: IRequestNewSpace): Promise<string> {
+  public async createSpace(token: DecodedIdToken, data: IRequestNewSpace): Promise<string> {
 
     const space = new DbSpace({
+      owner: token.uid,
       name: data.name
     });
 
@@ -36,11 +40,12 @@ export class DatabaseService {
 
   /**
    * Reads all spaces in the database.
+   * @param token The decoded token of an authorized user
    * @returns An array of normalized space objects
    */
-  public async getSpaces(): Promise<ISpace[]> {
+  public async getSpaces(token: DecodedIdToken): Promise<ISpace[]> {
 
-    const spaces = await DbSpace.find().sort({ createdAt: 1 });
+    const spaces = await DbSpace.find({ owner: token.uid }).sort({ createdAt: 1 });
 
     return spaces.map(s => normalizeCommonDocument(s) as ISpace);
 
@@ -48,15 +53,16 @@ export class DatabaseService {
 
   /**
    * Updates a space in the database.
+   * @param token The decoded token of an authorized user
    * @param id Space ID
    * @param data Update space request object
    */
-  public async updateSpace(id: string, data: IRequestUpdateSpace): Promise<void> {
+  public async updateSpace(token: DecodedIdToken, id: string, data: IRequestUpdateSpace): Promise<void> {
 
     if ( ! id )
       throw new ServerError('invalid-request', 'Space ID missing!');
 
-    const doc = await DbSpace.findById(id);
+    const doc = await DbSpace.findOne({ _id: id, owner: token.uid });
 
     if ( ! doc )
       throw new ServerError('invalid-request', `Could not find space with ID "${id}"!`);
@@ -67,36 +73,43 @@ export class DatabaseService {
 
   /**
    * Deletes a space from the database.
+   * @param token The decoded token of an authorized user
    * @param id Space ID
    */
-  public async deleteSpace(id: string): Promise<void> {
+  public async deleteSpace(token: DecodedIdToken, id: string): Promise<void> {
 
     if ( ! id )
       throw new ServerError('invalid-request', 'Space ID missing!');
 
-    const doc = await DbSpace.findById(id);
+    const doc = await DbSpace.findOne({ _id: id, owner: token.uid });
 
     if ( ! doc )
       throw new ServerError('invalid-request', `Could not find space with ID "${id}"!`);
 
     await doc.deleteOne();
-    await DbCollection.deleteMany({ spaceId: id });
-    await DbItem.deleteMany({ spaceId: id });
+    await DbCollection.deleteMany({ spaceId: id, owner: token.uid });
+    await DbItem.deleteMany({ spaceId: id, owner: token.uid });
 
   }
 
   /**
    * Creates a new collection.
+   * @param token The decoded token of an authorized user
    * @param spaceId Space ID
    * @param data New collection request object
    * @returns New collection's ID
    */
-  public async createCollection(spaceId: string, data: IRequestNewCollection): Promise<string> {
+  public async createCollection(token: DecodedIdToken, spaceId: string, data: IRequestNewCollection): Promise<string> {
 
     if ( ! spaceId )
       throw new ServerError('invalid-request', 'Space ID missing!');
 
+    // If current user is not the owner of space or if the space doesn't exist
+    if ( ! await DbSpace.findOne({ _id: spaceId, owner: token.uid }) )
+      throw new ServerError('invalid-request', `Could not find space with ID "${spaceId}"!`);
+
     const collection = new DbCollection({
+      owner: token.uid,
       spaceId,
       name: data.name,
       color: data.color
@@ -110,15 +123,16 @@ export class DatabaseService {
 
   /**
    * Reads all collections in the gives space from the database.
+   * @param token The decoded token of an authorized user
    * @param spaceId Space ID
    * @returns An array of normalized collection objects
    */
-  public async getCollections(spaceId: string): Promise<ICollection[]> {
+  public async getCollections(token: DecodedIdToken, spaceId: string): Promise<ICollection[]> {
 
     if ( ! spaceId )
       throw new ServerError('invalid-request', 'Space ID missing!');
 
-    const collections = await DbCollection.find({ spaceId }).sort({ createdAt: 1 });
+    const collections = await DbCollection.find({ spaceId, owner: token.uid }).sort({ createdAt: 1 });
 
     return collections.map(c => normalizeCommonDocument(c) as ICollection);
 
@@ -126,15 +140,16 @@ export class DatabaseService {
 
   /**
    * Updates a collection in the database.
+   * @param token The decoded token of an authorized user
    * @param id Collection ID
    * @param data Update collection request object
    */
-  public async updateCollection(spaceId: string, id: string, data: IRequestUpdateCollection): Promise<void> {
+  public async updateCollection(token: DecodedIdToken, spaceId: string, id: string, data: IRequestUpdateCollection): Promise<void> {
     
     if ( ! id )
       throw new ServerError('invalid-request', 'Collection ID missing!');
 
-    const doc = await DbCollection.findOne({ _id: id, spaceId });
+    const doc = await DbCollection.findOne({ _id: id, spaceId, owner: token.uid });
 
     if ( ! doc )
       throw new ServerError('invalid-request', `Could not find collection with ID "${id}"!`);
@@ -145,34 +160,36 @@ export class DatabaseService {
 
   /**
    * Deletes a collection from the database.
+   * @param token The decoded token of an authorized user
    * @param id Collection ID
    */
-  public async deleteCollection(spaceId: string, id: string): Promise<void> {
+  public async deleteCollection(token: DecodedIdToken, spaceId: string, id: string): Promise<void> {
 
     if ( ! id )
       throw new ServerError('invalid-request', 'Collection ID missing!');
 
-    const doc = await DbCollection.findOne({ _id: id, spaceId });
+    const doc = await DbCollection.findOne({ _id: id, spaceId, owner: token.uid });
 
     if ( ! doc )
       throw new ServerError('invalid-request', `Could not find collection with ID "${id}"!`);
 
     await doc.deleteOne();
-    await DbItem.deleteMany({ collectionId: id });
+    await DbItem.deleteMany({ spaceId, collectionId: id, owner: token.uid });
 
   }
 
   /**
    * Reads an item from the database.
+   * @param token The decoded token of an authorized user
    * @param id Item ID
    * @returns Normalized item object
    */
-  public async getItem(spaceId: string, id: string): Promise<IItem> {
+  public async getItem(token: DecodedIdToken, spaceId: string, id: string): Promise<IItem> {
 
     if ( ! id )
       throw new ServerError('invalid-request', 'Missing item ID!');
 
-    const item = await DbItem.findOne({ _id: id, spaceId });
+    const item = await DbItem.findOne({ _id: id, spaceId, owner: token.uid });
 
     if ( ! item )
       throw new ServerError('not-found', `No item found with ID "${id}"!`);
@@ -183,15 +200,16 @@ export class DatabaseService {
 
   /**
    * Reads all items under a certain collection in the database.
+   * @param token The decoded token of an authorized user
    * @param collectionId Collection ID
    * @returns Array or normalized item objects
    */
-  public async getItems(spaceId: string, collectionId: string): Promise<IItem[]> {
+  public async getItems(token: DecodedIdToken, spaceId: string, collectionId: string): Promise<IItem[]> {
 
     if ( ! collectionId )
       throw new ServerError('invalid-request', 'Missing collection ID!');
 
-    const items = await DbItem.find({ collectionId, spaceId }).sort({ createdAt: -1 });
+    const items = await DbItem.find({ collectionId, spaceId, owner: token.uid }).sort({ createdAt: -1 });
 
     return items.map(i => normalizeCommonDocument(i));
 
@@ -199,12 +217,13 @@ export class DatabaseService {
   
   /**
    * Creates a new item under an existing collection in the database.
+   * @param token The decoded token of an authorized user
    * @param data New item request object
    * @returns ID of the newly created item
    */
-  public async createItem(spaceId: string, data: IRequestNewItem): Promise<string> {
+  public async createItem(token: DecodedIdToken, spaceId: string, data: IRequestNewItem): Promise<string> {
 
-    const collection = await DbCollection.findOne({ _id: data.collectionId, spaceId });
+    const collection = await DbCollection.findOne({ _id: data.collectionId, spaceId, owner: token.uid });
     
     if ( ! collection )
       throw new ServerError('invalid-request', `Could not find collection with ID "${ data.collectionId }"!`);
@@ -213,7 +232,8 @@ export class DatabaseService {
     
     const item = new DbItem({
       ...data,
-      spaceId: collection.spaceId
+      spaceId: collection.spaceId,
+      owner: token.uid
     });
 
     await item.save();
@@ -226,15 +246,16 @@ export class DatabaseService {
 
   /**
    * Updates an item in the database.
+   * @param token The decoded token of an authorized user
    * @param id Item ID
    * @param data Update item request object
    */
-  public async updateItem(spaceId: string, id: string, data: IRequestUpdateItem): Promise<void> {
+  public async updateItem(token: DecodedIdToken, spaceId: string, id: string, data: IRequestUpdateItem): Promise<void> {
 
     if ( ! id )
       throw new ServerError('invalid-request', 'Missing item ID!');
 
-    const doc = await DbItem.findOne({ _id: id, spaceId });
+    const doc = await DbItem.findOne({ _id: id, spaceId, owner: token.uid });
 
     if ( ! doc )
       throw new ServerError('invalid-request', `No item found with ID "${ id }"!`)
@@ -272,21 +293,22 @@ export class DatabaseService {
 
   /**
    * Deletes an item from the database.
+   * @param token The decoded token of an authorized user
    * @param id Item ID
    */
-  public async deleteItem(spaceId: string, id: string): Promise<void> {
+  public async deleteItem(token: DecodedIdToken, spaceId: string, id: string): Promise<void> {
 
     if ( ! id )
       throw new ServerError('invalid-request', 'Missing item ID!');
 
-    const doc = await DbItem.findOne({ _id: id, spaceId });
+    const doc = await DbItem.findOne({ _id: id, spaceId, owner: token.uid });
 
     if ( ! doc )
       throw new ServerError('invalid-request', `Could not find item with ID "${ id }"!`)
 
     await doc.deleteOne();
     
-    const collection = await DbCollection.findOne({ _id: doc.collectionId, spaceId });
+    const collection = await DbCollection.findOne({ _id: doc.collectionId, spaceId, owner: token.uid });
 
     if ( collection )
       await collection.updateOne({ size: collection.size - 1 });
@@ -295,16 +317,17 @@ export class DatabaseService {
 
   /**
    * Searches for spaces in the database.
+   * @param token The decoded token of an authorized user
    * @param q Text search query
    * @returns Array of normalized space objects
    */
-  public async searchSpaces(q?: string): Promise<ISpace[]> {
+  public async searchSpaces(token: DecodedIdToken, q?: string): Promise<ISpace[]> {
 
     if ( ! q?.trim().length )
-      return this.getSpaces();
+      return this.getSpaces(token);
 
     const qregex = queryStringToRegex(q);
-    const docs = await DbSpace.find({ name: { $regex: qregex.regex, $options: qregex.flags } });
+    const docs = await DbSpace.find({ name: { $regex: qregex.regex, $options: qregex.flags }, owner: token.uid });
 
     return docs.map(s => normalizeCommonDocument(s) as ISpace);
 
@@ -312,20 +335,21 @@ export class DatabaseService {
 
   /**
    * Searches for collections in the database.
+   * @param token The decoded token of an authorized user
    * @param spaceId Space ID
    * @param q Text search query
    * @returns Array of normalized collection objects
    */
-  public async searchCollections(spaceId: string, q: string): Promise<ICollection[]> {
+  public async searchCollections(token: DecodedIdToken, spaceId: string, q: string): Promise<ICollection[]> {
 
     if ( ! spaceId )
       throw new ServerError('invalid-request', 'Space ID missing!');
 
     if ( ! q?.trim().length )
-      return this.getCollections(spaceId);
+      return this.getCollections(token, spaceId);
 
     const qregex = queryStringToRegex(q);
-    const docs = await DbCollection.find({ spaceId, name: { $regex: qregex.regex, $options: qregex.flags } });
+    const docs = await DbCollection.find({ spaceId, name: { $regex: qregex.regex, $options: qregex.flags }, owner: token.uid });
 
     return docs.map(c => normalizeCommonDocument(c) as ICollection);
 
@@ -333,23 +357,25 @@ export class DatabaseService {
 
   /**
    * Searches for items under an existing collection in the database.
+   * @param token The decoded token of an authorized user
    * @param collectionId Collection ID
    * @param q Text search query
    * @param tags Array of tags to include in search
    * @returns Array of normalized item objects
    */
-  public async searchCollectionItems(spaceId: string, collectionId: string, q?: string, tags?: string[]): Promise<IItem[]> {
+  public async searchCollectionItems(token: DecodedIdToken, spaceId: string, collectionId: string, q?: string, tags?: string[]): Promise<IItem[]> {
 
     if ( ! collectionId )
       throw new ServerError('invalid-request', 'No collection specified!');
-    else if ( ! await DbCollection.findOne({ _id: collectionId, spaceId }) )
+    else if ( ! await DbCollection.findOne({ _id: collectionId, spaceId, owner: token.uid }) )
       throw new ServerError('invalid-request', `Could not find collection with ID "${ collectionId }"!`);
     else if ( ! q?.trim().length && ! tags?.length )
       throw new ServerError('invalid-request', 'No search criteria defined!');
 
     const query: any = {
       collectionId,
-      spaceId
+      spaceId,
+      owner: token.uid
     };
 
     if ( q?.trim() ) {
@@ -374,12 +400,13 @@ export class DatabaseService {
   
   /**
    * Searches for items across all collections in the database.
+   * @param token The decoded token of an authorized user
    * @param spaceId Space ID
    * @param q Text search query
    * @param tags Array of tags to include in search
    * @returns Array of normalized item objects
    */
-  public async searchItems(spaceId: string, q?: string, tags?: string[]): Promise<IItem[]> {
+  public async searchItems(token: DecodedIdToken, spaceId: string, q?: string, tags?: string[]): Promise<IItem[]> {
 
     if ( ! spaceId )
       throw new ServerError('invalid-request', 'Space ID missing!');
@@ -387,7 +414,7 @@ export class DatabaseService {
     if ( ! q?.trim().length && ! tags?.length )
       throw new ServerError('invalid-request', 'No search criteria defined!');
 
-    const query: any = { spaceId };
+    const query: any = { spaceId, owner: token.uid };
 
     if ( q?.trim() ) {
 

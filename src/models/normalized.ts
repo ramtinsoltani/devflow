@@ -14,6 +14,7 @@ export interface ITag {
 }
 
 export interface ICommonDocument {
+  owner: string,
   id: string,
   createdAt: number,
   updatedAt: number

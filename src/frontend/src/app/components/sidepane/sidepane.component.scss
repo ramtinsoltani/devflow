@@ -8,7 +8,10 @@
   background-color: utils.color(gray-2);
   padding: 15px;
   gap: 15px;
-  overflow-y: auto;
+
+  & > :not(.items) {
+    flex-shrink: 0;
+  }
 }
 
 .nav-back {
@@ -29,6 +32,9 @@
 
 .items {
   font-weight: 400;
+  height: 100%;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
 .new-item {

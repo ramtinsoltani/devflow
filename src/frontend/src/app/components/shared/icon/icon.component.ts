@@ -48,7 +48,10 @@ export class IconComponent {
 
   /** Icon container CSS width and height (square size, defaults to `iconSize`) */
   @Input()
-  public set containerSize(value: string) {
+  public set containerSize(value: string | undefined) {
+
+    if ( ! value )
+      return;
 
     this.containerWidth = value;
     this.containerHeight = value;

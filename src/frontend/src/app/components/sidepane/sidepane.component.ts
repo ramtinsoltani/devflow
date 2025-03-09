@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Color, ICollection, ISpace } from '@devflow/models';
-import { EndpointService, AppService, UtilsService, ModalService } from '@devflow/services';
+import { EndpointService, AppService, UtilsService, ModalService, AuthService } from '@devflow/services';
 import { Subscription } from 'rxjs';
 import { NavItemComponent } from '../shared/nav-item/nav-item.component';
 import { ActivationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -39,7 +39,8 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     private endpoint: EndpointService,
     public utils: UtilsService,
     private modals: ModalService,
-    private router: Router
+    private router: Router,
+    private auth: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -263,6 +264,12 @@ export class SidepaneComponent implements OnInit, OnDestroy {
   public onClearSpacesSearch(): void {
 
     this.filteredSpaces = undefined;
+
+  }
+
+  public onLogout(): void {
+
+    this.auth.signOut();
 
   }
 

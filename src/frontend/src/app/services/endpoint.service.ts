@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse as GenericHttpErrorResponse, HttpParams }
 import { ICollection, Color, ITag, IItem, ISpace } from '@devflow/models';
 import { lastValueFrom } from 'rxjs';
 import { environment } from '../environment';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,17 +11,34 @@ import { environment } from '../environment';
 export class EndpointService {
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private auth: AuthService
   ) { }
+
+  /**
+   * Generates request headers based on current auth state.
+   * @returns Headers object with Authorize header holding a bearer token (if user is logged in)
+   */
+  private async getAuthorizeHeader(): Promise<Record<string, string>> {
+
+    if ( ! this.auth.currentUser )
+      return {};
+
+    return { 'Authorize': 'Bearer ' + await this.auth.currentUser.getIdToken() };
+
+  }
 
   /**
    * Reads all existing spaces.
    * @returns An array of spaces
    */
-  public getSpaces(): Promise<ISpace[]> {
+  public async getSpaces(): Promise<ISpace[]> {
 
     return lastValueFrom(this.http.get<ISpace[]>(
-      `${environment.apiBaseUrl}/spaces`
+      `${environment.apiBaseUrl}/spaces`,
+      {
+        headers: await this.getAuthorizeHeader()
+      }
     ));
 
   }
@@ -30,11 +48,12 @@ export class EndpointService {
    * @param data New space request object
    * @returns General message response with `data` as the newly created space ID
    */
-  public createSpace(data: INewSpaceRequest): Promise<IGeneralMessageResponse<string>> {
+  public async createSpace(data: INewSpaceRequest): Promise<IGeneralMessageResponse<string>> {
 
     return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
       `${environment.apiBaseUrl}/space`,
-      data
+      data,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -45,11 +64,12 @@ export class EndpointService {
    * @param data Update space request object
    * @returns General message response
    */
-  public updateSpace(spaceId: string, data: Partial<IUpdateSpaceRequest>): Promise<IGeneralMessageResponse> {
+  public async updateSpace(spaceId: string, data: Partial<IUpdateSpaceRequest>): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/space/${spaceId}`,
-      data
+      data,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -59,10 +79,11 @@ export class EndpointService {
    * @param spaceId Space ID
    * @returns General message response
    */
-  public deleteSpace(spaceId: string): Promise<IGeneralMessageResponse> {
+  public async deleteSpace(spaceId: string): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
-      `${environment.apiBaseUrl}/space/${spaceId}`
+      `${environment.apiBaseUrl}/space/${spaceId}`,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -72,10 +93,11 @@ export class EndpointService {
    * @param spaceId Space ID
    * @returns An array of collections
    */
-  public getCollections(spaceId: string): Promise<ICollection[]> {
+  public async getCollections(spaceId: string): Promise<ICollection[]> {
 
     return lastValueFrom(this.http.get<ICollection[]>(
-      `${environment.apiBaseUrl}/${spaceId}/collections`
+      `${environment.apiBaseUrl}/${spaceId}/collections`,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -86,11 +108,12 @@ export class EndpointService {
    * @param data New collection request object
    * @returns General message response with `data` as the newly created collection ID
    */
-  public createCollection(spaceId: string, data: INewCollectionRequest): Promise<IGeneralMessageResponse<string>> {
+  public async createCollection(spaceId: string, data: INewCollectionRequest): Promise<IGeneralMessageResponse<string>> {
 
     return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
       `${environment.apiBaseUrl}/${spaceId}/collection`,
-      data
+      data,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -102,11 +125,12 @@ export class EndpointService {
    * @param data Update collection request object
    * @returns General message response
    */
-  public updateCollection(spaceId: string, collectionId: string, data: Partial<IUpdateCollectionRequest>): Promise<IGeneralMessageResponse> {
+  public async updateCollection(spaceId: string, collectionId: string, data: Partial<IUpdateCollectionRequest>): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/${spaceId}/collection/${collectionId}`,
-      data
+      data,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -117,10 +141,11 @@ export class EndpointService {
    * @param collectionId Collection ID
    * @returns 
    */
-  public deleteCollection(spaceId: string, collectionId: string): Promise<IGeneralMessageResponse> {
+  public async deleteCollection(spaceId: string, collectionId: string): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
-      `${environment.apiBaseUrl}/${spaceId}/collection/${collectionId}`
+      `${environment.apiBaseUrl}/${spaceId}/collection/${collectionId}`,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -131,10 +156,11 @@ export class EndpointService {
    * @param id Item ID
    * @returns Item object
    */
-  public getItem(spaceId: string, id: string): Promise<IItem> {
+  public async getItem(spaceId: string, id: string): Promise<IItem> {
 
     return lastValueFrom(this.http.get<IItem>(
-      `${environment.apiBaseUrl}/${spaceId}/item/${id}`
+      `${environment.apiBaseUrl}/${spaceId}/item/${id}`,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -145,10 +171,11 @@ export class EndpointService {
    * @param collectionId Collection ID
    * @returns Array of item objects
    */
-  public getItems(spaceId: string, collectionId: string): Promise<IItem[]> {
+  public async getItems(spaceId: string, collectionId: string): Promise<IItem[]> {
 
     return lastValueFrom(this.http.get<IItem[]>(
-      `${environment.apiBaseUrl}/${spaceId}/items/${collectionId}`
+      `${environment.apiBaseUrl}/${spaceId}/items/${collectionId}`,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -159,11 +186,12 @@ export class EndpointService {
    * @param data New item request object
    * @returns General message response with `data` as the newly created item ID
    */
-  public createItem(spaceId: string, data: INewItemRequest): Promise<IGeneralMessageResponse<string>> {
+  public async createItem(spaceId: string, data: INewItemRequest): Promise<IGeneralMessageResponse<string>> {
 
     return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
       `${environment.apiBaseUrl}/${spaceId}/item`,
-      data
+      data,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -175,11 +203,12 @@ export class EndpointService {
    * @param data Update item request object
    * @returns General message response
    */
-  public updateItem(spaceId: string, itemId: string, data: IUpdateItemRequest): Promise<IGeneralMessageResponse> {
+  public async updateItem(spaceId: string, itemId: string, data: IUpdateItemRequest): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/${spaceId}/item/${itemId}`,
-      data
+      data,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -190,10 +219,11 @@ export class EndpointService {
    * @param itemId Item ID
    * @returns General message response
    */
-  public deleteItem(spaceId: string, itemId: string): Promise<IGeneralMessageResponse> {
+  public async deleteItem(spaceId: string, itemId: string): Promise<IGeneralMessageResponse> {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
-      `${environment.apiBaseUrl}/${spaceId}/item/${itemId}`
+      `${environment.apiBaseUrl}/${spaceId}/item/${itemId}`,
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -202,14 +232,14 @@ export class EndpointService {
    * Searches spaces.
    * @returns Array of found space objects
    */
-  public searchSpaces(): Promise<ISpace[]>;
+  public async searchSpaces(): Promise<ISpace[]>;
   /**
    * Searches spaces.
    * @param q Text search query
    * @returns Array of found space objects
    */
-  public searchSpaces(q: string): Promise<ISpace[]>;
-  public searchSpaces(q?: string): Promise<ISpace[]> {
+  public async searchSpaces(q: string): Promise<ISpace[]>;
+  public async searchSpaces(q?: string): Promise<ISpace[]> {
 
     let params = new HttpParams();
 
@@ -217,7 +247,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<ISpace[]>(
       `${environment.apiBaseUrl}/search/spaces`,
-      { params }
+      { params, headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -227,15 +257,15 @@ export class EndpointService {
    * @param spaceId Space ID
    * @returns Array of found collection objects
    */
-  public searchCollections(spaceId: string): Promise<ICollection[]>;
+  public async searchCollections(spaceId: string): Promise<ICollection[]>;
   /**
    * Searches collections.
    * @param spaceId Space ID
    * @param q Text search query
    * @returns Array of found collection objects
    */
-  public searchCollections(spaceId: string, q: string): Promise<ICollection[]>;
-  public searchCollections(spaceId: string, q?: string): Promise<ICollection[]> {
+  public async searchCollections(spaceId: string, q: string): Promise<ICollection[]>;
+  public async searchCollections(spaceId: string, q?: string): Promise<ICollection[]> {
 
     let params = new HttpParams();
 
@@ -243,7 +273,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<ICollection[]>(
       `${environment.apiBaseUrl}/${spaceId}/search/collections`,
-      { params }
+      { params, headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -254,7 +284,7 @@ export class EndpointService {
    * @param collectionId Collection ID
    * @returns Array of found item objects
    */
-  public searchCollectionItems(spaceId: string, collectionId: string): Promise<IItem[]>;
+  public async searchCollectionItems(spaceId: string, collectionId: string): Promise<IItem[]>;
   /**
    * Searches items inside an existing collection.
    * @param spaceId Space ID
@@ -262,7 +292,7 @@ export class EndpointService {
    * @param q Text search query
    * @returns Array of found item objects
    */
-  public searchCollectionItems(spaceId: string, collectionId: string, q: string): Promise<IItem[]>;
+  public async searchCollectionItems(spaceId: string, collectionId: string, q: string): Promise<IItem[]>;
   /**
    * Searches items inside an existing collection.
    * @param spaceId Space ID
@@ -270,16 +300,7 @@ export class EndpointService {
    * @param tags Array of tags to include in search
    * @returns Array of found item objects
    */
-  public searchCollectionItems(spaceId: string, collectionId: string, tags: string[]): Promise<IItem[]>;
-  /**
-   * Searches items inside an existing collection.
-   * @param spaceId Space ID
-   * @param collectionId Collection ID
-   * @param q Text search query
-   * @param tags Array of tags to include in search
-   * @returns Array of found item objects
-   */
-  public searchCollectionItems(spaceId: string, collectionId: string, q: string, tags: string[]): Promise<IItem[]>;
+  public async searchCollectionItems(spaceId: string, collectionId: string, tags: string[]): Promise<IItem[]>;
   /**
    * Searches items inside an existing collection.
    * @param spaceId Space ID
@@ -288,8 +309,17 @@ export class EndpointService {
    * @param tags Array of tags to include in search
    * @returns Array of found item objects
    */
-  public searchCollectionItems(spaceId: string, collectionId: string, q?: string, tags?: string[]): Promise<IItem[]>;
-  public searchCollectionItems(spaceId: string, collectionId: string, param1?: string | string[], param2?: string[]): Promise<IItem[]> {
+  public async searchCollectionItems(spaceId: string, collectionId: string, q: string, tags: string[]): Promise<IItem[]>;
+  /**
+   * Searches items inside an existing collection.
+   * @param spaceId Space ID
+   * @param collectionId Collection ID
+   * @param q Text search query
+   * @param tags Array of tags to include in search
+   * @returns Array of found item objects
+   */
+  public async searchCollectionItems(spaceId: string, collectionId: string, q?: string, tags?: string[]): Promise<IItem[]>;
+  public async searchCollectionItems(spaceId: string, collectionId: string, param1?: string | string[], param2?: string[]): Promise<IItem[]> {
 
     let params = new HttpParams();
 
@@ -303,7 +333,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<IItem[]>(
       `${environment.apiBaseUrl}/${spaceId}/${collectionId}/search/items`,
-      { params }
+      { params, headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -313,29 +343,21 @@ export class EndpointService {
    * @param spaceId Space ID
    * @return Array of found item objects
    */
-  public searchItems(spaceId: string): Promise<IItem[]>;
+  public async searchItems(spaceId: string): Promise<IItem[]>;
   /**
    * Searches items across all collections.
    * @param spaceId Space ID
    * @param q Text search query
    * @return Array of found item objects
    */
-  public searchItems(spaceId: string, q: string): Promise<IItem[]>;
+  public async searchItems(spaceId: string, q: string): Promise<IItem[]>;
   /**
    * Searches items across all collections.
    * @param spaceId Space ID
    * @param tags Array of tags to include in search
    * @return Array of found item objects
    */
-  public searchItems(spaceId: string, tags: string[]): Promise<IItem[]>;
-  /**
-   * Searches items across all collections.
-   * @param spaceId Space ID
-   * @param q Text search query
-   * @param tags Array of tags to include in search
-   * @return Array of found item objects
-   */
-  public searchItems(spaceId: string, q: string, tags: string[]): Promise<IItem[]>;
+  public async searchItems(spaceId: string, tags: string[]): Promise<IItem[]>;
   /**
    * Searches items across all collections.
    * @param spaceId Space ID
@@ -343,8 +365,16 @@ export class EndpointService {
    * @param tags Array of tags to include in search
    * @return Array of found item objects
    */
-  public searchItems(spaceId: string, q?: string, tags?: string[]): Promise<IItem[]>;
-  public searchItems(spaceId: string, param1?: string | string[], param2?: string[]): Promise<IItem[]> {
+  public async searchItems(spaceId: string, q: string, tags: string[]): Promise<IItem[]>;
+  /**
+   * Searches items across all collections.
+   * @param spaceId Space ID
+   * @param q Text search query
+   * @param tags Array of tags to include in search
+   * @return Array of found item objects
+   */
+  public async searchItems(spaceId: string, q?: string, tags?: string[]): Promise<IItem[]>;
+  public async searchItems(spaceId: string, param1?: string | string[], param2?: string[]): Promise<IItem[]> {
 
     let params = new HttpParams();
 
@@ -358,7 +388,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<IItem[]>(
       `${environment.apiBaseUrl}/${spaceId}/search/items`,
-      { params }
+      { params, headers: await this.getAuthorizeHeader() }
     ));
 
   }
@@ -368,11 +398,12 @@ export class EndpointService {
    * @param url A valid URL
    * @returns URL metadata object
    */
-  public fetchMetadata(url: string): Promise<IURLMetadataResponse> {
+  public async fetchMetadata(url: string): Promise<IURLMetadataResponse> {
 
     return lastValueFrom(this.http.post<any>(
       environment.apiBaseUrl + '/utils/metadata',
-      { url }
+      { url },
+      { headers: await this.getAuthorizeHeader() }
     ));
 
   }

@@ -4,3 +4,4 @@ src/frontend/src/assets/icons/*
 src/frontend/documentation
 !.gitkeep
 run.bat
+.env
