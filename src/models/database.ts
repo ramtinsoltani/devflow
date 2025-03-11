@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { isURL } from 'validator';
-import { Color } from './normalized';
+import { Color, Permission } from './normalized';
 
 const ColorSubSchema = {
   type: Number,
@@ -20,8 +20,7 @@ export const SpaceSchema = new Schema({
   name: {
     type: String,
     required: true,
-    maxLength: 64,
-    index: true
+    maxLength: 64
   }
 }, {
   timestamps: true
@@ -35,8 +34,7 @@ export const DbSpace = model('Space', SpaceSchema);
 export const CollectionSchema = new Schema({
   owner: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   spaceId: {
     type: Schema.Types.ObjectId,
@@ -46,8 +44,7 @@ export const CollectionSchema = new Schema({
   name: {
     type: String,
     required: true,
-    maxLength: 64,
-    index: true
+    maxLength: 64
   },
   color: ColorSubSchema,
   size: {
@@ -61,16 +58,15 @@ export const CollectionSchema = new Schema({
 });
 
 // Compound indexing
-CollectionSchema.index({ owner: 1, spaceId: 1 });
-CollectionSchema.index({ _id: 1, spaceId: 1, owner: 1 });
+CollectionSchema.index({ spaceId: 1, owner: 1 });
+CollectionSchema.index({ _id: 1, spaceId: 1 });
 
 export const DbCollection = model('Collection', CollectionSchema);
 
 export const ItemSchema = new Schema({
   owner: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   spaceId: {
     type: Schema.Types.ObjectId,
@@ -79,19 +75,17 @@ export const ItemSchema = new Schema({
   },
   collectionId: {
     type: Schema.Types.ObjectId,
-    required: true,
-    index: true
+    required: true
   },
   title: {
     type: String,
     required: true,
-    maxLength: 128,
-    index: true
+    maxLength: 256
   },
   url: {
     type: String,
     required: true,
-    maxLength: 256,
+    maxLength: 1024,
     validate: {
       validator: (v: string) => isURL(v, {
         protocols: ['http', 'https'],
@@ -103,11 +97,11 @@ export const ItemSchema = new Schema({
   },
   description: {
     type: String,
-    maxLength: 512
+    maxLength: 1024
   },
   posterUrl: {
     type: String,
-    maxLength: 256,
+    maxLength: 1024,
     validate: {
       validator: (v: string) => isURL(v, {
         protocols: ['http', 'https'],
@@ -131,16 +125,15 @@ export const ItemSchema = new Schema({
     validate: {
       validator: (v: string[]) => v.length <= 20 && v.join().length <= 1000,
       message: () => `Tags exceed the maximum allowed size!`
-    },
-    index: true
+    }
   },
   originTitle: {
     type: String,
-    maxLength: 128
+    maxLength: 256
   },
   originUrl: {
     type: String,
-    maxLength: 256,
+    maxLength: 1024,
     validate: {
       validator: (v: string) => isURL(v, {
         protocols: ['http', 'https'],
@@ -152,7 +145,7 @@ export const ItemSchema = new Schema({
   },
   favicon: {
     type: String,
-    maxLength: 256,
+    maxLength: 1024,
     validate: {
       validator: (v: string) => isURL(v, {
         protocols: ['http', 'https'],
@@ -173,7 +166,71 @@ export const ItemSchema = new Schema({
 
 // Compound indexing
 ItemSchema.index({ spaceId: 1, owner: 1 });
-ItemSchema.index({ _id: 1, spaceId: 1, owner: 1 });
-ItemSchema.index({ collectionId: 1, spaceId: 1, owner: 1 });
+ItemSchema.index({ _id: 1, spaceId: 1 });
+ItemSchema.index({ spaceId: 1, collectionId: 1 });
+ItemSchema.index({ spaceId: 1, collectionId: 1, title: 1 });
+ItemSchema.index({ spaceId: 1, collectionId: 1, tags: 1 });
+ItemSchema.index({ spaceId: 1, collectionId: 1, title: 1, tags: 1 });
+ItemSchema.index({ spaceId: 1, title: 1 });
+ItemSchema.index({ spaceId: 1, tags: 1 });
+ItemSchema.index({ spaceId: 1, title: 1, tags: 1 });
 
 export const DbItem = model('Item', ItemSchema);
+
+export const PermissionSchema = new Schema({
+  owner: {
+    type: String,
+    required: true
+  },
+  spaceId: {
+    type: Schema.Types.ObjectId,
+    required: true
+  },
+  spaceName: {
+    type: String,
+    required: true
+  },
+  grantedTo: {
+    type: String,
+    required: true,
+    index: true
+  },
+  granteeName: {
+    type: String,
+    required: false
+  },
+  granteeEmail: {
+    type: String,
+    required: true
+  },
+  provisionerName: {
+    type: String,
+    required: false
+  },
+  provisionerEmail: {
+    type: String,
+    required: true
+  },
+  permission: {
+    type: String,
+    required: true,
+    enum: [Permission.ReadOnly, Permission.CanModifyContent],
+    default: Permission.ReadOnly
+  },
+  accepted: {
+    type: Boolean,
+    required: true
+  }
+}, {
+  timestamps: true
+});
+
+// Compound indexes
+PermissionSchema.index({ owner: 1, spaceId: 1 });
+PermissionSchema.index({ _id: 1, owner: 1 });
+PermissionSchema.index({ _id: 1, grantedTo: 1 });
+PermissionSchema.index({ grantedTo: 1, accepted: 1 });
+PermissionSchema.index({ owner: 1, grantedTo: 1, spaceId: 1 });
+PermissionSchema.index({ grantedTo: 1, spaceId: 1 });
+
+export const DbPermission = model('Permission', PermissionSchema);

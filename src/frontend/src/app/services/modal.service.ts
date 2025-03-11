@@ -50,9 +50,10 @@ export interface ModalButtonWithConfirmation extends ModalButton {
   confirmationLabel: string
 }
 
-/** Generic modal interface */
+/** Generic modal component interface */
 export interface GenericModalComponent {
-  modalData?: any
+  modalData?: any,
+  modalManager?: ModalManager
 }
 
 /** Defines an output hook where modal can set its output data */
@@ -67,9 +68,11 @@ export interface OnModalValidation {
 
 /** Defines an initialization hook where modal can run its initialization code after all inputs have been set */
 export interface OnModalInit {
-
   onModalInit(): void
+}
 
+export interface ModalManager {
+  close: () => void
 }
 
 export enum ModalSize {

@@ -1,0 +1,61 @@
+@use "../../../../scss/utils";
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 3px;
+  padding: 10px;
+  font-size: 1em;
+  cursor: default;
+  transition: background-color .15s ease-in-out;
+
+  &:hover {
+    background-color: utils.color(gray-3);
+
+    .actions app-icon {
+      display: block !important;
+    }
+  }
+}
+
+.text {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
+
+  &.processing {
+    opacity: .5;
+  }
+}
+
+span.dim {
+  color: utils.color(gray-6);
+}
+
+span.status {
+  font-style: italic;
+  font-size: utils.rem(14px);
+  margin-left: 4px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  app-icon {
+    display: none;
+    cursor: pointer;
+  }
+
+  &.processing {
+    display: none !important;
+  }
+}
+
+.spinner {
+  margin-right: 3px;
+  animation: spinning 1s infinite linear;
+}

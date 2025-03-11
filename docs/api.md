@@ -34,10 +34,19 @@
 
 | Endpoint | Query Params | Route Params | Body | Response |
 |:---------|:------------:|:------------:|:----:|:--------:|
-| **GET** `/api/search/spaces` | `q` as search text query | | | Array of [Space](#space) |
-| **GET** `/api/:spaceId/search/collections` | `q` as search text query | `spaceId` as space ID | | Array of [Collection](#collection) |
 | **GET** `/api/:spaceId/:collectionId/search/items` | `q` as search text query, `tags` as array of item tags | `spaceId` as space ID, `collectionId` as collection ID under which items are be searched | | Array of [Item](#item) |
 | **GET** `/api/:spaceId/search/items` | `q` as search text query, `tags` as array of item tags | `spaceId` as space ID | | Array of [Item](#item) |
+
+### Permission Endpoints
+
+| Endpoint | Query Params | Route Params | Body | Response |
+|:---------|:------------:|:------------:|:----:|:--------:|
+| **GET** `/api/permissions/provisioned/:spaceId` | | `spaceId` as space ID | | Array of [Permission](#permission) provisioned by the authenticated user for the space |
+| **GET** `/api/permissions/granted` | | | | Array of [Permission](#permission) granted to the authenticated user |
+| **POST** `/api/permissions/provision` | | | [New Permission Request](#new-permission-request) | [General Message Response](#general-message-response) indicating the new permission has been provisioned by the authenticated user for another user |
+| **PUT** `/api/permissions/:id/accept` | | `id` as permission ID | | [General Message Response](#general-message-response) indicating the permission has been accepted by the authenticated user as the grantee |
+| **DELETE** `/api/permissions/:id/revoke` | | `id` as permission ID | | [General Message Response](#general-message-response) indicating the permission has been revoked by the authenticated user as the owner |
+| **DELETE** `/api/permissions/:id/self-revoke` | | `id` as permission ID | | [General Message Response](#general-message-response) indicating the permission has been self-revoked by the authenticated user as the grantee |
 
 ### Utility Endpoints
 
@@ -64,6 +73,7 @@ enum Color {
 
 ```ts
 interface CommonDocument {
+  owner: string,
   id: string,
   updatedAt: number,
   createdAt: number
@@ -107,6 +117,17 @@ interface ItemDocument extends CommonDocument {
   description?: string,
   posterUrl?: string,
   tags: Tag[]
+}
+```
+
+### Permission
+
+```ts
+interface PermissionDocument extends CommonDocument {
+  spaceId: string,
+  grantedTo: string,
+  permission: 'read' | 'write',
+  accepted?: boolean
 }
 ```
 
@@ -202,6 +223,16 @@ interface RequestUpdateItem {
   description?: string | null,
   posterUrl?: string | null,
   tags?: Tag[]
+}
+```
+
+### New Permission Request
+
+```ts
+interface RequestNewPermission {
+  spaceId: string,
+  grantedTo: string,
+  permission: 'read' | 'write'
 }
 ```
 

@@ -1,5 +1,7 @@
 <div class="controls">
-  <app-nav-item class="new-item" label="New Item" icon="circle-plus" (click)="onNewItem()"></app-nav-item>
+  @if ( hasWritePermission ) {
+    <app-nav-item class="new-item" label="New Item" icon="circle-plus" (click)="onNewItem()"></app-nav-item>
+  }
   <app-textbox type="search"
   [(value)]="queryText"
   [(tags)]="queryTags"
@@ -11,7 +13,7 @@
 </div>
 <div class="items" [ngClass]="{ empty: filteredItems?.length === 0 || items.length === 0 }">
   @for (item of filteredItems || items; track item.updatedAt; let i = $index) {
-    <app-item [item]="item" (onItemUpdate)="onItemUpdated(i, $event)" (onTagFilter)="onTagFilter($event)"></app-item>
+    <app-item [item]="item" [readOnly]="! hasWritePermission" (onItemUpdate)="onItemUpdated(i, $event)" (onTagFilter)="onTagFilter($event)"></app-item>
   }
 
   @if ( items.length === 0 ) {

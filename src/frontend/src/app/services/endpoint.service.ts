@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse as GenericHttpErrorResponse, HttpParams } from '@angular/common/http';
-import { ICollection, Color, ITag, IItem, ISpace } from '@devflow/models';
+import { ICollection, Color, ITag, IItem, ISpace, IPermission, Permission } from '@devflow/models';
 import { lastValueFrom } from 'rxjs';
 import { environment } from '../environment';
 import { AuthService } from './auth.service';
@@ -229,56 +229,6 @@ export class EndpointService {
   }
 
   /**
-   * Searches spaces.
-   * @returns Array of found space objects
-   */
-  public async searchSpaces(): Promise<ISpace[]>;
-  /**
-   * Searches spaces.
-   * @param q Text search query
-   * @returns Array of found space objects
-   */
-  public async searchSpaces(q: string): Promise<ISpace[]>;
-  public async searchSpaces(q?: string): Promise<ISpace[]> {
-
-    let params = new HttpParams();
-
-    if ( q ) params = params.set('q', q);
-
-    return lastValueFrom(this.http.get<ISpace[]>(
-      `${environment.apiBaseUrl}/search/spaces`,
-      { params, headers: await this.getAuthorizeHeader() }
-    ));
-
-  }
-
-  /**
-   * Searches collections.
-   * @param spaceId Space ID
-   * @returns Array of found collection objects
-   */
-  public async searchCollections(spaceId: string): Promise<ICollection[]>;
-  /**
-   * Searches collections.
-   * @param spaceId Space ID
-   * @param q Text search query
-   * @returns Array of found collection objects
-   */
-  public async searchCollections(spaceId: string, q: string): Promise<ICollection[]>;
-  public async searchCollections(spaceId: string, q?: string): Promise<ICollection[]> {
-
-    let params = new HttpParams();
-
-    if ( q ) params = params.set('q', q);
-
-    return lastValueFrom(this.http.get<ICollection[]>(
-      `${environment.apiBaseUrl}/${spaceId}/search/collections`,
-      { params, headers: await this.getAuthorizeHeader() }
-    ));
-
-  }
-
-  /**
    * Searches items inside an existing collection.
    * @param spaceId Space ID
    * @param collectionId Collection ID
@@ -394,6 +344,91 @@ export class EndpointService {
   }
 
   /**
+   * Retrieves all permissions provisioned to other users for a space.
+   * @param spaceId Space ID
+   * @returns An array of permission objects
+   */
+  public async getProvisionedPermissions(spaceId: string): Promise<IPermission[]> {
+
+    return lastValueFrom(this.http.get<IPermission[]>(
+      `${environment.apiBaseUrl}/permissions/provisioned/${spaceId}`,
+      { headers: await this.getAuthorizeHeader() }
+    ));
+
+  }
+
+  /**
+   * Retrieves all permissions granted to the user that are pending acceptance.
+   * @returns An array of permission objects
+   */
+  public async getPendingPermissions(): Promise<IPermission[]> {
+
+    return lastValueFrom(this.http.get<IPermission[]>(
+      `${environment.apiBaseUrl}/permissions/pending`,
+      { headers: await this.getAuthorizeHeader() }
+    ));
+
+  }
+
+  /**
+   * Provisions a new permission.
+   * @param data New permission data
+   * @returns General message response
+   */
+  public async provisionNewPermission(data: INewPermissionRequest): Promise<IGeneralMessageResponse> {
+
+    return lastValueFrom(this.http.post<IGeneralMessageResponse>(
+      `${environment.apiBaseUrl}/permissions/provision`,
+      data,
+      { headers: await this.getAuthorizeHeader() }
+    ));
+
+  }
+
+  /**
+   * Accepts a permission granted to the user by another user.
+   * @param id Permission ID
+   * @returns General message response
+   */
+  public async acceptPermission(id: string): Promise<IGeneralMessageResponse> {
+
+    return lastValueFrom(this.http.put<IGeneralMessageResponse>(
+      `${environment.apiBaseUrl}/permissions/${id}/accept`,
+      null,
+      { headers: await this.getAuthorizeHeader() }
+    ));
+
+  }
+
+  /**
+   * Revokes a permission provisioned by the user.
+   * @param id Permission ID
+   * @returns General message response
+   */
+  public async revokePermission(id: string): Promise<IGeneralMessageResponse> {
+
+    return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
+      `${environment.apiBaseUrl}/permissions/${id}/revoke`,
+      { headers: await this.getAuthorizeHeader() }
+    ));
+
+  }
+
+  /**
+   * Self-revokes a permission granted to the user by another user.
+   * @param id Permission ID
+   * @returns General message response
+   */
+  public async selfRevokePermission(id: string): Promise<IGeneralMessageResponse> {
+
+    return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
+      `${environment.apiBaseUrl}/permissions/${id}/self-revoke`,
+      { headers: await this.getAuthorizeHeader() }
+    ));
+
+  }
+
+  /**
    * Fetches the metadata tags of the given URL.
    * @param url A valid URL
    * @returns URL metadata object
@@ -451,6 +486,12 @@ export interface IUpdateItemRequest {
   originUrl?: string | null,
   favicon?: string | null,
   forceAltLayout: boolean
+}
+
+export interface INewPermissionRequest {
+  spaceId: string,
+  grantee: string,
+  permission: Permission
 }
 
 export interface IGeneralMessageResponse<T=undefined> {

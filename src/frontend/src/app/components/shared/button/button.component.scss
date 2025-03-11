@@ -15,15 +15,31 @@ button {
   padding: 10px 15px;
   cursor: pointer;
   color: utils.color(accent-white);
-  transition: background-color .15s ease-in-out;
+  transition: background-color .15s ease-in-out, color .15s ease-in-out;
+
+  &.transparent {
+    background-color: transparent;
+  }
+
+  &.compact {
+    height: 100%;
+    padding: 0 10px;
+  }
+
+  &.color-override {
+    color: currentColor;
+  }
 
   app-icon {
     display: inline-block;
-    margin-right: 10px;
+    
+    &:not(.standalone) {
+      margin-right: 10px;
+    }
   }
 }
 
-button.primary {
+button.primary:not(.transparent) {
   background-color: utils.color(accent-blue);
 
   &:hover:not(:disabled) {
@@ -31,7 +47,7 @@ button.primary {
   }
 }
 
-button.secondary {
+button.secondary:not(.transparent) {
   background-color: utils.color(gray-3);
 
   &:hover:not(:disabled) {
@@ -39,7 +55,7 @@ button.secondary {
   }
 }
 
-button.success {
+button.success:not(.transparent) {
   background-color: utils.color(accent-green);
 
   &:hover:not(:disabled) {
@@ -47,7 +63,7 @@ button.success {
   }
 }
 
-button.danger {
+button.danger:not(.transparent) {
   background-color: utils.color(accent-red);
 
   &:hover:not(:disabled) {
@@ -56,7 +72,9 @@ button.danger {
 }
 
 button:disabled {
-  background-color: utils.color(gray-7) !important;
+  &:not(.transparent) {
+    background-color: utils.color(gray-7) !important;
+  }
   color: utils.color(gray-6) !important;
   cursor: default !important;
 }

@@ -1,5 +1,5 @@
 import { DecodedIdToken } from 'firebase-admin/auth';
-import { Color, ITag } from './normalized';
+import { Color, ITag, Permission } from './normalized';
 import { Request } from 'express';
 
 export interface AuthorizedRequest<P = any, ResBody = any, ReqBody = any, ReqQuery = any> extends Request<P, ResBody, ReqBody, ReqQuery> {
@@ -49,6 +49,12 @@ export interface IRequestUpdateItem {
   forceAltLayout: boolean
 }
 
+export interface IRequestNewPermission {
+  spaceId: string,
+  grantee: string,
+  permission: Permission
+}
+
 export interface IRequestFetchMetadata {
   url: string
 }
@@ -69,4 +75,9 @@ export type SearchSpacesRequest = AuthorizedRequest<any, any, any, { q: string }
 export type SearchCollectionsRequest = AuthorizedRequest<{ spaceId: string }, any, any, { q: string }>;
 export type SearchCollectionItemsRequest = AuthorizedRequest<{ spaceId: string, collectionId: string }, any, any, { q: string, tags: string[] }>;
 export type SearchItemsRequest = AuthorizedRequest<{ spaceId: string }, any, any, { q: string, tags: string[] }>;
+export type GetProvisionedPermissionsRequest = AuthorizedRequest<{ spaceId: string }>;
+export type NewPermissionRequest = AuthorizedRequest<any, any, IRequestNewPermission>;
+export type AcceptPermissionRequest = AuthorizedRequest<{ id: string }>;
+export type RevokePermissionRequest = AuthorizedRequest<{ id: string }>;
+export type SelfRevokePermissionRequest = AuthorizedRequest<{ id: string }>;
 export type FetchMetadataRequest = AuthorizedRequest<any, any, IRequestFetchMetadata>;

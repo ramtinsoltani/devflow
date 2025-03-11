@@ -17,8 +17,10 @@ export class NavItemComponent {
 
   public finalAccentColor: string = 'currentColor';
   public finalActionIconHoverColor: string = 'currentColor';
+  public finalSecondaryActionIconHoverColor: string = 'currentColor';
   public hovered: boolean = false;
   public actionIconHovered: boolean = false;
+  public secondaryActionIconHovered: boolean = false;
 
   /** Enables high contrast mode between inside badge (used for light accent colors, automatically set for `Color.Yellow` and `Color.White`) */
   @Input()
@@ -81,6 +83,26 @@ export class NavItemComponent {
   @Input()
   public actionIconContainerSize?: string;
 
+  /** Nav item secondary action icon (corresponds to filenames in `/assets/icons`) */
+  @Input()
+  public secondaryActionIcon?: string;
+
+  /** Hover color of the secondary action icon */
+  @Input()
+  public set secondaryActionIconHoverColor(value: string | undefined) {
+
+    this.finalSecondaryActionIconHoverColor = value ? `var(--color-${value})` : 'currentColor';
+    
+  }
+
+  /** Secondary action icon CSS size (defaults to `1em`) */
+  @Input()
+  public secondaryActionIconSize: string = '1em';
+
+  /** Secondary action icon container CSS size (defaults to `actionIconSize`) */
+  @Input()
+  public secondaryActionIconContainerSize?: string;
+
   @HostListener('mouseenter')
   public onMouseEnter(): void {
 
@@ -117,6 +139,31 @@ export class NavItemComponent {
     event.stopImmediatePropagation();
 
     this.onAction.emit();
+
+  }
+
+  /** Emits when secondary action button (if any) is pressed */
+  @Output()
+  public onSecondaryAction = new EventEmitter();
+
+  public onSecondaryActionIconMouseEnter(): void {
+
+    this.secondaryActionIconHovered = true;
+
+  }
+
+  public onSecondaryActionIconMouseLeave(): void {
+
+    this.secondaryActionIconHovered = false;
+
+  }
+
+  public onSecondaryActionIconClick(event: MouseEvent): void {
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    this.onSecondaryAction.emit();
 
   }
 

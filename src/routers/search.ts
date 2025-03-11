@@ -10,22 +10,6 @@ export const SearchRouter = Router();
 // Make all routes protected
 SearchRouter.use(protectedRoute);
 
-SearchRouter.get('/search/spaces', asyncHandler(async (req: SearchSpacesRequest, res: Response<ISpace[]>) => {
-
-  const result = await services.db.searchSpaces(req.token, req.query.q);
-
-  res.json(result);
-
-}));
-
-SearchRouter.get('/:spaceId/search/collections', asyncHandler(async (req: SearchCollectionsRequest, res: Response<ICollection[]>) => {
-
-  const result = await services.db.searchCollections(req.token, req.params.spaceId, req.query.q);
-
-  res.json(result);
-
-}));
-
 SearchRouter.get('/:spaceId/:collectionId/search/items',
   queryArrayParserMiddleware('tags'),
   asyncHandler(async (req: SearchCollectionItemsRequest, res: Response<IItem[]>) => {

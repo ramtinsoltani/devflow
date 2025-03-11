@@ -3,17 +3,18 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { resolve as pathResolve } from 'path';
+import { ServerError } from './lib/error';
+import { Service } from './services/common';
 import { DatabaseService } from './services/database';
+import { ValidatorService } from './services/validator';
+import { AuthService } from './services/auth';
+import { SpaceRouter } from './routers/space';
 import { CollectionRouter } from './routers/collection';
 import { ItemRouter } from './routers/item';
 import { SearchRouter } from './routers/search';
-import { IResponseError } from './models/responses';
-import { ServerError } from './lib/error';
+import { PermissionsRouter } from './routers/permissions';
 import { UtilitiesRouter } from './routers/utils';
-import { SpaceRouter } from './routers/space';
-import { ValidatorService } from './services/validator';
-import { AuthService } from './services/auth';
-import { Service } from './services/common';
+import { IResponseError } from './models/responses';
 
 dotenv.config();
 
@@ -59,6 +60,7 @@ app.use('/api', SpaceRouter);
 app.use('/api', CollectionRouter);
 app.use('/api', ItemRouter);
 app.use('/api', SearchRouter);
+app.use('/api', PermissionsRouter);
 app.use('/api', UtilitiesRouter);
 
 // API 404

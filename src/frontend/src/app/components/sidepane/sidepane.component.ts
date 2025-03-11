@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Color, ICollection, ISpace } from '@devflow/models';
-import { EndpointService, AppService, UtilsService, ModalService, AuthService } from '@devflow/services';
+import { Color, ICollection, IPermission, ISpace, Permission } from '@devflow/models';
+import { EndpointService, AppService, UtilsService, ModalService, AuthService, NotificationService } from '@devflow/services';
 import { Subscription } from 'rxjs';
 import { NavItemComponent } from '../shared/nav-item/nav-item.component';
 import { ActivationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -8,6 +8,9 @@ import { TextboxComponent, TextboxSearchEvent } from '../shared/textbox/textbox.
 import { CollectionModalComponent, CollectionModalData } from '../modals/collection/collection.component';
 import { IconComponent } from '../shared/icon/icon.component';
 import { SpaceModalComponent, SpaceModalData } from '../modals/space/space.component';
+import { InviteModalComponent, InviteModalData } from '../modals/invite/invite.component';
+import { ButtonComponent } from '../shared/button/button.component';
+import { InvitationsModalComponent } from '../modals/invitations/invitations.component';
 
 @Component({
   selector: 'app-sidepane',
@@ -16,7 +19,8 @@ import { SpaceModalComponent, SpaceModalData } from '../modals/space/space.compo
     TextboxComponent,
     RouterLink,
     RouterLinkActive,
-    IconComponent
+    IconComponent,
+    ButtonComponent
   ],
   templateUrl: './sidepane.component.html',
   styleUrl: './sidepane.component.scss'
@@ -33,6 +37,7 @@ export class SidepaneComponent implements OnInit, OnDestroy {
   public collections: ICollection[] = [];
   public filteredCollections?: ICollection[];
   public Color = Color;
+  public invitations: IPermission[] = [];
 
   constructor(
     private app: AppService,
@@ -40,7 +45,8 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     public utils: UtilsService,
     private modals: ModalService,
     private router: Router,
-    private auth: AuthService
+    private auth: AuthService,
+    private notifications: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -70,8 +76,35 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     }));
 
     this.app.fetchSpaces()
-    .catch(error => console.error(error));
+    .catch(console.error);
+
+    // Invitations
+    this.subscriptions.push(this.app.invitations$.subscribe(permissions => {
+      
+      if ( permissions.length > this.invitations.length && this.router.url !== '/' ) {
+
+        this.notifications.create({
+          type: 'info',
+          message: `You have ${permissions.length} pending invitation${permissions.length > 1 ? 's' : ''}`
+        });
+
+      }
+      
+      this.invitations = permissions;
+
+    }));
+
+    this.app.fetchInvitations()
+    .catch(console.error);
     
+  }
+
+  private queryStringToRegex(q: string): RegExp {
+
+    const tokens = q.replace(/\s+/g, ' ').trim().toLowerCase().split(' ');
+
+    return new RegExp(tokens.map(t => `(${t})`).join('|'), 'i');
+  
   }
 
   private selectSpaceFromURLParam(): void {
@@ -160,9 +193,10 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     if ( ! event.value.trim().length )
       return this.onClearCollectionsSearch();
 
-    this.endpoint.searchCollections(this.selectedSpace?.id as string, event.value)
-    .then(results => this.filteredCollections = results)
-    .catch(error => console.error(error));
+    const regex = this.queryStringToRegex(event.value.trim());
+
+    this.filteredCollections = this.collections
+    .filter(c => c.name.match(regex));
 
   }
 
@@ -221,7 +255,8 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     ],
     // Modal data
     {
-      name: space.name
+      name: space.name,
+      id: space.id
     });
 
   }
@@ -255,9 +290,10 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     if ( ! event.value.trim().length )
       return this.onClearSpacesSearch();
 
-    this.endpoint.searchSpaces(event.value)
-    .then(results => this.filteredSpaces = results)
-    .catch(error => console.error(error));
+    const regex = this.queryStringToRegex(event.value.trim());
+
+    this.filteredSpaces = this.spaces
+    .filter(s => s.name.match(regex));
 
   }
 
@@ -270,6 +306,53 @@ export class SidepaneComponent implements OnInit, OnDestroy {
   public onLogout(): void {
 
     this.auth.signOut();
+
+  }
+
+  public onInviteUser(space: ISpace): void {
+
+    this.modals.openModal('Invite to Space', InviteModalComponent, [
+      { label: 'Invite', type: 'success', closesModal: true, boundToValidation: true, callback: (modalOutput: InviteModalData) => {
+
+        this.endpoint.provisionNewPermission({
+          grantee: modalOutput.email,
+          spaceId: space.id,
+          permission: modalOutput.canModify ? Permission.CanModifyContent : Permission.ReadOnly
+        })
+        .then(() => this.notifications.create({ type: 'info', message: 'An invitation was sent to the user' }))
+        .catch(console.error);
+
+      }},
+      { label: 'Cancel', type: 'secondary', closesModal: true }
+    ]);
+
+  }
+
+  public onInvitationsClick(): void {
+
+    this.modals.openModal('Invitations', InvitationsModalComponent, [
+      { label: 'Close', type: 'secondary', closesModal: true }
+    ]);
+
+  }
+
+  public getOwnedSpaces(): ISpace[] {
+
+    return (this.filteredSpaces || this.spaces)
+    .filter(s => ! s.shared);
+
+  }
+
+  public getSharedSpaces(): ISpace[] {
+
+    return (this.filteredSpaces || this.spaces)
+    .filter(s => !! s.shared);
+
+  }
+
+  public hasWritePermission(): boolean {
+
+    return !! this.selectedSpace && (! this.selectedSpace.shared || this.selectedSpace.permission === Permission.CanModifyContent);
 
   }
 

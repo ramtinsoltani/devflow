@@ -1,0 +1,15 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+section.permissions,
+.permissions-list {
+  display: flex;
+  flex-direction: column;
+}
+
+section.permissions {
+  gap: 5px;
+}

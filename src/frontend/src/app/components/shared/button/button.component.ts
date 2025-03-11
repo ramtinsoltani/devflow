@@ -1,9 +1,13 @@
 import { booleanAttribute, Component, EventEmitter, Input, Output } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-button',
-  imports: [IconComponent],
+  imports: [
+    IconComponent,
+    NgClass
+  ],
   templateUrl: './button.component.html',
   styleUrl: './button.component.scss'
 })
@@ -32,6 +36,15 @@ export class ButtonComponent {
   /** Icon container CSS size (defaults to `iconSize`) */
   @Input()
   public iconContainerSize?: string;
+
+  @Input({ transform: booleanAttribute })
+  public allowColorOverrides: boolean = false;
+
+  @Input({ transform: booleanAttribute })
+  public transparentBackground: boolean = false;
+
+  @Input({ transform: booleanAttribute })
+  public compact: boolean = false;
 
   /** Emits when button is pressed */
   @Output()

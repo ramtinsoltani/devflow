@@ -1,0 +1,9 @@
+@for (invitation of invitations; track $index) {
+  <app-invitation-item
+  mode="grantee"
+  [permission]="invitation"
+  [processing]="processing.has(invitation.id)"
+  (onAccept)="onProcessInvitation(invitation, 'accept')"
+  (onReject)="onProcessInvitation(invitation, 'reject')">
+  </app-invitation-item>
+}

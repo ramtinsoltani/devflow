@@ -1,26 +1,56 @@
 @if ( ! selectedSpace ) {
-  <app-textbox
-  placeholder="Search spaces"
-  type="search"
-  (onSearch)="onSearchSpaces($event)"
-  (onClear)="onClearSpacesSearch()"></app-textbox>
-  <app-nav-item
-  class="new-item"
-  label="New Space"
-  icon="circle-plus"
-  iconContainerSize="1rem"
-  (click)="onNewSpace()">
-  </app-nav-item>
+  <div class="control-group">
+    <app-textbox
+    class="w-100"
+    placeholder="Search spaces"
+    type="search"
+    emitSearchEventsOnChanges
+    (onSearch)="onSearchSpaces($event)"
+    (onClear)="onClearSpacesSearch()"></app-textbox>
+    <app-button
+    class="new-item"
+    icon="circle-plus"
+    iconSize="1.125rem"
+    allowColorOverrides
+    transparentBackground
+    compact
+    (onClick)="onNewSpace()">
+    </app-button>
+  </div>
+
+  @if ( invitations.length ) {
+    <app-nav-item
+    label="Invitations"
+    icon="envelope"
+    iconSize="1em"
+    [badge]="invitations.length"
+    (click)="onInvitationsClick()">
+    </app-nav-item>
+  }
+
   <div class="items">
-    @for (space of filteredSpaces || spaces; track $index) {
+    @for (space of getOwnedSpaces(); track $index) {
       <app-nav-item
       [label]="space.name"
       actionIcon="pen-to-square"
-      actionIconSize=".875em"
+      actionIconSize="1em"
       actionIconHoverColor="gray-9"
+      secondaryActionIcon="user-plus"
+      secondaryActionIconSize="1.125em"
+      secondaryActionIconHoverColor="gray-9"
       (click)="onSelectSpace(space)"
-      (onAction)="onEditSpace(space)">
+      (onAction)="onEditSpace(space)"
+      (onSecondaryAction)="onInviteUser(space)">
       </app-nav-item>
+    }
+    @if (getSharedSpaces().length ) {
+      <div class="separator"><span>Shared With You</span></div>
+      @for (space of getSharedSpaces(); track $index) {
+        <app-nav-item
+        [label]="space.name"
+        (click)="onSelectSpace(space)">
+        </app-nav-item>
+      }
     }
   </div>
   <app-nav-item
@@ -37,38 +67,67 @@
     icon="chevron-left"
     iconSize="1em">
     </app-icon>
-    <span class="space-name">{{ selectedSpace.name }}</span>
+    <span class="space-name">
+      {{ selectedSpace.name }}
+    </span>
+    @if ( ! hasWritePermission() ) {
+      <span class="space-permission">Read Only</span>
+    }
   </div>
-  <app-textbox
-  placeholder="Search collections"
-  type="search"
-  (onSearch)="onSearchCollections($event)"
-  (onClear)="onClearCollectionsSearch()"></app-textbox>
-  <app-nav-item
-  class="new-item"
-  label="New Collection"
-  icon="circle-plus"
-  iconContainerSize="1rem"
-  (click)="onNewCollection()">
-  </app-nav-item>
+  <div class="control-group">
+    <app-textbox
+    class="w-100"
+    placeholder="Search collections"
+    type="search"
+    emitSearchEventsOnChanges
+    (onSearch)="onSearchCollections($event)"
+    (onClear)="onClearCollectionsSearch()"></app-textbox>
+    @if ( hasWritePermission() ) {
+      <app-button
+      class="new-item"
+      icon="circle-plus"
+      iconSize="1.125rem"
+      allowColorOverrides
+      transparentBackground
+      compact
+      (onClick)="onNewCollection()">
+      </app-button>
+    }
+  </div>
   <div class="items">
     @for (collection of filteredCollections || collections; track $index) {
-      <app-nav-item
-      [routerLink]="selectedSpace.id + '/' + collection.id"
-      [state]="{ spaceName: selectedSpace.id, collectionName: collection.name }"
-      #navItemLink="routerLinkActive"
-      routerLinkActive
-      [selected]="navItemLink.isActive"
-      [label]="collection.name"
-      icon="rectangle-history"
-      iconSize="1em"
-      [accentColor]="utils.getPaletteColor(collection.color)"
-      [badge]="collection.size"
-      actionIcon="pen-to-square"
-      actionIconSize=".875em"
-      actionIconHoverColor="gray-9"
-      (onAction)="onEditCollection(collection)">
-      </app-nav-item>
+      @if ( hasWritePermission() ) {
+        <app-nav-item
+        [routerLink]="selectedSpace.id + '/' + collection.id"
+        [state]="{ spaceName: selectedSpace.id, collectionName: collection.name }"
+        #navItemLink="routerLinkActive"
+        routerLinkActive
+        [selected]="navItemLink.isActive"
+        [label]="collection.name"
+        icon="rectangle-history"
+        iconSize="1em"
+        [accentColor]="utils.getPaletteColor(collection.color)"
+        [badge]="collection.size"
+        actionIcon="pen-to-square"
+        actionIconSize="1em"
+        actionIconHoverColor="gray-9"
+        (onAction)="onEditCollection(collection)">
+        </app-nav-item>
+      }
+      @else {
+        <app-nav-item
+        [routerLink]="selectedSpace.id + '/' + collection.id"
+        [state]="{ spaceName: selectedSpace.id, collectionName: collection.name }"
+        #navItemLink="routerLinkActive"
+        routerLinkActive
+        [selected]="navItemLink.isActive"
+        [label]="collection.name"
+        icon="rectangle-history"
+        iconSize="1em"
+        [accentColor]="utils.getPaletteColor(collection.color)"
+        [badge]="collection.size">
+        </app-nav-item>
+      }
     }
   </div>
   <app-nav-item

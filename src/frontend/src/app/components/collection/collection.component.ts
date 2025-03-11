@@ -11,16 +11,16 @@ import { EmptyPlaceholderComponent } from '../shared/empty-placeholder/empty-pla
 import { NgClass } from '@angular/common';
 
 @Component({
-    selector: 'app-collection',
-    imports: [
-        ItemComponent,
-        NavItemComponent,
-        TextboxComponent,
-        EmptyPlaceholderComponent,
-        NgClass
-    ],
-    templateUrl: './collection.component.html',
-    styleUrl: './collection.component.scss'
+  selector: 'app-collection',
+  imports: [
+    ItemComponent,
+    NavItemComponent,
+    TextboxComponent,
+    EmptyPlaceholderComponent,
+    NgClass
+  ],
+  templateUrl: './collection.component.html',
+  styleUrl: './collection.component.scss'
 })
 export class CollectionComponent implements OnDestroy {
 
@@ -30,6 +30,7 @@ export class CollectionComponent implements OnDestroy {
 
   public items: IItem[] = [];
   public filteredItems?: IItem[] = undefined;
+  public hasWritePermission: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -55,6 +56,20 @@ export class CollectionComponent implements OnDestroy {
         .then(items => this.items = items)
         .catch(error => console.error(error));
 
+      }
+
+      // Read space settings (write permission)
+      if ( spaceId ) {
+
+        this.subscriptions.push(this.app.spaces$.subscribe(spaces => {
+
+          if ( ! spaces.length )
+            return;
+
+          this.hasWritePermission = this.app.isWritePermissionGranted(spaceId);
+
+        }));
+        
       }
 
     }));

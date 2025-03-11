@@ -29,6 +29,9 @@ export class ItemComponent implements OnInit {
   @Input()
   public item?: IItem;
 
+  @Input()
+  public readOnly: boolean = false;
+
   /** Emits when item is updated */
   @Output()
   public onItemUpdate = new EventEmitter<IItem | null>();
@@ -82,6 +85,9 @@ export class ItemComponent implements OnInit {
   }
 
   public onEditItem(event: MouseEvent): void {
+
+    if ( this.readOnly )
+      return;
 
     event.stopImmediatePropagation();
 

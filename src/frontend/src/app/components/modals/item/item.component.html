@@ -25,6 +25,6 @@
   (onUrlSubmit)="onSubmitUrl($event)">
   </app-textbox>
   <app-textbox [(value)]="modalData.title" label="Title" placeholder="Required"></app-textbox>
-  <app-textbox type="multiline" [(value)]="modalData.description" label="Description" placeholder="Optional" [multilineMaxAllowedChars]="512"></app-textbox>
+  <app-textbox type="multiline" [(value)]="modalData.description" label="Description" placeholder="Optional" [multilineMaxAllowedChars]="1024"></app-textbox>
   <app-textbox [(tags)]="modalData.tags" label="Tags" placeholder="Optional" withTags [previousTagsColorSequence]="originalColorSequence"></app-textbox>
 </div>

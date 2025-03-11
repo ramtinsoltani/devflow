@@ -1,5 +1,5 @@
 import { cert, initializeApp } from 'firebase-admin/app';
-import { DecodedIdToken, FirebaseAuthError, getAuth } from 'firebase-admin/auth';
+import { DecodedIdToken, FirebaseAuthError, getAuth, UserRecord } from 'firebase-admin/auth';
 import { ServerError } from '../lib/error';
 import { Service } from './common';
 
@@ -42,6 +42,28 @@ export class AuthService implements Service {
     }
     
     return decoded;
+
+  }
+
+  /**
+   * Retrieves user record from an email if it's registered.
+   * @param email Email address of a user
+   * @returns A promise with the resolved user record or null if user does not exist
+   */
+  public async getUserFromEmail(email: string): Promise<UserRecord | null> {
+
+    try {
+
+      return await getAuth().getUserByEmail(email);
+
+    }
+    catch (error) {
+
+      console.error(error);
+
+      return null;
+
+    }
 
   }
 

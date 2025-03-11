@@ -1,2 +1,18 @@
 <app-textbox [(value)]="modalData.name" label="Name" placeholder="Required">
 </app-textbox>
+
+@if ( permissions.length ) {
+  <section class="permissions">
+    <label>Shared With</label>
+    <div class="permissions-list">
+      @for (permission of permissions; track $index) {
+        <app-invitation-item
+        [permission]="permission"
+        [processing]="processing.has(permission.id)"
+        mode="provisioner"
+        (onRevoke)="onRevokePermission(permission)">
+        </app-invitation-item>
+      }
+    </div>
+  </section>
+}

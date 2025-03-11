@@ -1,0 +1,15 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+additionalProperties: false
+properties:
+  spaceId:
+    type: string
+    required: true
+  grantee:
+    type: string
+    format: email
+    required: true
+  permission:
+    type: string,
+    required: true
+    enum: ["read", "write"]

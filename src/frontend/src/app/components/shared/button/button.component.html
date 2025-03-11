@@ -1,10 +1,20 @@
-<button class="{{ type }}" type="button" (click)="onButtonClick()" [disabled]="disabled">
+<button
+type="button"
+class="{{ type }}"
+[ngClass]="{
+  'color-override': allowColorOverrides,
+  'transparent': transparentBackground,
+  'compact': compact
+}"
+[disabled]="disabled"
+(click)="onButtonClick()">
   @if ( icon ) {
     <app-icon
     [icon]="icon"
     [iconSize]="iconSize"
     [containerSize]="iconContainerSize"
-    color="currentColor">
+    color="currentColor"
+    [ngClass]="{ standalone: ! label }">
     </app-icon>
   }
   {{ label }}

@@ -23,3 +23,8 @@ export interface ITag {
   label: string,
   color: Color
 }
+
+export enum Permission {
+  ReadOnly = 'read',
+  CanModifyContent = 'write'
+}

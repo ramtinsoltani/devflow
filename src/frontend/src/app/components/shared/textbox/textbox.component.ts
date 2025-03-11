@@ -94,6 +94,10 @@ export class TextboxComponent implements OnInit {
   @Input()
   public value: string | undefined = '';
 
+  /** Determines whether search events should be emitted when input is changed or when Enter is pressed */
+  @Input({ transform: booleanAttribute })
+  public emitSearchEventsOnChanges: boolean = false;
+
   /** Emits when textbox value changes */
   @Output()
   public valueChange = new EventEmitter<string>();
@@ -187,6 +191,9 @@ export class TextboxComponent implements OnInit {
 
     if ( this.type === 'url' )
       this.checkUrlValue();
+
+    if ( this.emitSearchEventsOnChanges )
+      this.onSearchTrigger();
 
   }
 

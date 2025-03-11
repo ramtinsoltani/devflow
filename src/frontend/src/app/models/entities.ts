@@ -1,4 +1,4 @@
-import { Color, ITag } from '@devflow/models';
+import { Color, ITag, Permission } from '@devflow/models';
 
 export interface ICommonDocument {
   owner: string,
@@ -8,7 +8,9 @@ export interface ICommonDocument {
 }
 
 export interface ISpace extends ICommonDocument {
-  name: string
+  name: string,
+  shared?: true,
+  permission?: Permission
 }
 
 export interface ICollection extends ICommonDocument {
@@ -30,4 +32,16 @@ export interface IItem extends ICommonDocument {
   originUrl?: string,
   favicon?: string,
   forceAltLayout: boolean
+}
+
+export interface IPermission extends ICommonDocument {
+  grantedTo: string,
+  spaceId: string,
+  spaceName: string,
+  permission: Permission,
+  granteeName?: string,
+  granteeEmail: string,
+  provisionerName?: string,
+  provisionerEmail: string,
+  accepted: boolean
 }

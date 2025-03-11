@@ -1,0 +1,39 @@
+<div class="text" [ngClass]="{ processing }">
+  @if ( mode === 'provisioner' ) {
+    {{ permission.granteeName || permission.granteeEmail }} <span class="dim status">{{ getPermissionText() }}</span>
+  }
+  @else {
+    {{ permission.provisionerName || permission.provisionerEmail }} <span class="dim">invited you to</span> {{ permission.spaceName }}
+  }
+</div>
+<div class="actions" [ngClass]="{ processing }">
+  @if ( mode === 'provisioner' ) {
+    <app-icon
+    icon="user-minus"
+    iconSize="1.125em"
+    paletteColor="accent-red"
+    (click)="onRevoke.emit()">
+    </app-icon>
+  }
+  @else {
+    <app-icon
+    icon="check"
+    iconSize="1em"
+    paletteColor="accent-green"
+    (click)="onAccept.emit()">
+    </app-icon>
+    <app-icon
+    icon="xmark"
+    iconSize="1em"
+    paletteColor="accent-red"
+    (click)="onReject.emit()">
+    </app-icon>
+  }
+</div>
+@if ( processing ) {
+  <app-icon
+  class="spinner"
+  icon="spinner-third"
+  iconSize="1em">
+  </app-icon>
+}

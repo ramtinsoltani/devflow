@@ -38,5 +38,26 @@ export interface ICollection extends ICommonDocument {
 }
 
 export interface ISpace extends ICommonDocument {
-  name: string
+  name: string,
+  /** Virtual field */
+  shared?: true,
+  /** Virtual field */
+  permission?: Permission
+}
+
+export interface IPermission extends ICommonDocument {
+  spaceId: string,
+  spaceName: string,
+  grantedTo: string,
+  granteeName?: string,
+  granteeEmail: string,
+  provisionerName?: string,
+  provisionerEmail: string,
+  permission: Permission,
+  accepted: boolean
+}
+
+export enum Permission {
+  ReadOnly = 'read',
+  CanModifyContent = 'write'
 }
