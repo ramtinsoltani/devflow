@@ -102,6 +102,20 @@ export class ModalComponent implements OnInit {
 
 
         this.modalContentRef.instance.modalManager = {
+          submit: () => {
+
+            const firstSubmitButton = this.buttons.findIndex(b => !! b.submit);
+
+            if ( firstSubmitButton !== -1 ) {
+
+              if ( this.buttons[firstSubmitButton].boundToValidation && ! this.isModalValid() )
+                return;
+              
+              this.onButtonClick(this.buttons[firstSubmitButton], firstSubmitButton);
+
+            }
+
+          },
           close: () => this.onModalClose.emit()
         };
 

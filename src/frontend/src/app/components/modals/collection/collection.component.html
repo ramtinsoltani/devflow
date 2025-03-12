@@ -1,4 +1,4 @@
-<app-textbox [(value)]="modalData.name" label="Name" placeholder="Required">
+<app-textbox [(value)]="modalData.name" label="Name" placeholder="Required" autofocus (keyup.enter)="onEnterPress()">
 </app-textbox>
 <div class="color-swatch-control">
   <label>Color</label>

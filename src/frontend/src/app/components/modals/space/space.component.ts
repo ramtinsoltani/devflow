@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { EndpointService, GenericModalComponent, OnModalOutput, OnModalValidation } from '@devflow/services';
+import { EndpointService, GenericModalComponent, ModalManager, OnModalOutput, OnModalValidation } from '@devflow/services';
 import { TextboxComponent } from '../../shared/textbox/textbox.component';
 import { IPermission } from '@devflow/models';
 import { InvitationItemComponent } from '../../shared/invitation-item/invitation-item.component';
@@ -19,6 +19,8 @@ export class SpaceModalComponent implements OnInit, GenericModalComponent, OnMod
   public modalData: SpaceModalData = {
     name: ''
   };
+
+  public modalManager!: ModalManager;
 
   public permissions: IPermission[] = [];
   public processing = new Map<string, true>();
@@ -62,6 +64,12 @@ export class SpaceModalComponent implements OnInit, GenericModalComponent, OnMod
     .then(() => this.permissions.splice(this.permissions.findIndex(p => p.id === permission.id), 1))
     .catch(console.error)
     .finally(() => this.processing.delete(permission.id));
+
+  }
+
+  public onEnterPress(): void {
+
+    this.modalManager.submit();
 
   }
     

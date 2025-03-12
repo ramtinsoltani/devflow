@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { GenericModalComponent, OnModalOutput, OnModalValidation } from '@devflow/services';
+import { GenericModalComponent, ModalManager, OnModalOutput, OnModalValidation } from '@devflow/services';
 import { isEmail } from 'validator';
 import { TextboxComponent } from '../../shared/textbox/textbox.component';
 import { CheckboxComponent } from '../../shared/checkbox/checkbox.component';
@@ -21,6 +21,8 @@ export class InviteModalComponent implements GenericModalComponent, OnModalOutpu
     canModify: false
   };
 
+  public modalManager!: ModalManager;
+
   onModalOutput() {
     
     return this.modalData;
@@ -31,6 +33,12 @@ export class InviteModalComponent implements GenericModalComponent, OnModalOutpu
     
     return isEmail(this.modalData.email);
     
+  }
+
+  public onEnterPress(): void {
+
+    this.modalManager.submit();
+
   }
   
 }

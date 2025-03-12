@@ -55,3 +55,7 @@ input[type=checkbox] {
   color: utils.color(gray-9);
   pointer-events: none;
 }
+
+label {
+  font-weight: 300 !important;
+}

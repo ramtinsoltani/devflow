@@ -35,6 +35,8 @@ export interface ModalDef<T=any> {
 
 export interface ModalButton {
   type: 'primary' | 'secondary' | 'danger' | 'success',
+  /** Whether this button submits the form or not (useful for implementing manual submission using ModalManager where the first button that submits will be used) */
+  submit?: boolean,
   label: string,
   callback?: (modalOutput?: any) => void,
   /** If true, modal will be automatically closed when this button is pressed */
@@ -72,6 +74,9 @@ export interface OnModalInit {
 }
 
 export interface ModalManager {
+  /** Submits the modal and closes it (if modal data is valid) */
+  submit: () => void,
+  /** Closes the modal */
   close: () => void
 }
 

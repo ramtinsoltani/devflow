@@ -129,7 +129,7 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     let newCollectionId!: string;
 
     this.modals.openModal('New Collection', CollectionModalComponent, [
-      { label: 'Create', type: 'success', closesModal: true, boundToValidation: true, callback: (modalOutput: CollectionModalData) => {
+      { label: 'Create', type: 'success', submit: true, closesModal: true, boundToValidation: true, callback: (modalOutput: CollectionModalData) => {
 
         this.endpoint.createCollection(this.selectedSpace?.id as string, { name: modalOutput.name, color: modalOutput.color })
         .then(res => {
@@ -171,7 +171,7 @@ export class SidepaneComponent implements OnInit, OnDestroy {
         .catch(error => console.error(error));
 
       }},
-      { label: 'Update', type: 'primary', closesModal: true, boundToValidation: true, callback: (modalOutput: CollectionModalData) => {
+      { label: 'Update', type: 'primary', submit: true, closesModal: true, boundToValidation: true, callback: (modalOutput: CollectionModalData) => {
 
         this.endpoint.updateCollection(this.selectedSpace?.id as string, collection.id, { name: modalOutput.name, color: modalOutput.color })
         .then(() => this.app.fetchCollections(this.selectedSpace?.id as string))
@@ -211,7 +211,7 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     let newSpaceId!: string;
 
     this.modals.openModal('New Space', SpaceModalComponent, [
-      { label: 'Create', type: 'success', closesModal: true, boundToValidation: true, callback: (modalOutput: SpaceModalData) => {
+      { label: 'Create', type: 'success', submit: true, closesModal: true, boundToValidation: true, callback: (modalOutput: SpaceModalData) => {
 
         this.endpoint.createSpace({ name: modalOutput.name })
         .then(res => {
@@ -244,7 +244,7 @@ export class SidepaneComponent implements OnInit, OnDestroy {
         .catch(error => console.error(error));
 
       }},
-      { label: 'Update', type: 'primary', closesModal: true, boundToValidation: true, callback: (modalOutput: SpaceModalData) => {
+      { label: 'Update', type: 'primary', submit: true, closesModal: true, boundToValidation: true, callback: (modalOutput: SpaceModalData) => {
 
         this.endpoint.updateSpace(space.id, { name: modalOutput.name })
         .then(() => this.app.fetchSpaces())
@@ -312,7 +312,7 @@ export class SidepaneComponent implements OnInit, OnDestroy {
   public onInviteUser(space: ISpace): void {
 
     this.modals.openModal('Invite to Space', InviteModalComponent, [
-      { label: 'Invite', type: 'success', closesModal: true, boundToValidation: true, callback: (modalOutput: InviteModalData) => {
+      { label: 'Invite', type: 'success', submit: true, closesModal: true, boundToValidation: true, callback: (modalOutput: InviteModalData) => {
 
         this.endpoint.provisionNewPermission({
           grantee: modalOutput.email,

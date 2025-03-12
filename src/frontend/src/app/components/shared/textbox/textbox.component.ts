@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, Input, Output, HostListener, EventEmitter, booleanAttribute, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, Input, Output, HostListener, EventEmitter, booleanAttribute, ViewChild, ElementRef, OnInit, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Color, ITag } from '@devflow/models';
 import { UtilsService } from '@devflow/services';
@@ -18,7 +18,7 @@ import isURL from 'validator/es/lib/isURL';
     templateUrl: './textbox.component.html',
     styleUrl: './textbox.component.scss'
 })
-export class TextboxComponent implements OnInit {
+export class TextboxComponent implements OnInit, AfterViewInit {
 
   /** Indicates if host element is hovered */
   public hovered: boolean = false;
@@ -27,6 +27,12 @@ export class TextboxComponent implements OnInit {
 
   @ViewChild('tagsContainer', { read: ElementRef })
   public tagsContainerEl!: ElementRef<HTMLDivElement>;
+
+  @ViewChild('singleLineInput', { read: ElementRef })
+  public singleLineInput?: ElementRef<HTMLInputElement>;
+
+  @ViewChild('multilineInput', { read: ElementRef })
+  public multilineInput?: ElementRef<HTMLTextAreaElement>;
 
   @HostListener('mouseenter')
   public onMouseEnter(): void {
@@ -98,6 +104,10 @@ export class TextboxComponent implements OnInit {
   @Input({ transform: booleanAttribute })
   public emitSearchEventsOnChanges: boolean = false;
 
+  /** Whether this textbox should have auto-focus or not */
+  @Input({ transform: booleanAttribute })
+  public autofocus: boolean = false;
+
   /** Emits when textbox value changes */
   @Output()
   public valueChange = new EventEmitter<string>();
@@ -127,6 +137,13 @@ export class TextboxComponent implements OnInit {
     if ( this.type === 'url' )
       this.checkUrlValue();
     
+  }
+
+  ngAfterViewInit(): void {
+    
+    if ( this.autofocus )
+      (this.singleLineInput || this.multilineInput)?.nativeElement.focus();
+
   }
 
   private createTag(value: string): void {

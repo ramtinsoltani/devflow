@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Color } from '@devflow/models';
-import { GenericModalComponent, OnModalOutput, OnModalValidation, UtilsService } from '@devflow/services';
+import { GenericModalComponent, ModalManager, OnModalOutput, OnModalValidation, UtilsService } from '@devflow/services';
 import { TextboxComponent } from '../../shared/textbox/textbox.component';
 import { IconComponent } from '../../shared/icon/icon.component';
 import { NgClass } from '@angular/common';
@@ -28,6 +28,8 @@ export class CollectionModalComponent implements GenericModalComponent, OnModalO
     name: '',
     color: Color.Blue
   };
+
+  public modalManager!: ModalManager;
 
   public colorTuples: [Color, string][] = [];
 
@@ -63,6 +65,12 @@ export class CollectionModalComponent implements GenericModalComponent, OnModalO
     
     return !! this.modalData.name?.length;
     
+  }
+
+  public onEnterPress(): void {
+
+    this.modalManager.submit();
+
   }
 
 }

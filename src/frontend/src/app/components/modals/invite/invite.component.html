@@ -1,4 +1,4 @@
-<app-textbox [(value)]="modalData.email" label="Email" placeholder="Required">
+<app-textbox [(value)]="modalData.email" label="Email" placeholder="Required" autofocus (keyup.enter)="onEnterPress()">
 </app-textbox>
 <app-checkbox [(checked)]="modalData.canModify" label="Allow this user to modify the content in this space">
 </app-checkbox>
