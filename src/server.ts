@@ -16,7 +16,6 @@ import { PermissionsRouter } from './routers/permissions';
 import { UtilitiesRouter } from './routers/utils';
 import { HealthRouter } from './routers/health';
 import { IResponseError } from './models/responses';
-import { TestRouter } from './routers/test';
 
 dotenv.config();
 
@@ -63,7 +62,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // API routes
 app.use('/api', HealthRouter);
-app.use('/api', TestRouter);
 app.use('/api', SpaceRouter);
 app.use('/api', CollectionRouter);
 app.use('/api', ItemRouter);

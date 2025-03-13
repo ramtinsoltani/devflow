@@ -16,8 +16,6 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
 
   services.validator.validate(req.body, ValidatorSchema.RequestFetchMetadata);
 
-  console.log('>>> Request validated');
-
   const previewOptions: any = {
     headers: {
       'user-agent': 'google-bot',
@@ -25,8 +23,6 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
     },
     followRedirects: 'follow'
   };
-
-  console.log('>>> previewOptions:', previewOptions);
   
   const previewResults = await Promise.allSettled([
     // Link preview
@@ -34,8 +30,6 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
     // Link's origin preview
     getLinkPreview(new URL(req.body.url).origin, previewOptions)
   ]);
-
-  console.log('>>> Got results');
 
   // Show warnings for each failed preview fetch
   for ( const result of previewResults ) {
@@ -58,8 +52,6 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
     }`);
 
   }
-
-  console.log('>>> Reading link preview data...');
 
   const metadata: IResponseUrlMetadata = {};
 
@@ -100,8 +92,6 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
     metadata.originUrl = new URL(req.body.url).origin;
 
   }
-
-  console.log('>>> Resolving favicon');
 
   // Find the best favicon
   const favicons: { svg?: string, png: { url: string, size: number }[], ico?: string } = {
@@ -154,8 +144,6 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
   }
 
   metadata.favicon = favicons.svg || bestPNG || favicons.ico || new URL(req.body.url).origin + '/favicon.ico';
-
-  console.log('>>> Responding with results');
 
   res.json(metadata);
 
