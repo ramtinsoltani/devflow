@@ -1,20 +1,25 @@
-import { Component, ViewContainerRef, ViewChild } from '@angular/core';
+import { Component, ViewContainerRef, ViewChild, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent, SidepaneComponent, ModalComponent, NotificationComponent } from '@devflow/components';
-import { AuthService, ModalService, NotificationService } from './services';
+import { AppService, AuthService, ModalService, NotificationService } from './services';
 import { User } from 'firebase/auth';
+import { FloatingButtonComponent } from './components/shared/floating-button/floating-button.component';
+import { HelpModalComponent } from './components/modals/help/help.component';
 
 @Component({
   selector: 'app-root',
   imports: [
     RouterOutlet,
     HeaderComponent,
-    SidepaneComponent
+    SidepaneComponent,
+    FloatingButtonComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
+
+  private modalsOpen: number = 0;
 
   public currentUser?: User;
 
@@ -24,10 +29,31 @@ export class AppComponent {
   @ViewChild('notificationsContainer', { read: ViewContainerRef })
   private notificationsContainer!: ViewContainerRef;
 
+  @HostListener('body:keyup', ['$event'])
+  public onKeyUp(event: KeyboardEvent): void {
+
+    if ( this.modalsOpen )
+      return;
+
+    this.app.processKeyboardEvent(event);
+
+  }
+
+  @HostListener('paste', ['$event'])
+  public onPaste(event: ClipboardEvent): void {
+    
+    if ( this.modalsOpen )
+      return;
+
+    this.app.processKeyboardEvent(event);
+    
+  }
+
   constructor(
     private modals: ModalService,
     private notifications: NotificationService,
-    private auth: AuthService
+    private auth: AuthService,
+    private app: AppService
   ) {
 
     this.auth.onAuthStateChanged$.subscribe(user => this.currentUser = user || undefined);
@@ -52,13 +78,19 @@ export class AppComponent {
 
         const index = this.modalsContainer.indexOf(ref.hostView);
 
-        if ( index != -1 )
+        if ( index != -1 ) {
+
           this.modalsContainer.remove(index);
+          this.modalsOpen--;
+
+        }
 
         if ( sub && ! sub.closed )
           sub.unsubscribe();
 
       });
+
+      this.modalsOpen++;
 
     });
 
@@ -84,6 +116,14 @@ export class AppComponent {
       });
 
     });
+
+  }
+
+  public onHelpButtonClick(): void {
+
+    this.modals.openModal('Help', HelpModalComponent, [
+      { label: 'Close', type: 'secondary', closesModal: true }
+    ]);
 
   }
 

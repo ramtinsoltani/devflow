@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Color, IItem, ITag } from '@devflow/models';
-import { AppService, EndpointService, ModalService, ModalSize } from '@devflow/services';
+import { AppService, EndpointService, IUpdateItemRequest, KeyboardShortcut, ModalService, ModalSize } from '@devflow/services';
 import { Subscription } from 'rxjs';
 import { ItemComponent, TagFilterEvent } from '../shared/item/item.component';
 import { NavItemComponent } from '../shared/nav-item/nav-item.component';
@@ -9,6 +9,8 @@ import { TextboxComponent, TextboxSearchEvent } from '../shared/textbox/textbox.
 import { ItemModalComponent, ItemModalData, ItemModalOutput } from '../modals/item/item.component';
 import { EmptyPlaceholderComponent } from '../shared/empty-placeholder/empty-placeholder.component';
 import { NgClass } from '@angular/common';
+import isURL from 'validator/es/lib/isURL';
+import { cloneDeep } from 'lodash-es';
 
 @Component({
   selector: 'app-collection',
@@ -30,6 +32,7 @@ export class CollectionComponent implements OnDestroy {
 
   public items: IItem[] = [];
   public filteredItems?: IItem[] = undefined;
+  public fetchingMetadata = new Map<string, true>();
   public hasWritePermission: boolean = true;
 
   constructor(
@@ -102,6 +105,88 @@ export class CollectionComponent implements OnDestroy {
 
     }));
 
+    // Subscribe to keyboard shortcuts
+    this.subscriptions.push(this.app.onKeyboardShortcut(async event => {
+
+      if ( event.shortcut === KeyboardShortcut.NewItem )
+        return this.onNewItem();
+
+      if ( event.shortcut === KeyboardShortcut.PasteItem ) {
+
+        // Grab text from clipboard
+        const text = (event.event as ClipboardEvent).clipboardData?.getData('text');
+
+        if ( ! text )
+          return;
+
+        // Check if it's a valid URL
+        const isUrlValid = isURL(text.trim(), {
+          protocols: ['http', 'https'],
+          require_protocol: true,
+          require_valid_protocol: true
+        });
+
+        if ( ! isUrlValid )
+          return;
+
+        // Create a new item with plain info
+        const url = new URL(text.trim());
+
+        try {
+
+          const itemId = (await this.endpoint.createItem(this.spaceId, {
+            collectionId: this.collectionId,
+            url: text.trim(),
+            title: url.hostname,
+            tags: [],
+            forceAltLayout: false
+          })).data;
+
+          // Read the new item
+          const item = await this.endpoint.getItem(this.spaceId, itemId);
+
+          // Update current collection
+          this.items.unshift(item);
+          this.app.updateCollectionSize(item.collectionId, this.app.getCollectionSize(item.collectionId) + 1);
+
+          // Fetch item metadata separately
+          this.fetchingMetadata.set(itemId, true);
+          
+          const metadata = await this.endpoint.fetchMetadata(text.trim());
+          const itemUpdate: IUpdateItemRequest = { forceAltLayout: false };
+
+          for ( const key in metadata )
+            if ( metadata[key] !== undefined && metadata[key] !== null )
+              itemUpdate[key] = metadata[key];
+
+          // Update item if anything fetched
+          if ( Object.keys(itemUpdate).length > 1 ) {
+
+            await this.endpoint.updateItem(this.spaceId, itemId, itemUpdate);
+
+            // Update item reference
+            const updatedItem = cloneDeep(item);
+            const itemIndex = this.items.findIndex(i => i.id === updatedItem.id);
+
+            if ( itemIndex !== -1 )
+              this.onItemUpdated(itemIndex, { ...updatedItem, ...(itemUpdate as any) });
+
+          }
+
+          // Clear fetching flag
+          this.fetchingMetadata.delete(itemId);
+
+        }
+        catch (error) {
+
+          console.error(error);
+
+        }
+
+      }
+
+    }));
+
   }
 
   public queryTags: ITag[] = [];
@@ -162,7 +247,7 @@ export class CollectionComponent implements OnDestroy {
         .then(newItem => {
 
           this.items.unshift(newItem);
-          this.app.updateCollectionSize(newItem.collectionId, this.app.getCollectionSize(newItem.collectionId) + 1)
+          this.app.updateCollectionSize(newItem.collectionId, this.app.getCollectionSize(newItem.collectionId) + 1);
 
         })
         .catch(error => console.error(error));

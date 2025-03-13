@@ -37,4 +37,15 @@
       </div>
     }
   </div>
+
+  @if ( fetching ) {
+    <div class="fetching-status">
+      <app-icon
+      class="spinner"
+      icon="spinner-third"
+      iconSize="1em">
+      </app-icon>
+      <span>Fetching Metadata</span>
+    </div>
+  }
 }

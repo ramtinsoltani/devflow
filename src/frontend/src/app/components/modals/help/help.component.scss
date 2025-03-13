@@ -1,0 +1,27 @@
+@use "../../../../scss/utils";
+
+table {
+  border: none;
+  appearance: none;
+
+  tr:not(:last-child) td {
+    padding-bottom: 10px;
+  }
+
+  td:first-child {
+    white-space: nowrap;
+    vertical-align: top;
+  }
+
+  td:last-child {
+    color: utils.color(gray-6);
+    padding-left: 20px;
+  }
+}
+
+span.shortcut {
+  font-size: utils.rem(12px);
+  font-weight: 500;
+  color: utils.color(gray-7);
+  text-transform: uppercase;
+}

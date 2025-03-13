@@ -22,6 +22,7 @@ The following FontAwesome icons are in use in this project in SVG format:
 | user-plus | Classic | Solid | ✅ Free | https://fontawesome.com/icons/user-plus?f=classic&s=solid |
 | user-minus | Classic | Solid | ✅ Free | https://fontawesome.com/icons/user-minus?f=classic&s=solid |
 | envelope | Classic | Solid | ✅ Free | https://fontawesome.com/icons/envelope?f=classic&s=solid |
+| question | Classic | Solid | ✅ Free | https://fontawesome.com/icons/question?f=classic&s=solid |
 
 > FontAwesome version 6.4.0 web
 

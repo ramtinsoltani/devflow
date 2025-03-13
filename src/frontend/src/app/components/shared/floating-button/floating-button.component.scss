@@ -1,0 +1,23 @@
+@use '../../../../scss/utils';
+
+:host {
+  position: absolute;
+}
+
+button.floating {
+  appearance: none;
+  outline: none;
+  border: none;
+  color: utils.color(gray-6);
+  border-radius: 50%;
+  background-color: utils.color(gray-2);
+  cursor: pointer;
+  z-index: 400;
+  box-shadow: 0 2px 20px utils.color(dropshadow);
+  flex-shrink: 0;
+  transition: color .15s ease-in-out;
+
+  &:hover {
+    color: utils.color(gray-8);
+  }
+}

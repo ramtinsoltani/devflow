@@ -7,6 +7,11 @@
     <router-outlet></router-outlet>
   </div>
 </div>
+<app-floating-button
+icon="question"
+iconSize="24px"
+padding="13px"
+(onClick)="onHelpButtonClick()"></app-floating-button>
 <ng-container #modalsContainer></ng-container>
 <div class="notifications">
   <ng-container #notificationsContainer></ng-container>

@@ -1,12 +1,16 @@
 @use '../../../../scss/utils';
 
-:host:hover .card {
-  background-color: utils.color(gray-3);
-  transform: scale(1.05);
-  box-shadow: 0 10px 20px utils.color(dropshadow);
+:host {
+  position: relative;
 
-  app-icon.edit-icon {
-    display: initial !important;
+  &:hover .card {
+    background-color: utils.color(gray-3);
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px utils.color(dropshadow);
+  
+    app-icon.edit-icon {
+      display: initial !important;
+    }
   }
 }
 
@@ -115,5 +119,26 @@
 
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+.fetching-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: utils.color(gray-2);
+  color: utils.color(gray-9);
+  font-size: utils.rem(12px);
+  font-weight: 500;
+  text-transform: uppercase;
+  cursor: pointer;
+  
+  .spinner {
+    animation: spinning 1s infinite linear;
+    font-size: utils.rem(14px);
   }
 }

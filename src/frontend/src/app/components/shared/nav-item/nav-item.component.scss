@@ -9,6 +9,7 @@
   font-size: 1em;
   border-radius: 3px;
   transition: background-color .15s ease-in-out;
+  outline: none;
 
   &:hover {
     background-color: utils.color(gray-3);

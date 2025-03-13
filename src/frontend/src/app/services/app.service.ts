@@ -1,16 +1,30 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Color, ICollection, IPermission, ISpace, Permission } from '@devflow/models';
 import { EndpointService } from './endpoint.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
+
+export enum KeyboardShortcut {
+  NewSpace,
+  NewCollection,
+  NewItem,
+  PasteItem
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppService {
 
+  private static KEYBOARD_SHORTCUT_COMBOS = [
+    { shortcut: KeyboardShortcut.NewSpace, combo: { key: 'N', shiftKey: true } },
+    { shortcut: KeyboardShortcut.NewCollection, combo: { key: 'C', shiftKey: true } },
+    { shortcut: KeyboardShortcut.NewItem, combo: { key: 'I', shiftKey: true } }
+  ];
+
   private _collections$ = new BehaviorSubject<ICollection[]>([]);
   private _spaces$ = new BehaviorSubject<ISpace[]>([]);
   private _invitations$ = new BehaviorSubject<IPermission[]>([]);
+  private _keyboardShortcuts = new EventEmitter<KeyboardShortcutEvent>();
   
   public readonly collection$ = this._collections$.asObservable();
   public readonly spaces$ = this._spaces$.asObservable();
@@ -132,4 +146,45 @@ export class AppService {
 
   }
 
+  /**
+   * Subscribes an event handler to the keyboard shortcuts event.
+   * @param handler An event handler
+   * @returns The subscription
+   */
+  public onKeyboardShortcut(handler: (event: KeyboardShortcutEvent) => void | Promise<void>): Subscription {
+
+    return this._keyboardShortcuts.subscribe(handler);
+
+  }
+
+  /**
+   * Processes a keyboard event and emits the keyboard shortcuts event if combo is registered as a shortcut.
+   * @param event A keyboard event shortcut
+   */
+  public processKeyboardEvent(event: KeyboardEvent | ClipboardEvent): void {
+
+    if ( event instanceof ClipboardEvent )
+      return this._keyboardShortcuts.emit({ shortcut: KeyboardShortcut.PasteItem, event });
+    
+    for ( const def of AppService.KEYBOARD_SHORTCUT_COMBOS ) {
+
+      let currentCombo: number = 0;
+      const correctCombo: number = Object.keys(def.combo).length;
+
+      for ( const key in def.combo )
+        if ( event[key] === def.combo[key] )
+          currentCombo++;
+      
+      if ( currentCombo === correctCombo )
+        return this._keyboardShortcuts.emit({ shortcut: def.shortcut, event });
+
+    }
+
+  }
+
+}
+
+export interface KeyboardShortcutEvent {
+  shortcut: KeyboardShortcut,
+  event: KeyboardEvent | ClipboardEvent
 }

@@ -29,8 +29,13 @@ export class ItemComponent implements OnInit {
   @Input()
   public item?: IItem;
 
+  /** Whether item is read only (no update controls) or not */
   @Input()
   public readOnly: boolean = false;
+
+  /** Display fetching spinner on item */
+  @Input()
+  public fetching: boolean = false;
 
   /** Emits when item is updated */
   @Output()

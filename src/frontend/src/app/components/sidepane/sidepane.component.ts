@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Color, ICollection, IPermission, ISpace, Permission } from '@devflow/models';
-import { EndpointService, AppService, UtilsService, ModalService, AuthService, NotificationService } from '@devflow/services';
+import { EndpointService, AppService, UtilsService, ModalService, AuthService, NotificationService, KeyboardShortcut } from '@devflow/services';
 import { Subscription } from 'rxjs';
 import { NavItemComponent } from '../shared/nav-item/nav-item.component';
 import { ActivationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -96,6 +96,17 @@ export class SidepaneComponent implements OnInit, OnDestroy {
 
     this.app.fetchInvitations()
     .catch(console.error);
+
+    // Keyboard shortcuts
+    this.subscriptions.push(this.app.onKeyboardShortcut(event => {
+
+      if ( event.shortcut === KeyboardShortcut.NewSpace )
+        return this.onNewSpace(true);
+
+      if ( event.shortcut === KeyboardShortcut.NewCollection && this.selectedSpace )
+        return this.onNewCollection();
+
+    }));
     
   }
 
@@ -206,7 +217,7 @@ export class SidepaneComponent implements OnInit, OnDestroy {
 
   }
 
-  public onNewSpace(): void {
+  public onNewSpace(forceNavigation: boolean = false): void {
 
     let newSpaceId!: string;
 
@@ -223,7 +234,7 @@ export class SidepaneComponent implements OnInit, OnDestroy {
         })
         .then(() => {
 
-          this.onSelectSpace(this.spaces.find(s => s.id === newSpaceId) as ISpace)
+          this.onSelectSpace(this.spaces.find(s => s.id === newSpaceId) as ISpace, forceNavigation);
 
         })
         .catch(error => console.error(error));
@@ -261,13 +272,13 @@ export class SidepaneComponent implements OnInit, OnDestroy {
 
   }
 
-  public onSelectSpace(space: ISpace): void {
+  public onSelectSpace(space: ISpace, forceNavigation: boolean = false): void {
 
     this.selectedSpace = space;
     this.filteredCollections = undefined;
     this.filteredSpaces = undefined;
 
-    if ( ! this.urlCollectionId )
+    if ( forceNavigation || ! this.urlCollectionId )
       this.router.navigate(['/' + space.id]);
 
     this.app.fetchCollections(space.id)

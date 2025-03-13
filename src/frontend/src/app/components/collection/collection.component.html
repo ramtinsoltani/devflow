@@ -13,7 +13,13 @@
 </div>
 <div class="items" [ngClass]="{ empty: filteredItems?.length === 0 || items.length === 0 }">
   @for (item of filteredItems || items; track item.updatedAt; let i = $index) {
-    <app-item [item]="item" [readOnly]="! hasWritePermission" (onItemUpdate)="onItemUpdated(i, $event)" (onTagFilter)="onTagFilter($event)"></app-item>
+    <app-item
+    [item]="item"
+    [readOnly]="! hasWritePermission"
+    [fetching]="fetchingMetadata.has(item.id)"
+    (onItemUpdate)="onItemUpdated(i, $event)"
+    (onTagFilter)="onTagFilter($event)">
+    </app-item>
   }
 
   @if ( items.length === 0 ) {

@@ -48,6 +48,20 @@ export class TextboxComponent implements OnInit, AfterViewInit {
 
   }
 
+  @HostListener('keyup', ['$event'])
+  public onKeyUp(event: KeyboardEvent) {
+
+    event.stopPropagation();
+
+  }
+
+  @HostListener('paste', ['$event'])
+  public onPaste(event: ClipboardEvent) {
+
+    event.stopPropagation();
+    
+  }
+
   /** Textbox placeholder */
   @Input()
   public placeholder?: string;
