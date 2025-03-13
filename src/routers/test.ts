@@ -10,7 +10,8 @@ TestRouter.post('/proxy', asyncHandler(async (req: Request, res: Response) => {
     headers: {
       'user-agent': 'google-bot',
       origin: new URL(req.body.url).origin
-    }
+    },
+    redirect: 'follow'
   })
   .then(response => {
 
@@ -23,5 +24,41 @@ TestRouter.post('/proxy', asyncHandler(async (req: Request, res: Response) => {
     res.json(error);
 
   });
+
+}));
+
+TestRouter.post('/proxy2', asyncHandler(async (req: Request, res: Response) => {
+
+  const responses = await Promise.allSettled([
+    fetch(req.body.url, {
+      method: 'GET',
+      headers: {
+        'user-agent': 'google-bot',
+        origin: new URL(req.body.url).origin
+      },
+      redirect: 'follow'
+    }),
+    fetch(new URL(req.body.url).origin, {
+      method: 'GET',
+      headers: {
+        'user-agent': 'google-bot',
+        origin: new URL(req.body.url).origin
+      },
+      redirect: 'follow'
+    })
+  ]);
+
+  if ( responses[0].status === 'rejected' )
+    res.send('REJECTED');
+  else if ( responses[1].status === 'rejected' )
+    res.send('REJECTED');
+  else {
+
+    const text1 = await responses[0].value.text();
+    const text2 = await responses[1].value.text();
+
+    res.send(text1 + text2);
+
+  }
 
 }));

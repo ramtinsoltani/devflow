@@ -11,7 +11,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
 
-      notifications.create({ type: 'error', message: error.error.message });
+      notifications.create({ type: 'error', message: error.error.message || 'Oops! Something went wrong.' });
 
       return throwError(() => error);
 
