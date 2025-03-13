@@ -14,6 +14,7 @@ import { ItemRouter } from './routers/item';
 import { SearchRouter } from './routers/search';
 import { PermissionsRouter } from './routers/permissions';
 import { UtilitiesRouter } from './routers/utils';
+import { HealthRouter } from './routers/health';
 import { IResponseError } from './models/responses';
 
 dotenv.config();
@@ -36,7 +37,11 @@ globalThis.services = {
   auth: new AuthService()
 };
 
-app.use(cors());
+// Setup CORS
+app.use(cors({
+  origin: process.env.CORS_ORIGINS?.split(',') || true
+}));
+
 app.use(bodyParser.json());
 
 // Debug routes
@@ -56,6 +61,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // API routes
+app.use('/api', HealthRouter);
 app.use('/api', SpaceRouter);
 app.use('/api', CollectionRouter);
 app.use('/api', ItemRouter);
@@ -73,15 +79,21 @@ app.use('/api', (req: Request, res: Response<IResponseError>) => {
 
 });
 
-// Frontend static files
-app.use(express.static(pathResolve(__dirname, '..', 'public')));
+if ( process.env.HOST_FE?.toLowerCase() === 'true' ) {
 
-// Frontend 404 routing
-app.use('/', (req: Request, res: Response) => {
+  console.log('Setting up frontend hosting...');
 
-  res.sendFile(pathResolve(__dirname, '..', 'public', 'index.html'));
+  // Frontend static files
+  app.use(express.static(pathResolve(__dirname, '..', 'public')));
 
-});
+  // Frontend 404 routing
+  app.use('/', (req: Request, res: Response) => {
+
+    res.sendFile(pathResolve(__dirname, '..', 'public', 'index.html'));
+
+  });
+
+}
 
 // Global error handler
 app.use((error: ServerError, req: Request, res: Response<IResponseError>, next: NextFunction) => {

@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "npx ts-node src/server.ts",
-    "build": "cd ./src/frontend && npx ng build && cd ../../",
+    "build": "cd ./src/frontend && npm run build && cd ../../",
+    "build:local": "cd ./src/frontend && npm run build:local && cd ../../",
     "compodoc": "cd ./src/frontend && npx compodoc -p tsconfig.doc.json -s --port 6060 && cd ../../",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

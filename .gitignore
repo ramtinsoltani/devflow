@@ -5,3 +5,4 @@ src/frontend/documentation
 !.gitkeep
 run.bat
 .env
+.firebaserc

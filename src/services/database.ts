@@ -15,7 +15,35 @@ export class DatabaseService implements Service {
    */
   public async init(): Promise<void> {
 
-    await mongoose.connect(`mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE}`);
+    const {
+      MONGODB_PROTOCOL,
+      MONGODB_USERNAME,
+      MONGODB_PASSWORD,
+      MONGODB_HOST,
+      MONGODB_PORT,
+      MONGODB_DATABASE,
+      MONGODB_PARAMS
+    } = process.env;
+
+    let url = `${MONGODB_PROTOCOL || 'mongodb'}://`;
+
+    if ( MONGODB_USERNAME && MONGODB_PASSWORD )
+      url += `${MONGODB_USERNAME}:${MONGODB_PASSWORD}@`;
+
+    url += MONGODB_HOST || '127.0.0.1';
+
+    if ( MONGODB_PORT )
+      url += `:${MONGODB_PORT}`;
+
+    url += '/';
+
+    if ( MONGODB_DATABASE )
+      url += `${MONGODB_DATABASE}`;
+
+    if ( MONGODB_PARAMS )
+      url += `?${MONGODB_PARAMS}`;
+
+    await mongoose.connect(url);
 
   }
 
