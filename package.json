@@ -10,6 +10,7 @@
     "start": "npx ts-node src/server.ts",
     "build": "cd ./src/frontend && npm run build && cd ../../",
     "build:local": "cd ./src/frontend && npm run build:local && cd ../../",
+    "inspect": "node --inspect -r ts-node/register src/server.ts",
     "compodoc": "cd ./src/frontend && npx compodoc -p tsconfig.doc.json -s --port 6060 && cd ../../",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

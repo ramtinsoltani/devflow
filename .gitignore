@@ -6,3 +6,4 @@ src/frontend/documentation
 run.bat
 .env
 .firebaserc
+.firebase
