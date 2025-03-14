@@ -1,9 +1,10 @@
 import { Router, Response } from "express";
+import { getLinkPreview } from "link-preview-js";
+import { getBasicInfo as youtubeBasicInfo } from "ytdl-core";
 import { asyncHandler } from "../lib/middleware/async-handler";
 import { FetchMetadataRequest } from "../models/requests";
 import { IResponseUrlMetadata } from "../models/responses";
 import { ServerError } from "../lib/error";
-import { getLinkPreview } from "link-preview-js";
 import { ValidatorSchema } from "../services/validator";
 import { protectedRoute } from "../lib/middleware/auth";
 
@@ -16,19 +17,49 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
 
   services.validator.validate(req.body, ValidatorSchema.RequestFetchMetadata);
 
+  const originUrl = new URL(req.body.url).origin;
+
   const previewOptions: any = {
     headers: {
       'user-agent': 'google-bot',
-      origin: new URL(req.body.url).origin
+      origin: originUrl
     },
     followRedirects: 'follow'
   };
+
+  // Detect Youtube links
+  let isYoutube: boolean = false;
+  const youtubePreviewResult: LinkPreviewResult = {
+    url: req.body.url,
+    mediaType: 'video.other',
+    contentType: 'text/html',
+    siteName: 'YouTube',
+    charset: 'utf-8',
+    videos: []
+  };
+
+  if ( originUrl.match(/^http(s)?:\/\/(www\.)?youtube\..{2,}$/i) || originUrl.match(/^http(s)?:\/\/youtu.be$/i) ) {
+
+    isYoutube = true;
+
+    const info = await youtubeBasicInfo(req.body.url, { requestOptions: { headers: previewOptions.headers } });
+
+    youtubePreviewResult.images = info.videoDetails.thumbnails
+    .sort((a, b) => (b.height * b.width) - (a.height * a.width))
+    .map(t => t.url);
+
+    youtubePreviewResult.title = info.videoDetails.title;
+    youtubePreviewResult.description = info.videoDetails.description || undefined;
+
+    console.log(youtubePreviewResult);
+
+  }
   
   const previewResults = await Promise.allSettled([
     // Link preview
-    getLinkPreview(req.body.url, previewOptions),
+    isYoutube ? Promise.resolve(youtubePreviewResult) : getLinkPreview(req.body.url, previewOptions),
     // Link's origin preview
-    getLinkPreview(new URL(req.body.url).origin, previewOptions)
+    getLinkPreview(originUrl, previewOptions)
   ]);
 
   // Show warnings for each failed preview fetch
@@ -89,7 +120,7 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
   if ( originResult ) {
 
     metadata.originTitle = originResult.siteName || originResult.title;
-    metadata.originUrl = new URL(req.body.url).origin;
+    metadata.originUrl = originUrl;
 
   }
 
@@ -97,8 +128,14 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
   const favicons: { svg?: string, png: { url: string, size: number }[], ico?: string } = {
     png: []
   };
+
+  // Merge favicons (URL and origin) into one
+  const sourceFavicons = [
+    ...result?.favicons || [],
+    ...originResult?.favicons || []
+  ];
   
-  for ( const icon of (result || originResult || {}).favicons || [] ) {
+  for ( const icon of sourceFavicons ) {
 
     let url!: URL;
 
@@ -143,7 +180,26 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
 
   }
 
-  metadata.favicon = favicons.svg || bestPNG || favicons.ico || new URL(req.body.url).origin + '/favicon.ico';
+  metadata.favicon = favicons.svg || bestPNG || favicons.ico || originUrl + '/favicon.ico';
+
+  // Truncate
+  if ( metadata.title?.length )
+    metadata.title = metadata.title.substring(0, 256);
+
+  if ( metadata.description?.length )
+    metadata.description = metadata.description.substring(0, 1024);
+
+  if ( metadata.posterUrl?.length )
+    metadata.posterUrl = metadata.posterUrl.substring(0, 1024);
+
+  if ( metadata.originTitle?.length )
+    metadata.originTitle = metadata.originTitle.substring(0, 256);
+
+  if ( metadata.originUrl?.length )
+    metadata.originUrl = metadata.originUrl.substring(0, 1024);
+
+  if ( metadata.favicon?.length )
+    metadata.favicon = metadata.favicon.substring(0, 1024);
 
   res.json(metadata);
 

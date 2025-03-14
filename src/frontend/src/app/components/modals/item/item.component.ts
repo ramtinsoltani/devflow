@@ -72,7 +72,7 @@ export class ItemModalComponent implements GenericModalComponent, OnModalInit, O
 
   onModalValidation(): boolean {
     
-    return (!! this.modalData.url.length) && (!! this.modalData.title?.length);
+    return (!! this.modalData.url.length) && (!! this.modalData.title?.length) && ((this.modalData.description?.length || 0) <= 1024);
     
   }
 

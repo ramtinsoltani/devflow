@@ -4,22 +4,22 @@ additionalProperties: false
 properties:
   title:
     type: string
-    maxLength: 128
+    maxLength: 256
     minLength: 1
     required: false
   url:
     type: string
-    maxLength: 256
+    maxLength: 1024
     minLength: 1
     required: false
   description:
     type: string
-    maxLength: 512
+    maxLength: 1024
     minLength: 1
     required: false
   posterUrl:
     type: string
-    maxLength: 256
+    maxLength: 1024
     minLength: 1
     required: false
   tags:
@@ -41,18 +41,18 @@ properties:
           required: true
   originTitle:
     type: string
-    maxLength: 128
+    maxLength: 256
     minLength: 1
     required: false
   originUrl:
     type: string
-    maxLength: 256
+    maxLength: 1024
     minLength: 1
     required: false
   favicon:
     type: string
     minLength: 1
-    maxLength: 256
+    maxLength: 1024
     required: false
   forceAltLayout:
     type: boolean

@@ -16,9 +16,9 @@ export enum KeyboardShortcut {
 export class AppService {
 
   private static KEYBOARD_SHORTCUT_COMBOS = [
-    { shortcut: KeyboardShortcut.NewSpace, combo: { key: 'N', shiftKey: true } },
-    { shortcut: KeyboardShortcut.NewCollection, combo: { key: 'C', shiftKey: true } },
-    { shortcut: KeyboardShortcut.NewItem, combo: { key: 'I', shiftKey: true } }
+    { shortcut: KeyboardShortcut.NewSpace, combo: { key: 'N', shiftKey: true, ctrlKey: false, altKey: false } },
+    { shortcut: KeyboardShortcut.NewCollection, combo: { key: 'C', shiftKey: true, ctrlKey: false, altKey: false } },
+    { shortcut: KeyboardShortcut.NewItem, combo: { key: 'I', shiftKey: true, ctrlKey: false, altKey: false } }
   ];
 
   private _collections$ = new BehaviorSubject<ICollection[]>([]);
