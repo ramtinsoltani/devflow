@@ -1,6 +1,6 @@
 import { Router, Response } from "express";
 import { getLinkPreview } from "link-preview-js";
-import { getBasicInfo as youtubeBasicInfo } from "ytdl-core";
+import { getBasicInfo as youtubeBasicInfo } from "@distube/ytdl-core";
 import { asyncHandler } from "../lib/middleware/async-handler";
 import { FetchMetadataRequest } from "../models/requests";
 import { IResponseUrlMetadata } from "../models/responses";
@@ -40,18 +40,25 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
 
   if ( originUrl.match(/^http(s)?:\/\/(www\.)?youtube\..{2,}$/i) || originUrl.match(/^http(s)?:\/\/youtu.be$/i) ) {
 
-    isYoutube = true;
+    try {
 
-    const info = await youtubeBasicInfo(req.body.url, { requestOptions: { headers: previewOptions.headers } });
+      const info = await youtubeBasicInfo(req.body.url, { requestOptions: { headers: previewOptions.headers } });
 
-    youtubePreviewResult.images = info.videoDetails.thumbnails
-    .sort((a, b) => (b.height * b.width) - (a.height * a.width))
-    .map(t => t.url);
+      youtubePreviewResult.images = info.videoDetails.thumbnails
+      .sort((a, b) => (b.height * b.width) - (a.height * a.width))
+      .map(t => t.url);
 
-    youtubePreviewResult.title = info.videoDetails.title;
-    youtubePreviewResult.description = info.videoDetails.description || undefined;
+      youtubePreviewResult.title = info.videoDetails.title;
+      youtubePreviewResult.description = info.videoDetails.description || undefined;
 
-    console.log(youtubePreviewResult);
+      isYoutube = true;
+
+    }
+    catch (error) {
+
+      console.error('Error fetching Youtube link:', error);
+
+    }
 
   }
   
