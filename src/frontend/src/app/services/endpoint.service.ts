@@ -19,12 +19,12 @@ export class EndpointService {
    * Generates request headers based on current auth state.
    * @returns Headers object with Authorize header holding a bearer token (if user is logged in)
    */
-  private async getAuthorizeHeader(): Promise<Record<string, string>> {
+  private async getAuthorizationHeader(): Promise<Record<string, string>> {
 
     if ( ! this.auth.currentUser )
       return {};
 
-    return { 'Authorize': 'Bearer ' + await this.auth.currentUser.getIdToken() };
+    return { 'Authorization': 'Bearer ' + await this.auth.currentUser.getIdToken() };
 
   }
 
@@ -37,7 +37,7 @@ export class EndpointService {
     return lastValueFrom(this.http.get<ISpace[]>(
       `${environment.apiBaseUrl}/spaces`,
       {
-        headers: await this.getAuthorizeHeader()
+        headers: await this.getAuthorizationHeader()
       }
     ));
 
@@ -53,7 +53,7 @@ export class EndpointService {
     return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
       `${environment.apiBaseUrl}/space`,
       data,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -69,7 +69,7 @@ export class EndpointService {
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/space/${spaceId}`,
       data,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -83,7 +83,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/space/${spaceId}`,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -97,7 +97,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<ICollection[]>(
       `${environment.apiBaseUrl}/${spaceId}/collections`,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -113,7 +113,7 @@ export class EndpointService {
     return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
       `${environment.apiBaseUrl}/${spaceId}/collection`,
       data,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -130,7 +130,7 @@ export class EndpointService {
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/${spaceId}/collection/${collectionId}`,
       data,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -145,7 +145,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/${spaceId}/collection/${collectionId}`,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -160,7 +160,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<IItem>(
       `${environment.apiBaseUrl}/${spaceId}/item/${id}`,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -175,7 +175,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<IItem[]>(
       `${environment.apiBaseUrl}/${spaceId}/items/${collectionId}`,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -191,7 +191,7 @@ export class EndpointService {
     return lastValueFrom(this.http.post<IGeneralMessageResponse<string>>(
       `${environment.apiBaseUrl}/${spaceId}/item`,
       data,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -208,7 +208,7 @@ export class EndpointService {
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/${spaceId}/item/${itemId}`,
       data,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -223,7 +223,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/${spaceId}/item/${itemId}`,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -283,7 +283,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<IItem[]>(
       `${environment.apiBaseUrl}/${spaceId}/${collectionId}/search/items`,
-      { params, headers: await this.getAuthorizeHeader() }
+      { params, headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -338,7 +338,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<IItem[]>(
       `${environment.apiBaseUrl}/${spaceId}/search/items`,
-      { params, headers: await this.getAuthorizeHeader() }
+      { params, headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -352,7 +352,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<IPermission[]>(
       `${environment.apiBaseUrl}/permissions/provisioned/${spaceId}`,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -365,7 +365,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.get<IPermission[]>(
       `${environment.apiBaseUrl}/permissions/pending`,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -380,7 +380,7 @@ export class EndpointService {
     return lastValueFrom(this.http.post<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/permissions/provision`,
       data,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -395,7 +395,7 @@ export class EndpointService {
     return lastValueFrom(this.http.put<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/permissions/${id}/accept`,
       null,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -409,7 +409,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/permissions/${id}/revoke`,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -423,7 +423,7 @@ export class EndpointService {
 
     return lastValueFrom(this.http.delete<IGeneralMessageResponse>(
       `${environment.apiBaseUrl}/permissions/${id}/self-revoke`,
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }
@@ -438,7 +438,7 @@ export class EndpointService {
     return lastValueFrom(this.http.post<any>(
       environment.apiBaseUrl + '/utils/metadata',
       { url },
-      { headers: await this.getAuthorizeHeader() }
+      { headers: await this.getAuthorizationHeader() }
     ));
 
   }

@@ -13,12 +13,12 @@ properties:
     minLength: 1
     required: false
   description:
-    type: string
+    type: [string, "null"]
     maxLength: 1024
     minLength: 1
     required: false
   posterUrl:
-    type: string
+    type: [string, "null"]
     maxLength: 1024
     minLength: 1
     required: false
@@ -40,17 +40,17 @@ properties:
           max: 6
           required: true
   originTitle:
-    type: string
+    type: [string, "null"]
     maxLength: 256
     minLength: 1
     required: false
   originUrl:
-    type: string
+    type: [string, "null"]
     maxLength: 1024
     minLength: 1
     required: false
   favicon:
-    type: string
+    type: [string, "null"]
     minLength: 1
     maxLength: 1024
     required: false

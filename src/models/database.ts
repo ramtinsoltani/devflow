@@ -169,11 +169,11 @@ ItemSchema.index({ spaceId: 1, owner: 1 });
 ItemSchema.index({ _id: 1, spaceId: 1 });
 ItemSchema.index({ spaceId: 1, collectionId: 1 });
 ItemSchema.index({ spaceId: 1, collectionId: 1, title: 1 });
-ItemSchema.index({ spaceId: 1, collectionId: 1, tags: 1 });
-ItemSchema.index({ spaceId: 1, collectionId: 1, title: 1, tags: 1 });
+ItemSchema.index({ spaceId: 1, collectionId: 1, 'tags.label': 1 });
+ItemSchema.index({ spaceId: 1, collectionId: 1, title: 1, 'tags.label': 1 });
 ItemSchema.index({ spaceId: 1, title: 1 });
-ItemSchema.index({ spaceId: 1, tags: 1 });
-ItemSchema.index({ spaceId: 1, title: 1, tags: 1 });
+ItemSchema.index({ spaceId: 1, 'tags.label': 1 });
+ItemSchema.index({ spaceId: 1, title: 1, 'tags.label': 1 });
 
 export const DbItem = model('Item', ItemSchema);
 

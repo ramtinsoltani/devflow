@@ -1,12 +1,13 @@
-import mongoose from 'mongoose';
+import mongoose, { syncIndexes } from 'mongoose';
 import { DbCollection, DbItem, DbPermission, DbSpace } from '../models/database';
 import { IRequestNewCollection, IRequestNewItem, IRequestNewPermission, IRequestNewSpace, IRequestUpdateCollection, IRequestUpdateItem, IRequestUpdateSpace } from '../models/requests';
-import { ICollection, IItem, IPermission, ISpace, Permission } from '../models/normalized';
+import { Color, ICollection, IItem, IPermission, ISpace, Permission } from '../models/normalized';
 import { normalizeCommonDocument } from '../lib/normalizer';
 import { ServerError } from '../lib/error';
 import { queryStringToRegex } from '../lib/utilities';
 import { Service } from './common';
 import { DecodedIdToken } from 'firebase-admin/auth';
+import { uniqBy } from 'lodash';
 
 export class DatabaseService implements Service {
 
@@ -44,6 +45,8 @@ export class DatabaseService implements Service {
       url += `?${MONGODB_PARAMS}`;
 
     await mongoose.connect(url);
+
+    await this.syncDatabaseIndexes();
 
   }
 
@@ -98,6 +101,15 @@ export class DatabaseService implements Service {
     }
 
     return trueOwner;
+
+  }
+
+  /**
+   * Syncs all database model indexes by dropping indexes on MongoDB that no longer exist (due to development) and creates new ones if needed.
+   */
+  public async syncDatabaseIndexes(): Promise<void> {
+
+    await syncIndexes();
 
   }
 
@@ -349,6 +361,7 @@ export class DatabaseService implements Service {
     const trueOwner = await this.enforcePermission(token, spaceId, collection.owner, Permission.CanModifyContent);
 
     data.tags = data.tags.map(t => ({ ...t, label: t.label.trim().toLowerCase() }));
+    data.tags = uniqBy(data.tags, tag => tag.label);
     
     const item = new DbItem({
       ...data,
@@ -405,7 +418,11 @@ export class DatabaseService implements Service {
     if ( data.tags ) {
 
       doc.tags.splice(0, doc.tags.length);
-      doc.tags.push(...data.tags.map(t => ({ ...t, label: t.label.trim().toLowerCase() })));
+
+      let newTags = data.tags.map(t => ({ ...t, label: t.label.trim().toLowerCase() }));
+      newTags = uniqBy(newTags, tag => tag.label);
+
+      doc.tags.push(...newTags);
 
     }
 
@@ -661,6 +678,32 @@ export class DatabaseService implements Service {
       throw new ServerError('invalid-request', `No permissions found with ID "${permissionId}!`);
 
     await doc.deleteOne();
+
+  }
+
+  /**
+   * Returns the color of the first tag found with the given label in the specified space.
+   * @param token Decoded token of an authorized user
+   * @param spaceId Space ID
+   * @param tagLabel Tag label to search for
+   * @returns Tag color or null if not found
+   */
+  public async getTagColor(token: DecodedIdToken, spaceId: string, tagLabel: string): Promise<Color | null> {
+
+    if ( ! tagLabel?.trim() )
+      throw new ServerError('invalid-request', 'Missing tag label!');
+
+    const item = await DbItem.findOne({ spaceId, 'tags.label': tagLabel.toLowerCase().trim() }).sort({ createdAt: -1 });
+
+    if ( item )
+      await this.enforcePermission(token, spaceId, item.owner, Permission.ReadOnly);
+
+    if ( ! item )
+      return null;
+
+    const tag = item.tags.find(t => t.label?.toLowerCase().trim() === tagLabel.toLowerCase().trim());
+
+    return tag?.color ?? null;
 
   }
 

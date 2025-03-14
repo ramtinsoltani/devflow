@@ -1,3 +1,5 @@
+import { Color } from "./normalized"
+
 export interface IResponseGeneralMessage<T=any> {
   message: string,
   data?: T
@@ -15,4 +17,8 @@ export interface IResponseUrlMetadata {
   originTitle?: string,
   originUrl?: string,
   favicon?: string
+}
+
+export interface IResponseColor {
+  color: Color | null
 }

@@ -48,6 +48,12 @@
 | **DELETE** `/api/permissions/:id/revoke` | | `id` as permission ID | | [General Message Response](#general-message-response) indicating the permission has been revoked by the authenticated user as the owner |
 | **DELETE** `/api/permissions/:id/self-revoke` | | `id` as permission ID | | [General Message Response](#general-message-response) indicating the permission has been self-revoked by the authenticated user as the grantee |
 
+### Tags Endpoints
+
+| Endpoint | Query Params | Route Params | Body | Response |
+|:---------|:------------:|:------------:|:----:|:--------:|
+| **GET** `/api/tags/:spaceId/color/:label` | | `spaceId` as space ID, `label` as tag label | | [Color Response](#color-response) holding the color of the tag, or `null` if tag does not exist |
+
 ### Utility Endpoints
 
 | Endpoint | Query Params | Route Params | Body | Response |
@@ -160,6 +166,14 @@ interface URLMetadataResponse {
   title?: string,
   description?: string,
   posterUrl?: string
+}
+```
+
+### Color Response
+
+```ts
+interface ColorResponse {
+  color: Color | null
 }
 ```
 

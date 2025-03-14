@@ -12,7 +12,7 @@
     <div class="content">
       <div class="content-header">
         <div class="title" [title]="item.title">{{ item.title }}</div>
-        @if ( ! readOnly ) {
+        @if ( ! readOnly && ! fetching ) {
           <app-icon class="edit-icon" icon="pen-to-square" iconSize=".875em" containerSize="1.25em" (click)="onEditItem($event)"></app-icon>
         }
       </div>

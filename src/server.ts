@@ -16,6 +16,7 @@ import { PermissionsRouter } from './routers/permissions';
 import { UtilitiesRouter } from './routers/utils';
 import { HealthRouter } from './routers/health';
 import { IResponseError } from './models/responses';
+import { TagsRouter } from './routers/tags';
 
 dotenv.config();
 
@@ -67,6 +68,7 @@ app.use('/api', CollectionRouter);
 app.use('/api', ItemRouter);
 app.use('/api', SearchRouter);
 app.use('/api', PermissionsRouter);
+app.use('/api', TagsRouter);
 app.use('/api', UtilitiesRouter);
 
 // API 404

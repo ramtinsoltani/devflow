@@ -8,7 +8,7 @@ import { asyncHandler } from './async-handler';
  */
 export const protectedRoute = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
 
-  const bearerToken = req.get('authorize')?.match(/^Bearer (?<token>.+)$/)?.groups?.token;
+  const bearerToken = req.get('authorization')?.match(/^Bearer (?<token>.+)$/)?.groups?.token;
 
   if ( ! bearerToken )
     throw new ServerError('unauthorized', 'Missing bearer token!');

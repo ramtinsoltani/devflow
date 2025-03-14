@@ -25,6 +25,7 @@
 
   - Build and server frontend documentation: `npm run compodoc`
   - Run the service in inspection mode: `npm run inspect`
+  - Build the frontend using local configuration and then start the service: `npm run start:local`
 
 # Additional Documentation
 

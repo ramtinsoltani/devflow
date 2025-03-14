@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "npx ts-node src/server.ts",
+    "start:local": "npm run build:local && npm start",
     "build": "cd ./src/frontend && npm run build && cd ../../",
     "build:local": "cd ./src/frontend && npm run build:local && cd ../../",
     "inspect": "node --inspect -r ts-node/register src/server.ts",
@@ -32,6 +33,7 @@
     "firebase-admin": "^13.2.0",
     "jsonschema": "^1.5.0",
     "link-preview-js": "^3.0.12",
+    "lodash": "^4.17.21",
     "mongoose": "^8.6.3",
     "validator": "^13.12.0",
     "yaml": "^2.7.0"
@@ -39,6 +41,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/lodash": "^4.17.16",
     "@types/node": "^22.5.5",
     "@types/validator": "^13.12.2",
     "ts-node": "^10.9.2",
