@@ -131,10 +131,11 @@ export class CollectionComponent implements OnDestroy {
 
         // Create a new item with plain info
         const url = new URL(text.trim());
+        let itemId: string | undefined;
 
         try {
 
-          const itemId = (await this.endpoint.createItem(this.spaceId, {
+          itemId = (await this.endpoint.createItem(this.spaceId, {
             collectionId: this.collectionId,
             url: text.trim(),
             title: url.hostname,
@@ -173,13 +174,17 @@ export class CollectionComponent implements OnDestroy {
 
           }
 
-          // Clear fetching flag
-          this.fetchingMetadata.delete(itemId);
-
         }
         catch (error) {
 
           console.error(error);
+
+        }
+        finally {
+
+          if ( itemId )
+            // Clear fetching flag
+            this.fetchingMetadata.delete(itemId);
 
         }
 
