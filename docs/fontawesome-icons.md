@@ -1,4 +1,4 @@
-# FontAwesome Icons
+# FontAwesome Icons Reference Sheet
 
 The following FontAwesome icons are in use in this project in SVG format:
 
@@ -26,9 +26,9 @@ The following FontAwesome icons are in use in this project in SVG format:
 
 > FontAwesome version 6.4.0 web
 
-# How to Use
+# How To Use
 
 Download the web kit of FontAwesome and grab the SVG files of the icons mentioned above and place them in `/src/frontend/src/assets/icons/` directory. Make sure the file names are the same as the icons listed above.
 
-> Feel free to substitute the pro icons with free ones if you lack a pro license, **but make sure you rename those SVG files to the original icons listed above**.
+> Feel free to substitute the pro icons with free ones if you lack a pro license, **but make sure you rename those SVG files to the original icons listed above (e.g. rename `xmark-solid.svg` to `xmark.svg`)**.
 
