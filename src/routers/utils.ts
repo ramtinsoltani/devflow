@@ -1,6 +1,5 @@
 import { Router, Response } from "express";
 import { getLinkPreview } from "link-preview-js";
-import { getBasicInfo as youtubeBasicInfo } from "@distube/ytdl-core";
 import { asyncHandler } from "../lib/middleware/async-handler";
 import { FetchMetadataRequest } from "../models/requests";
 import { IResponseUrlMetadata } from "../models/responses";
@@ -29,6 +28,7 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
 
   // Detect Youtube links
   let isYoutube: boolean = false;
+
   const youtubePreviewResult: LinkPreviewResult = {
     url: req.body.url,
     mediaType: 'video.other',
@@ -38,25 +38,41 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
     videos: []
   };
 
+  // If Youtube link (full or short)
   if ( originUrl.match(/^http(s)?:\/\/(www\.)?youtube\..{2,}$/i) || originUrl.match(/^http(s)?:\/\/youtu.be$/i) ) {
 
     try {
 
-      const info = await youtubeBasicInfo(req.body.url, { requestOptions: { headers: previewOptions.headers } });
+      const youtubeUrl = new URL(req.body.url);
+      const videoId = youtubeUrl.searchParams.get('v') || youtubeUrl.pathname.substring(1);
 
-      youtubePreviewResult.images = info.videoDetails.thumbnails
-      .sort((a, b) => (b.height * b.width) - (a.height * a.width))
-      .map(t => t.url);
+      // If video ID was extracted and we have Youtube Data API v3 token set
+      if ( videoId && process.env.YOUTUBE_DATA_API_V3_TOKEN ) {
 
-      youtubePreviewResult.title = info.videoDetails.title;
-      youtubePreviewResult.description = info.videoDetails.description || undefined;
+        const response = await fetch(`https://content-youtube.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${process.env.YOUTUBE_DATA_API_V3_TOKEN}`, {
+          method: 'GET'
+        });
 
-      isYoutube = true;
+        const data: YoutubeAPIVideoResponse = await response.json();
+
+        if ( data.items.length && data.items[0].id === videoId ) {
+
+          youtubePreviewResult.title = data.items[0].snippet.title;
+          youtubePreviewResult.description = data.items[0].snippet.description;
+          youtubePreviewResult.images = [
+            data.items[0].snippet.thumbnails.maxres.url
+          ];
+
+          isYoutube = true;
+
+        }
+
+      }
 
     }
     catch (error) {
 
-      console.error('Error fetching Youtube link:', error);
+      console.error('Error fetching Youtube data:', error);
 
     }
 
@@ -223,4 +239,27 @@ interface LinkPreviewResult {
   charset?: string
   videos?: string[],
   favicons?: string[]
+}
+
+interface YoutubeAPIVideoResponse {
+  items: {
+    id: string,
+    snippet: {
+      title: string,
+      description: string,
+      thumbnails: {
+        default: YoutubeThumbnail,
+        medium: YoutubeThumbnail,
+        high: YoutubeThumbnail,
+        standard: YoutubeThumbnail,
+        maxres: YoutubeThumbnail
+      }
+    }
+  }[]
+}
+
+interface YoutubeThumbnail {
+  url: string,
+  width: number,
+  height: number
 }
