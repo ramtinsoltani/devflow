@@ -443,6 +443,21 @@ export class EndpointService {
 
   }
 
+  /**
+   * Retrieves the color of an existing tag in the given space.
+   * @param spaceId Space ID
+   * @param label Tag label to search for
+   * @returns Color response
+   */
+  public async getTagColor(spaceId: string, label: string): Promise<IColorResponse> {
+
+    return lastValueFrom(this.http.get<any>(
+      `${environment.apiBaseUrl}/tags/${spaceId}/color/${label}`,
+      { headers: await this.getAuthorizationHeader()}
+    ));
+
+  }
+
 }
 
 export interface INewSpaceRequest {
@@ -511,6 +526,10 @@ export interface IURLMetadataResponse {
   originTitle?: string,
   originUrl?: string,
   favicon?: string
+}
+
+export interface IColorResponse {
+  color: Color | null
 }
 
 export interface HttpErrorResponse<T=IErrorResponse> extends GenericHttpErrorResponse {

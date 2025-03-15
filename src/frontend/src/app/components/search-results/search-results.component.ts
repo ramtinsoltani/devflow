@@ -66,11 +66,11 @@ export class SearchResultsComponent implements OnDestroy {
 
   }
 
-  public onTagFilter(collectionId: string, event: TagFilterEvent): void {
+  public onTagFilter(spaceId: string, collectionId: string, event: TagFilterEvent): void {
 
     // If CTRL/CMD key was held down, filter by tag in its collection view
     if ( event.ctrlKey )
-      this.router.navigate([`/collection/${collectionId}`], { queryParams: { tags: event.tag }});
+      this.router.navigate([`/${spaceId}/${collectionId}`], { queryParams: { tags: event.tag }});
     // Otherwise, filter in global search (current view)
     else
       this.router.navigate([], { relativeTo: this.route, queryParams: { tags: event.tag }});

@@ -7,14 +7,14 @@ import { ItemImageComponent } from '../../shared/item-image/item-image.component
 import { CheckboxComponent } from '../../shared/checkbox/checkbox.component';
 
 @Component({
-    selector: 'app-item-modal',
-    imports: [
-        TextboxComponent,
-        ItemImageComponent,
-        CheckboxComponent
-    ],
-    templateUrl: './item.component.html',
-    styleUrl: './item.component.scss'
+  selector: 'app-item-modal',
+  imports: [
+    TextboxComponent,
+    ItemImageComponent,
+    CheckboxComponent
+  ],
+  templateUrl: './item.component.html',
+  styleUrl: './item.component.scss'
 })
 export class ItemModalComponent implements GenericModalComponent, OnModalInit, OnModalOutput, OnModalValidation {
 
@@ -33,7 +33,8 @@ export class ItemModalComponent implements GenericModalComponent, OnModalInit, O
     url: '',
     tags: [],
     forceAltLayout: false,
-    collectionColor: Color.Blue
+    collectionColor: Color.Blue,
+    spaceId: null
   };
 
   constructor(
@@ -132,7 +133,8 @@ export interface ItemModalData {
   originUrl?: string,
   favicon?: string,
   forceAltLayout: boolean,
-  collectionColor: Color
+  collectionColor: Color,
+  spaceId: string | null
 }
 
 export interface ItemModalOutput {

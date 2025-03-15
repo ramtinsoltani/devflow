@@ -266,7 +266,8 @@ export class CollectionComponent implements OnDestroy {
       url: '',
       tags: [],
       forceAltLayout: false,
-      collectionColor: this.app.getCollectionColor(this.collectionId) as Color
+      collectionColor: this.app.getCollectionColor(this.collectionId) as Color,
+      spaceId: this.spaceId
     },
     // Modal options
     { size: ModalSize.Large });
@@ -277,7 +278,7 @@ export class CollectionComponent implements OnDestroy {
 
     // If CTRL/CMD key is held, apply tag filter in global search
     if ( event.ctrlKey )
-      this.router.navigate(['/search'], { queryParams: { tags: event.tag }});
+      this.router.navigate([`/${this.spaceId}/search`], { queryParams: { tags: event.tag }});
     // Otherwise, apply tag filter in collections search (current view)
     else
       this.router.navigate([], { relativeTo: this.route, queryParams: { tags: event.tag }});

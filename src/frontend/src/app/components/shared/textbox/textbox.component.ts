@@ -2,21 +2,21 @@ import { NgClass } from '@angular/common';
 import { Component, Input, Output, HostListener, EventEmitter, booleanAttribute, ViewChild, ElementRef, OnInit, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Color, ITag } from '@devflow/models';
-import { UtilsService } from '@devflow/services';
+import { EndpointService, UtilsService } from '@devflow/services';
 import { IconComponent } from '../icon/icon.component';
 import { TagComponent } from '../tag/tag.component';
 import isURL from 'validator/es/lib/isURL';
 
 @Component({
-    selector: 'app-textbox',
-    imports: [
-        NgClass,
-        IconComponent,
-        FormsModule,
-        TagComponent
-    ],
-    templateUrl: './textbox.component.html',
-    styleUrl: './textbox.component.scss'
+  selector: 'app-textbox',
+  imports: [
+    NgClass,
+    IconComponent,
+    FormsModule,
+    TagComponent
+  ],
+  templateUrl: './textbox.component.html',
+  styleUrl: './textbox.component.scss'
 })
 export class TextboxComponent implements OnInit, AfterViewInit {
 
@@ -61,6 +61,9 @@ export class TextboxComponent implements OnInit, AfterViewInit {
     event.stopPropagation();
     
   }
+
+  @Input()
+  public spaceId: string | null = null;
 
   /** Textbox placeholder */
   @Input()
@@ -143,7 +146,8 @@ export class TextboxComponent implements OnInit, AfterViewInit {
   public onUrlClear = new EventEmitter<void>();
 
   constructor(
-    private utils: UtilsService
+    private utils: UtilsService,
+    private endpoint: EndpointService
   ) { }
 
   ngOnInit(): void {
@@ -160,14 +164,45 @@ export class TextboxComponent implements OnInit, AfterViewInit {
 
   }
 
-  private createTag(value: string): void {
+  private async createTag(value: string): Promise<void> {
 
     if ( ! value.trim() )
       return;
 
+    // Avoid creating identical tags
+    if ( this.tags.find(t => t.label.toLowerCase().trim() === value.toLowerCase().trim()) )
+      return;
+
+    let existingColor: Color | null = null;
+
+    // Fetch tag color if it exists in current space
+    if ( ! this.spaceId ) {
+
+      console.warn('Space ID was not set! Tag colors cannot be persisted.')
+
+    }
+    else {
+
+      try {
+
+        existingColor = (await this.endpoint.getTagColor(this.spaceId, value.toLowerCase().trim())).color;
+
+        // Update previous tags color sequence
+        if ( existingColor !== null && ! this.previousTagsColorSequence.includes(existingColor) )
+          this.previousTagsColorSequence.push(existingColor);
+
+      }
+      catch (error) {
+
+        console.error(error);
+        
+      }
+
+    }
+
     this.tags.push({
       label: value,
-      color: this.utils.pickRandomColor(this.previousTagsColorSequence)
+      color: existingColor ?? this.utils.pickRandomColor(this.previousTagsColorSequence)
     });
 
     this.tagsChange.emit(this.tags);

@@ -40,7 +40,7 @@ export class HeaderComponent implements OnDestroy {
       url.queryParams = {};
       
       // If not in search route, exit
-      if ( url.toString() !== '/search' )
+      if ( ! url.toString().match(/^\/.+?\/search$/i) )
         return;
 
       const q = queryParams.get('q');
