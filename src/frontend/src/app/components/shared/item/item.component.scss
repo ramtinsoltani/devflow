@@ -80,6 +80,21 @@
     }
   }
 
+  .collection {
+    font-size: utils.rem(12px);
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-transform: uppercase;
+    color: utils.color(gray-8);
+    margin-top: -5px;
+
+    span:hover {
+      text-decoration: underline;
+    }
+  }
+
   p.description {
     margin: 0;
     color: utils.color(gray-8);

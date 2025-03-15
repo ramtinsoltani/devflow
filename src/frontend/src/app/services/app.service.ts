@@ -54,6 +54,16 @@ export class AppService {
   }
 
   /**
+   * Returns the currently cached list of collections.
+   * @returns List of collections
+   */
+  public getCollections(): ICollection[] {
+
+    return this._collections$.value;
+
+  }
+
+  /**
    * Updates a collection size.
    * @param collectionId Collection ID
    * @param newSize New collection size

@@ -1,28 +1,34 @@
-import { NgClass } from '@angular/common';
-import { Component, Input, Output, HostListener, EventEmitter, OnInit } from '@angular/core';
-import { Color, IItem, ITag } from '@devflow/models';
-import { AppService, EndpointService, ModalService, ModalSize } from '@devflow/services';
+import { NgClass, NgStyle } from '@angular/common';
+import { Component, Input, Output, HostListener, EventEmitter, OnInit, booleanAttribute, OnDestroy } from '@angular/core';
+import { Color, ICollection, IItem, ITag } from '@devflow/models';
+import { AppService, EndpointService, ModalService, ModalSize, UtilsService } from '@devflow/services';
 import { IconComponent } from '../icon/icon.component';
 import { TagComponent } from '../tag/tag.component';
 import { ItemModalComponent, ItemModalData, ItemModalOutput } from '../../modals/item/item.component';
 import { ItemImageComponent } from '../item-image/item-image.component';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'app-item',
-    imports: [
-        NgClass,
-        IconComponent,
-        TagComponent,
-        ItemImageComponent
-    ],
-    templateUrl: './item.component.html',
-    styleUrl: './item.component.scss'
+  selector: 'app-item',
+  imports: [
+    NgStyle,
+    NgClass,
+    IconComponent,
+    TagComponent,
+    ItemImageComponent
+  ],
+  templateUrl: './item.component.html',
+  styleUrl: './item.component.scss'
 })
-export class ItemComponent implements OnInit {
+export class ItemComponent implements OnInit, OnDestroy {
+
+  private subscriptions: Subscription[] = [];
 
   public spaceId!: string;
   public collectionColor: Color = Color.Blue;
+  public collectionPaletteColor!: string;
+  public collection!: ICollection;
   public hovered: boolean = false;
 
   /** Item object */
@@ -33,9 +39,13 @@ export class ItemComponent implements OnInit {
   @Input()
   public readOnly: boolean = false;
 
-  /** Display fetching spinner on item */
+  /** Displays fetching spinner on item */
   @Input()
   public fetching: boolean = false;
+
+  /** Displays collection name with link */
+  @Input({ transform: booleanAttribute })
+  public showCollection: boolean = false;
 
   /** Emits when item is updated */
   @Output()
@@ -79,14 +89,25 @@ export class ItemComponent implements OnInit {
     private modals: ModalService,
     private endpoint: EndpointService,
     private app: AppService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+    private utils: UtilsService
   ) { }
 
   ngOnInit(): void {
     
     this.spaceId = this.route.snapshot.paramMap.get('spaceId') as string;
-    this.collectionColor = this.app.getCollectionColor(this.item?.collectionId as string) || Color.Blue;
+
+    this.subscriptions.push(this.app.collection$.subscribe(() => this.getCollectionInfo()));
   
+  }
+
+  private getCollectionInfo(): void {
+
+    this.collection = this.app.getCollections().find(c => c.id === this.item?.collectionId) as ICollection;
+    this.collectionColor = this.app.getCollectionColor(this.item?.collectionId as string) || Color.Blue;
+    this.collectionPaletteColor = this.utils.getPaletteColor(this.collectionColor);
+
   }
 
   public onEditItem(event: MouseEvent): void {
@@ -153,6 +174,22 @@ export class ItemComponent implements OnInit {
 
     window.open(this.item?.url, '_blank');
 
+  }
+
+  public onOpenCollection(event: MouseEvent): void {
+
+    event.stopPropagation();
+
+    this.router.navigate([`/${this.collection.spaceId}/${this.collection.id}`]);
+
+  }
+
+  ngOnDestroy(): void {
+    
+    for ( const sub of this.subscriptions )
+      if ( sub && ! sub.closed )
+        sub.unsubscribe();
+    
   }
 
 }
