@@ -12,9 +12,9 @@ You may create a `.env` file at project root directory, or set individual enviro
 | DEBUG_ROUTES | No | Boolean | false | Enables endpoint logging on NodeJS server. |
 | HOST_FE | No | Boolean | false | Enables hosting the frontend application from `public` directory. |
 | CORS_ORIGINS | No | String | | Enables CORS headers on the NodeJS server for a given comma-separated list of origins. |
-| MONGODB_PROTOCOL | Yes | String | | MongoDB URL protocol/scheme (e.g. `mongodb` or `mongodb+srv`). |
-| MONGODB_HOST | Yes | String | | MongoDB host to connect to. |
-| MONGODB_PORT | Yes | Number | | MongoDB port number to connect to. |
+| MONGODB_PROTOCOL | No | String | mongodb | MongoDB URL protocol/scheme (e.g. `mongodb` or `mongodb+srv`). |
+| MONGODB_HOST | No | String | 127.0.0.1 | MongoDB host to connect to. |
+| MONGODB_PORT | No | Number | | MongoDB port number to connect to. |
 | MONGODB_DATABASE | Yes | String | | MongoDB database name to use. |
 | MONGODB_USERNAME | No | String | | MongoDB username for authentication. |
 | MONGODB_PASSWORD | No | String | | MongoDB password for authentication. |
