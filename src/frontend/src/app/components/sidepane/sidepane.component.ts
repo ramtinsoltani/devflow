@@ -66,7 +66,7 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     this.subscriptions.push(this.router.events.subscribe(event => {
 
       if ( event instanceof ActivationEnd ) {
-        
+
         this.urlSpaceId = event.snapshot.paramMap.get('spaceId') || undefined;
         this.urlCollectionId = event.snapshot.paramMap.get('collectionId') || undefined;
         this.selectSpaceFromURLParam();
@@ -278,7 +278,9 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     this.filteredCollections = undefined;
     this.filteredSpaces = undefined;
 
-    if ( forceNavigation || ! this.urlCollectionId )
+    const isOnSearchRoute = this.router.isActive(`/${space.id}/search`, { queryParams: 'ignored', paths: 'exact', fragment: 'ignored', matrixParams: 'ignored' });
+
+    if ( forceNavigation || (! this.urlCollectionId && ! isOnSearchRoute) )
       this.router.navigate(['/' + space.id]);
 
     this.app.fetchCollections(space.id)

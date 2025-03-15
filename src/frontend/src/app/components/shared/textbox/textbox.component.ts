@@ -176,12 +176,12 @@ export class TextboxComponent implements OnInit, AfterViewInit {
     let existingColor: Color | null = null;
 
     // Fetch tag color if it exists in current space
-    if ( ! this.spaceId ) {
+    if ( ! this.spaceId && ! this.monochromeTags ) {
 
       console.warn('Space ID was not set! Tag colors cannot be persisted.')
 
     }
-    else {
+    else if ( this.spaceId && ! this.monochromeTags) {
 
       try {
 

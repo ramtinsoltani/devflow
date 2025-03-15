@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, OnDestroy, inject } from '@angular/core';
 import { TextboxComponent, TextboxSearchEvent } from '../shared/textbox/textbox.component';
-import { ActivatedRoute, ActivationEnd, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, ActivationEnd, ParamMap, Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Color, ITag } from '@devflow/models';
 import { AppService, UtilsService } from '@devflow/services';
@@ -33,28 +33,7 @@ export class HeaderComponent implements OnDestroy {
   ) {
 
     // Subscribe to route query parameter changes
-    this.subscriptions.push(this.route.queryParamMap.subscribe(queryParams => {
-
-      const url = this.router.parseUrl(this.router.url);
-      
-      url.queryParams = {};
-      
-      // If not in search route, exit
-      if ( ! url.toString().match(/^\/.+?\/search$/i) )
-        return;
-
-      const q = queryParams.get('q');
-      const tags = queryParams.get('tags');
-
-      // Set query text from route query params
-      if ( q )
-        this.queryText = q;
-
-      // Set tags from route query params
-      if ( tags?.split(',').length )
-        this.queryTags = tags.split(',').map(label => ({ label, color: Color.Blue }));
-
-    }));
+    this.subscriptions.push(this.route.queryParamMap.subscribe(queryParams => this.getSearchParamsFromUrl(queryParams)));
 
     // Subscribe to router navigation changes
     this.subscriptions.push(this.router.events.subscribe(event => {
@@ -65,13 +44,16 @@ export class HeaderComponent implements OnDestroy {
         this.urlSpaceId = event.snapshot.paramMap.get('spaceId') || undefined;
         this.urlCollectionId = event.snapshot.paramMap.get('collectionId') || undefined;
 
-        if ( ! this.spaceSelected ) {
+        const isSearchRoute = this.router.isActive(`/${this.urlSpaceId}/search`, { queryParams: 'ignored', paths: 'exact', fragment: 'ignored', matrixParams: 'ignored' });
+
+        if ( ! this.spaceSelected || ! isSearchRoute ) {
 
           this.queryTags = [];
           this.queryText = '';
 
         }
 
+        this.getSearchParamsFromUrl(event.snapshot.queryParamMap);
         this.updateColors();
 
       }
@@ -88,6 +70,29 @@ export class HeaderComponent implements OnDestroy {
   public queryTags: ITag[] = [];
   public queryText: string = '';
   public currentCollectionColor: Color | null = null;
+
+  private getSearchParamsFromUrl(queryParams: ParamMap): void {
+
+    const url = this.router.parseUrl(this.router.url);
+      
+    url.queryParams = {};
+    
+    // If not in search route, exit
+    if ( ! url.toString().match(/^\/.+?\/search$/i) )
+      return;
+
+    const q = queryParams.get('q');
+    const tags = queryParams.get('tags');
+
+    // Set query text from route query params
+    if ( q )
+      this.queryText = q;
+
+    // Set tags from route query params
+    if ( tags?.split(',').length )
+      this.queryTags = tags.split(',').map(label => ({ label, color: Color.Blue }));
+
+  }
 
   private updateColors(): void {
 
