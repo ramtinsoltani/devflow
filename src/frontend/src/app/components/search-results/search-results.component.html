@@ -1,4 +1,4 @@
-<div class="items" [ngClass]="{ empty: ! filteredItems.length }">
+<div class="items" [ngClass]="{ empty: ! fetching && ! filteredItems.length }">
   @if ( fetching ) {
     <app-loading-spinner></app-loading-spinner>
   }

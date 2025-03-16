@@ -11,7 +11,7 @@
   (onClear)="onSearchClear()"
   (onSearch)="onSearch($event)"></app-textbox>
 </div>
-<div class="items" [ngClass]="{ empty: filteredItems?.length === 0 || items.length === 0 }">
+<div class="items" [ngClass]="{ empty: ! fetching && (filteredItems?.length === 0 || items.length === 0) }">
   @if ( fetching ) {
     <app-loading-spinner></app-loading-spinner>
   }
