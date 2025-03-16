@@ -18,7 +18,7 @@
       </div>
 
       @if ( showCollection && collection ) {
-        <div class="collection" (click)="onOpenCollection($event)">In <span [ngStyle]="{ color: 'var(--color-' + collectionPaletteColor + ')' }">{{ collection.name }}</span></div>
+        <div class="collection">In <span (click)="onOpenCollection($event)" [ngStyle]="{ color: 'var(--color-' + collectionPaletteColor + ')' }">{{ collection.name }}</span></div>
       }
 
       @if ( item.description ) {
