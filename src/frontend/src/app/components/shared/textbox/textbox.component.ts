@@ -6,6 +6,7 @@ import { EndpointService, UtilsService } from '@devflow/services';
 import { IconComponent } from '../icon/icon.component';
 import { TagComponent } from '../tag/tag.component';
 import isURL from 'validator/es/lib/isURL';
+import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-textbox',
@@ -13,7 +14,8 @@ import isURL from 'validator/es/lib/isURL';
     NgClass,
     IconComponent,
     FormsModule,
-    TagComponent
+    TagComponent,
+    LoadingSpinnerComponent
   ],
   templateUrl: './textbox.component.html',
   styleUrl: './textbox.component.scss'

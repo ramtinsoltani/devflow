@@ -72,7 +72,8 @@ textarea.textbox {
 }
 
 app-icon.search-icon,
-app-icon.link-icon {
+app-icon.link-icon,
+.loading-icon {
   padding-left: utils.rem(5px);
 }
 
@@ -93,12 +94,8 @@ app-icon.clear-icon {
 }
 
 app-icon.link-icon:hover:not(.invalid),
-app-icon.loading-icon {
+.loading-icon {
   color: utils.color(accent-blue);
-}
-
-app-icon.loading-icon {
-  animation: spinning 1s infinite linear;
 }
 
 .control-container:has(app-icon.search-icon:hover),

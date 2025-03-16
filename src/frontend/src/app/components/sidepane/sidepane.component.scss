@@ -44,6 +44,10 @@
   flex-grow: 1;
   overflow-y: auto;
   background-color: inherit;
+
+  app-loading-spinner {
+    padding-top: 30px;
+  }
 }
 
 .new-item {

@@ -64,6 +64,24 @@ export class AppService {
   }
 
   /**
+   * Clears the spaces cache.
+   */
+  public clearSpaces(): void {
+
+    this._spaces$.next([]);
+
+  }
+
+  /**
+   * Clears the collections cache.
+   */
+  public clearCollections(): void {
+
+    this._collections$.next([]);
+
+  }
+
+  /**
    * Updates a collection size.
    * @param collectionId Collection ID
    * @param newSize New collection size

@@ -63,7 +63,8 @@ export class CollectionModalComponent implements GenericModalComponent, OnModalO
 
   onModalValidation(): boolean {
     
-    return !! this.modalData.name?.length;
+    return !! this.modalData.name?.length &&
+    (! this.modalData.initialState || this.modalData.initialState.name !== this.modalData.name || this.modalData.initialState.color !== this.modalData.color);
     
   }
 
@@ -77,5 +78,10 @@ export class CollectionModalComponent implements GenericModalComponent, OnModalO
 
 export interface CollectionModalData {
   name: string,
-  color: Color
+  color: Color,
+  /** Makes modal invalid if current state is not different than this initial state (useful for update modals) */
+  initialState?: {
+    name: string,
+    color: Color
+  }
 }

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Color, ITag } from '@devflow/models';
 import { EndpointService, GenericModalComponent, IURLMetadataResponse, OnModalInit, OnModalOutput, OnModalValidation, UtilsService } from '@devflow/services';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { TextboxComponent } from '../../shared/textbox/textbox.component';
 import { ItemImageComponent } from '../../shared/item-image/item-image.component';
 import { CheckboxComponent } from '../../shared/checkbox/checkbox.component';
@@ -73,7 +73,38 @@ export class ItemModalComponent implements GenericModalComponent, OnModalInit, O
 
   onModalValidation(): boolean {
     
-    return (!! this.modalData.url.length) && (!! this.modalData.title?.length) && ((this.modalData.description?.length || 0) <= 1024);
+    const inputValid = (!! this.modalData.url.length) && (!! this.modalData.title?.length) && ((this.modalData.description?.length || 0) <= 1024);
+
+    if ( ! inputValid )
+      return false;
+
+    if ( ! this.modalData.initialState )
+      return true;
+
+    return ! isEqual(
+      {
+        title: this.modalData.title,
+        description: this.modalData.description,
+        tags: this.modalData.tags,
+        posterUrl: this.modalData.posterUrl,
+        url: this.modalData.url,
+        originTitle: this.latestMetadata?.originTitle || this.modalData.originTitle,
+        originUrl: this.latestMetadata?.originUrl || this.modalData.originUrl,
+        favicon: this.latestMetadata?.favicon || this.modalData.favicon,
+        forceAltLayout: this.forceGeneratedPosterLayout
+      },
+      {
+        title: this.modalData.initialState.title,
+        description: this.modalData.initialState.description,
+        tags: this.modalData.initialState.tags,
+        posterUrl: this.modalData.initialState.posterUrl,
+        url: this.modalData.initialState.url,
+        originTitle: this.modalData.initialState.originTitle,
+        originUrl: this.modalData.initialState.originUrl,
+        favicon: this.modalData.initialState.favicon,
+        forceAltLayout: this.modalData.initialState.forceAltLayout
+      }
+    );
     
   }
 
@@ -134,7 +165,19 @@ export interface ItemModalData {
   favicon?: string,
   forceAltLayout: boolean,
   collectionColor: Color,
-  spaceId: string | null
+  spaceId: string | null,
+  /** Makes modal invalid if current state is not different than this initial state (useful for update modals) */
+  initialState?: {
+    title: string,
+    description?: string,
+    tags: ITag[],
+    posterUrl?: string,
+    url: string,
+    originTitle?: string,
+    originUrl?: string,
+    favicon?: string,
+    forceAltLayout: boolean
+  }
 }
 
 export interface ItemModalOutput {

@@ -1,17 +1,22 @@
 <div class="items" [ngClass]="{ empty: ! filteredItems.length }">
-  @for (item of filteredItems; track item.updatedAt; let i = $index) {
-    <app-item
-    [item]="item"
-    showCollection
-    (onItemUpdate)="onItemUpdated(i, $event)"
-    (onTagFilter)="onTagFilter(item.spaceId, item.collectionId, $event)">
-    </app-item>
+  @if ( fetching ) {
+    <app-loading-spinner></app-loading-spinner>
   }
-  @empty {
-    <app-empty-placeholder
-    assetFilename="images/search-frown.png"
-    title="No results found!"
-    message="Adjust your search criteria to view items across all collections...">
-    </app-empty-placeholder>
+  @else {
+    @for (item of filteredItems; track item.updatedAt; let i = $index) {
+      <app-item
+      [item]="item"
+      showCollection
+      (onItemUpdate)="onItemUpdated(i, $event)"
+      (onTagFilter)="onTagFilter(item.spaceId, item.collectionId, $event)">
+      </app-item>
+    }
+    @empty {
+      <app-empty-placeholder
+      assetFilename="images/search-frown.png"
+      title="No results found!"
+      message="Adjust your search criteria to view items across all collections...">
+      </app-empty-placeholder>
+    }
   }
 </div>

@@ -49,7 +49,7 @@ export class SpaceModalComponent implements OnInit, GenericModalComponent, OnMod
 
   onModalValidation(): boolean {
     
-    return !! this.modalData.name?.length;
+    return !! this.modalData.name?.length && (! this.modalData.initialState || this.modalData.initialState.name !== this.modalData.name);
     
   }
 
@@ -77,5 +77,7 @@ export class SpaceModalComponent implements OnInit, GenericModalComponent, OnMod
 
 export interface SpaceModalData {
   name: string,
-  id?: string
+  id?: string,
+  /** Makes modal invalid if current state is not different than this initial state (useful for update modals) */
+  initialState?: { name: string }
 }

@@ -11,6 +11,7 @@ import { EmptyPlaceholderComponent } from '../shared/empty-placeholder/empty-pla
 import { NgClass } from '@angular/common';
 import isURL from 'validator/es/lib/isURL';
 import { cloneDeep } from 'lodash-es';
+import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-collection',
@@ -19,6 +20,7 @@ import { cloneDeep } from 'lodash-es';
     NavItemComponent,
     TextboxComponent,
     EmptyPlaceholderComponent,
+    LoadingSpinnerComponent,
     NgClass
   ],
   templateUrl: './collection.component.html',
@@ -34,6 +36,7 @@ export class CollectionComponent implements OnDestroy {
   public filteredItems?: IItem[] = undefined;
   public fetchingMetadata = new Map<string, true>();
   public hasWritePermission: boolean = true;
+  public fetching: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -55,9 +58,12 @@ export class CollectionComponent implements OnDestroy {
         this.spaceId = spaceId;
         this.collectionId = collectionId;
 
+        this.fetching = true;
+
         this.endpoint.getItems(spaceId, collectionId)
         .then(items => this.items = items)
-        .catch(error => console.error(error));
+        .catch(error => console.error(error))
+        .finally(() => this.fetching = false);
 
       }
 
@@ -99,9 +105,12 @@ export class CollectionComponent implements OnDestroy {
 
       }
 
+      this.fetching = true;
+
       this.endpoint.searchCollectionItems(this.spaceId, this.collectionId, q || undefined, tags?.split(','))
       .then(items => this.filteredItems = items)
-      .catch(error => console.error(error));
+      .catch(error => console.error(error))
+      .finally(() => this.fetching = false);
 
     }));
 

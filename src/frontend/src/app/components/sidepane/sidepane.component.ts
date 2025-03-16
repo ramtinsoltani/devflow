@@ -3,7 +3,7 @@ import { Color, ICollection, IPermission, ISpace, Permission } from '@devflow/mo
 import { EndpointService, AppService, UtilsService, ModalService, AuthService, NotificationService, KeyboardShortcut } from '@devflow/services';
 import { Subscription } from 'rxjs';
 import { NavItemComponent } from '../shared/nav-item/nav-item.component';
-import { ActivationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivationEnd, NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TextboxComponent, TextboxSearchEvent } from '../shared/textbox/textbox.component';
 import { CollectionModalComponent, CollectionModalData } from '../modals/collection/collection.component';
 import { IconComponent } from '../shared/icon/icon.component';
@@ -11,6 +11,7 @@ import { SpaceModalComponent, SpaceModalData } from '../modals/space/space.compo
 import { InviteModalComponent, InviteModalData } from '../modals/invite/invite.component';
 import { ButtonComponent } from '../shared/button/button.component';
 import { InvitationsModalComponent } from '../modals/invitations/invitations.component';
+import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-sidepane',
@@ -20,7 +21,8 @@ import { InvitationsModalComponent } from '../modals/invitations/invitations.com
     RouterLink,
     RouterLinkActive,
     IconComponent,
-    ButtonComponent
+    ButtonComponent,
+    LoadingSpinnerComponent
   ],
   templateUrl: './sidepane.component.html',
   styleUrl: './sidepane.component.scss'
@@ -38,6 +40,7 @@ export class SidepaneComponent implements OnInit, OnDestroy {
   public filteredCollections?: ICollection[];
   public Color = Color;
   public invitations: IPermission[] = [];
+  public fetching: boolean = false;
 
   constructor(
     private app: AppService,
@@ -72,11 +75,19 @@ export class SidepaneComponent implements OnInit, OnDestroy {
         this.selectSpaceFromURLParam();
 
       }
+      else if ( event instanceof NavigationEnd && event.urlAfterRedirects === '/' ) {
+
+        this.onDeselectSpace();
+
+      }
 
     }));
 
+    this.fetching = true;
+
     this.app.fetchSpaces()
-    .catch(console.error);
+    .catch(console.error)
+    .finally(() => this.fetching = false);
 
     // Invitations
     this.subscriptions.push(this.app.invitations$.subscribe(permissions => {
@@ -146,8 +157,17 @@ export class SidepaneComponent implements OnInit, OnDestroy {
         .then(res => {
 
           newCollectionId = res.data;
+
+          this.fetching = true;
           
-          return this.app.fetchCollections(this.selectedSpace?.id as string);
+          return new Promise((resolve, reject) => {
+
+            this.app.fetchCollections(this.selectedSpace?.id as string)
+            .then(resolve)
+            .catch(reject)
+            .finally(() => this.fetching = false);
+
+          });
 
         })
         // Navigate to newly created collection
@@ -169,7 +189,16 @@ export class SidepaneComponent implements OnInit, OnDestroy {
       { label: 'Delete', type: 'danger', closesModal: true, promptsConfirmation: true, confirmationLabel: 'Proceed?', callback: () => {
 
         this.endpoint.deleteCollection(this.selectedSpace?.id as string, collection.id)
-        .then(() => this.app.fetchCollections(this.selectedSpace?.id as string))
+        .then(() => new Promise((resolve, reject) => {
+
+          this.fetching = true;
+
+          this.app.fetchCollections(this.selectedSpace?.id as string)
+          .then(resolve)
+          .catch(reject)
+          .finally(() => this.fetching = false);
+
+        }))
         .then(() => {
 
           // If current route is the deleted collection, navigate to landing page
@@ -185,7 +214,16 @@ export class SidepaneComponent implements OnInit, OnDestroy {
       { label: 'Update', type: 'primary', submit: true, closesModal: true, boundToValidation: true, callback: (modalOutput: CollectionModalData) => {
 
         this.endpoint.updateCollection(this.selectedSpace?.id as string, collection.id, { name: modalOutput.name, color: modalOutput.color })
-        .then(() => this.app.fetchCollections(this.selectedSpace?.id as string))
+        .then(() => new Promise((resolve, reject) => {
+
+          this.fetching = true;
+
+          this.app.fetchCollections(this.selectedSpace?.id as string)
+          .then(resolve)
+          .catch(reject)
+          .finally(() => this.fetching = false);
+
+        }))
         .catch(error => console.error(error));
 
       }},
@@ -194,7 +232,11 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     // Modal data
     {
       name: collection.name,
-      color: collection.color
+      color: collection.color,
+      initialState: {
+        name: collection.name,
+        color: collection.color
+      }
     });
 
   }
@@ -229,7 +271,16 @@ export class SidepaneComponent implements OnInit, OnDestroy {
 
           newSpaceId = res.data;
           
-          return this.app.fetchSpaces();
+          return new Promise((resolve, reject) => {
+
+            this.fetching = true;
+
+            this.app.fetchSpaces()
+            .then(resolve)
+            .catch(reject)
+            .finally(() => this.fetching = false);
+
+          });
 
         })
         .then(() => {
@@ -247,19 +298,33 @@ export class SidepaneComponent implements OnInit, OnDestroy {
 
   public onEditSpace(space: ISpace): void {
 
-    this.modals.openModal<SpaceModalData>('Edit Collection', SpaceModalComponent, [
+    this.modals.openModal<SpaceModalData>('Edit Space', SpaceModalComponent, [
       { label: 'Delete', type: 'danger', closesModal: true, promptsConfirmation: true, confirmationLabel: 'Proceed?', callback: () => {
 
         this.endpoint.deleteSpace(space.id)
-        .then(() => this.app.fetchSpaces())
-        .catch(error => console.error(error));
+        .then(() => {
+
+          this.fetching = true;
+
+          return this.app.fetchSpaces();
+
+        })
+        .catch(error => console.error(error))
+        .finally(() => this.fetching = false);
 
       }},
       { label: 'Update', type: 'primary', submit: true, closesModal: true, boundToValidation: true, callback: (modalOutput: SpaceModalData) => {
 
         this.endpoint.updateSpace(space.id, { name: modalOutput.name })
-        .then(() => this.app.fetchSpaces())
-        .catch(error => console.error(error));
+        .then(() => {
+
+          this.fetching = true;
+
+          return this.app.fetchSpaces();
+
+        })
+        .catch(error => console.error(error))
+        .finally(() => this.fetching = false);
 
       }},
       { label: 'Cancel', type: 'secondary', closesModal: true }
@@ -267,7 +332,10 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     // Modal data
     {
       name: space.name,
-      id: space.id
+      id: space.id,
+      initialState: {
+        name: space.name
+      }
     });
 
   }
@@ -283,8 +351,11 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     if ( forceNavigation || (! this.urlCollectionId && ! isOnSearchRoute) )
       this.router.navigate(['/' + space.id]);
 
+    this.fetching = true;
+
     this.app.fetchCollections(space.id)
-    .catch(console.error);
+    .catch(console.error)
+    .finally(() => this.fetching = false);
 
   }
 
@@ -293,6 +364,8 @@ export class SidepaneComponent implements OnInit, OnDestroy {
     this.selectedSpace = undefined;
     this.filteredCollections = undefined;
     this.filteredSpaces = undefined;
+
+    this.app.clearCollections();
 
     this.router.navigate(['/']);
 
@@ -317,6 +390,9 @@ export class SidepaneComponent implements OnInit, OnDestroy {
   }
 
   public onLogout(): void {
+
+    this.app.clearSpaces();
+    this.app.clearCollections();
 
     this.auth.signOut();
 

@@ -44,11 +44,7 @@
 
   @if ( fetching ) {
     <div class="fetching-status">
-      <app-icon
-      class="spinner"
-      icon="spinner-third"
-      iconSize="1em">
-      </app-icon>
+      <app-loading-spinner></app-loading-spinner>
       <span>Fetching Metadata</span>
     </div>
   }

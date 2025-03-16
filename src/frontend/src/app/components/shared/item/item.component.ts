@@ -8,6 +8,8 @@ import { ItemModalComponent, ItemModalData, ItemModalOutput } from '../../modals
 import { ItemImageComponent } from '../item-image/item-image.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import { cloneDeep } from 'lodash-es';
 
 @Component({
   selector: 'app-item',
@@ -16,7 +18,8 @@ import { Subscription } from 'rxjs';
     NgClass,
     IconComponent,
     TagComponent,
-    ItemImageComponent
+    ItemImageComponent,
+    LoadingSpinnerComponent
   ],
   templateUrl: './item.component.html',
   styleUrl: './item.component.scss'
@@ -152,7 +155,18 @@ export class ItemComponent implements OnInit, OnDestroy {
     // Modal data
     {
       ...this.item,
-      collectionColor: this.app.getCollectionColor(this.item.collectionId) as Color
+      collectionColor: this.app.getCollectionColor(this.item.collectionId) as Color,
+      initialState: {
+        title: this.item.title,
+        description: this.item.description,
+        tags: cloneDeep(this.item.tags),
+        posterUrl: this.item.posterUrl,
+        url: this.item.url,
+        originTitle: this.item.originTitle,
+        originUrl: this.item.originUrl,
+        favicon: this.item.favicon,
+        forceAltLayout: this.item.forceAltLayout
+      }
     },
     // Modal options
     { size: ModalSize.Large });

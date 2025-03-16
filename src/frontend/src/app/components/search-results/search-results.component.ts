@@ -6,12 +6,14 @@ import { Subscription } from 'rxjs';
 import { ItemComponent, TagFilterEvent } from '../shared/item/item.component';
 import { EmptyPlaceholderComponent } from '../shared/empty-placeholder/empty-placeholder.component';
 import { NgClass } from '@angular/common';
+import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-search-results',
   imports: [
     ItemComponent,
     EmptyPlaceholderComponent,
+    LoadingSpinnerComponent,
     NgClass
   ],
   templateUrl: './search-results.component.html',
@@ -22,6 +24,7 @@ export class SearchResultsComponent implements OnDestroy {
   private subscriptions: Subscription[] = [];
 
   public filteredItems: IItem[] = [];
+  public fetching: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -44,9 +47,12 @@ export class SearchResultsComponent implements OnDestroy {
 
       }
 
+      this.fetching = true;
+
       this.endpoint.searchItems(spaceId, q, tags)
       .then(items => this.filteredItems = items)
-      .catch(error => console.error(error));
+      .catch(error => console.error(error))
+      .finally(() => this.fetching = false);
 
     }));
 

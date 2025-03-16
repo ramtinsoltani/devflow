@@ -12,28 +12,33 @@
   (onSearch)="onSearch($event)"></app-textbox>
 </div>
 <div class="items" [ngClass]="{ empty: filteredItems?.length === 0 || items.length === 0 }">
-  @for (item of filteredItems || items; track item.updatedAt; let i = $index) {
-    <app-item
-    [item]="item"
-    [readOnly]="! hasWritePermission"
-    [fetching]="fetchingMetadata.has(item.id)"
-    (onItemUpdate)="onItemUpdated(i, $event)"
-    (onTagFilter)="onTagFilter($event)">
-    </app-item>
+  @if ( fetching ) {
+    <app-loading-spinner></app-loading-spinner>
   }
-
-  @if ( items.length === 0 ) {
-    <app-empty-placeholder
-    assetFilename="images/empty-box.png"
-    title="Nothing here to see!"
-    message="Add new items in this collection using the button above to start collecting stuff...">
-    </app-empty-placeholder>
-  }
-  @else if ( filteredItems?.length === 0 ) {
-    <app-empty-placeholder
-    assetFilename="images/search-frown.png"
-    title="No results found!"
-    message="Adjust your search criteria to view items in this collection...">
-    </app-empty-placeholder>
+  @else {
+    @for (item of filteredItems || items; track item.updatedAt; let i = $index) {
+      <app-item
+      [item]="item"
+      [readOnly]="! hasWritePermission"
+      [fetching]="fetchingMetadata.has(item.id)"
+      (onItemUpdate)="onItemUpdated(i, $event)"
+      (onTagFilter)="onTagFilter($event)">
+      </app-item>
+    }
+  
+    @if ( items.length === 0 ) {
+      <app-empty-placeholder
+      assetFilename="images/empty-box.png"
+      title="Nothing here to see!"
+      message="Add new items in this collection using the button above to start collecting stuff...">
+      </app-empty-placeholder>
+    }
+    @else if ( filteredItems?.length === 0 ) {
+      <app-empty-placeholder
+      assetFilename="images/search-frown.png"
+      title="No results found!"
+      message="Adjust your search criteria to view items in this collection...">
+      </app-empty-placeholder>
+    }
   }
 </div>
