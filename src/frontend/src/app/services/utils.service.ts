@@ -20,6 +20,20 @@ export class UtilsService {
   }
 
   /**
+   * Returns the next color in the normal sequence of colors (calculated from Colors enum).
+   * @param currentColor Current color in the sequence
+   * @returns Next color in the sequence
+   */
+  public pickNextColor(currentColor: Color): Color {
+
+    const colors: Color[] = Object.keys(Color).slice(0, Object.keys(Color).length / 2).map(c => +c);
+    const nextIndex = colors.indexOf(currentColor) + 1;
+
+    return nextIndex < colors.length ? colors[nextIndex] : colors[0];
+
+  }
+
+  /**
    * Picks a random Color value without repeating the ones already in the sequence (if provided).
    * @param previousSequence An array of Color values (that has been previously picked) to exclude from selection (this array will be updated automatically)
    * @returns A random Color value

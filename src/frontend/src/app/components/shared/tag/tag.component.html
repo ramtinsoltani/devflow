@@ -22,7 +22,7 @@
     monochrome,
     'high-contrast': highContrast
   }"
-  (click)="onCloseButtonClick()">
+  (click)="onCloseButtonClick($event)">
     <app-icon class="close-icon" icon="xmark" iconHeight=".6rem" [ngStyle]="{ '--monochrome-color': finalMonochromeTextColor }">
     </app-icon>
   </div>

@@ -17,6 +17,7 @@
   font-weight: 500;
   padding: utils.rem(2px) utils.rem(5px);
   cursor: inherit;
+  user-select: none;
 
   &.removable {
     border-top-right-radius: 0;

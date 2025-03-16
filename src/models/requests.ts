@@ -81,4 +81,4 @@ export type AcceptPermissionRequest = AuthorizedRequest<{ id: string }>;
 export type RevokePermissionRequest = AuthorizedRequest<{ id: string }>;
 export type SelfRevokePermissionRequest = AuthorizedRequest<{ id: string }>;
 export type FetchMetadataRequest = AuthorizedRequest<any, any, IRequestFetchMetadata>;
-export type GetTagColorRequest = AuthorizedRequest<{ spaceId: string, label: string }>;
+export type GetTagColorRequest = AuthorizedRequest<{ spaceId: string, label: string }, any, any, { exclude?: string }>;

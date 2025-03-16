@@ -44,6 +44,7 @@
         removable
         [monochrome]="monochromeTags"
         monochromeTextColor="gray-3"
+        (click)="onCycleTagColor(tag, i)"
         (onRemove)="onDeleteTag(i)">
         </app-tag>
       }

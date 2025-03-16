@@ -686,14 +686,20 @@ export class DatabaseService implements Service {
    * @param token Decoded token of an authorized user
    * @param spaceId Space ID
    * @param tagLabel Tag label to search for
+   * @param excludeItemId An item ID to exclude from the query
    * @returns Tag color or null if not found
    */
-  public async getTagColor(token: DecodedIdToken, spaceId: string, tagLabel: string): Promise<Color | null> {
+  public async getTagColor(token: DecodedIdToken, spaceId: string, tagLabel: string, excludeItemId?: string): Promise<Color | null> {
 
     if ( ! tagLabel?.trim() )
       throw new ServerError('invalid-request', 'Missing tag label!');
 
-    const item = await DbItem.findOne({ spaceId, 'tags.label': tagLabel.toLowerCase().trim() }).sort({ createdAt: -1 });
+    const query: any = { spaceId, 'tags.label': tagLabel.toLowerCase().trim() };
+
+    if ( excludeItemId )
+      query._id = { $ne: excludeItemId };
+
+    const item = await DbItem.findOne(query).sort({ createdAt: -1 });
 
     if ( item )
       await this.enforcePermission(token, spaceId, item.owner, Permission.ReadOnly);

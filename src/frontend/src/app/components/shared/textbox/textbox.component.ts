@@ -22,6 +22,11 @@ import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.comp
 })
 export class TextboxComponent implements OnInit, AfterViewInit {
 
+  /** Keeps track of all the tags which have their color fetched from the server (meaning they exist inside the space) */
+  private immutableTagColors = new Map<number, true>();
+  /** Keeps track of all the known tags which color can be mutated */
+  private mutableTagColors = new Map<number, true>();
+
   /** Indicates if host element is hovered */
   public hovered: boolean = false;
   /** Indicates if current URL is valid (only applicable if `type` is `url`) */
@@ -66,6 +71,9 @@ export class TextboxComponent implements OnInit, AfterViewInit {
 
   @Input()
   public spaceId: string | null = null;
+
+  @Input()
+  public itemId: string | null = null;
 
   /** Textbox placeholder */
   @Input()
@@ -187,11 +195,18 @@ export class TextboxComponent implements OnInit, AfterViewInit {
 
       try {
 
-        existingColor = (await this.endpoint.getTagColor(this.spaceId, value.toLowerCase().trim())).color;
+        existingColor = (await this.endpoint.getTagColor(this.spaceId, this.itemId, value.toLowerCase().trim())).color;
 
         // Update previous tags color sequence
         if ( existingColor !== null && ! this.previousTagsColorSequence.includes(existingColor) )
           this.previousTagsColorSequence.push(existingColor);
+
+        // Set the fetched color as immutable
+        if ( existingColor !== null )
+          this.immutableTagColors.set(this.tags.length, true);
+        // Or as mutable
+        else
+          this.mutableTagColors.set(this.tags.length, true);
 
       }
       catch (error) {
@@ -222,9 +237,78 @@ export class TextboxComponent implements OnInit, AfterViewInit {
 
   }
 
+  public async onCycleTagColor(tag: ITag, index: number): Promise<void> {
+
+    // If tag color is immutable
+    if ( this.immutableTagColors.has(index) )
+      return;
+
+    // If tag color's mutability is unknown, fetch
+    if ( this.spaceId && ! this.mutableTagColors.has(index) && ! this.immutableTagColors.has(index) ) {
+
+      try {
+
+        if ( (await this.endpoint.getTagColor(this.spaceId, this.itemId, tag.label)).color !== null ) {
+
+          this.immutableTagColors.set(index, true);
+          return;
+
+        }
+        else {
+
+          this.mutableTagColors.set(index, true);
+
+        }
+
+      }
+      catch (error) {
+
+        console.error(error);
+        return;
+
+      }
+
+    }
+
+    // Pick the next color in regular color sequence
+    tag.color = this.utils.pickNextColor(tag.color);
+
+    this.tagsChange.emit(this.tags);
+
+  }
+
   public onDeleteTag(index: number): void {
 
     this.tags.splice(index, 1);
+
+    // Update immutable tag colors indices
+    const newImmutableTagColors = new Map<number, true>();
+    
+    for ( const entry of this.immutableTagColors ) {
+
+      if ( entry[0] < index )
+        newImmutableTagColors.set(entry[0], true);
+      else if ( entry[0] > index )
+        newImmutableTagColors.set(entry[0] - 1, true);
+
+    }
+
+    this.immutableTagColors = newImmutableTagColors;
+
+    // Update mutable tag colors indices
+    const newMutableTagColors = new Map<number, true>();
+    
+    for ( const entry of this.mutableTagColors ) {
+
+      if ( entry[0] < index )
+        newMutableTagColors.set(entry[0], true);
+      else if ( entry[0] > index )
+        newMutableTagColors.set(entry[0] - 1, true);
+
+    }
+
+    this.mutableTagColors = newMutableTagColors;
+    
     this.tagsChange.emit(this.tags);
 
     if ( this.searchOnTagsChange )

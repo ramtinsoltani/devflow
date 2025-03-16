@@ -11,7 +11,7 @@ TagsRouter.use(protectedRoute);
 
 TagsRouter.get('/tags/:spaceId/color/:label', asyncHandler(async (req: GetTagColorRequest, res: Response<IResponseColor>) => {
 
-  const color = await services.db.getTagColor(req.token, req.params.spaceId, req.params.label);
+  const color = await services.db.getTagColor(req.token, req.params.spaceId, req.params.label, req.query.exclude);
 
   res.json({ color });
 

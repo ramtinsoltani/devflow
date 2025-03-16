@@ -168,6 +168,7 @@ export interface ItemModalData {
   spaceId: string | null,
   /** Makes modal invalid if current state is not different than this initial state (useful for update modals) */
   initialState?: {
+    id: string,
     title: string,
     description?: string,
     tags: ITag[],

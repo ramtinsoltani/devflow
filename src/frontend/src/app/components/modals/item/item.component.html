@@ -27,5 +27,5 @@
   </app-textbox>
   <app-textbox [(value)]="modalData.title" label="Title" placeholder="Required"></app-textbox>
   <app-textbox type="multiline" [(value)]="modalData.description" label="Description" placeholder="Optional" [multilineMaxAllowedChars]="1024"></app-textbox>
-  <app-textbox [(tags)]="modalData.tags" label="Tags" placeholder="Optional" withTags [previousTagsColorSequence]="originalColorSequence" [spaceId]="modalData.spaceId"></app-textbox>
+  <app-textbox [(tags)]="modalData.tags" label="Tags" placeholder="Optional" withTags [previousTagsColorSequence]="originalColorSequence" [spaceId]="modalData.spaceId" [itemId]="modalData.initialState?.id || null"></app-textbox>
 </div>

@@ -157,6 +157,7 @@ export class ItemComponent implements OnInit, OnDestroy {
       ...this.item,
       collectionColor: this.app.getCollectionColor(this.item.collectionId) as Color,
       initialState: {
+        id: this.item.id,
         title: this.item.title,
         description: this.item.description,
         tags: cloneDeep(this.item.tags),

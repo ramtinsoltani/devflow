@@ -57,8 +57,9 @@ export class TagComponent {
     private utils: UtilsService
   ) { }
 
-  public onCloseButtonClick(): void {
+  public onCloseButtonClick(event: MouseEvent): void {
 
+    event.stopPropagation();
     this.onRemove.emit();
 
   }

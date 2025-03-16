@@ -52,7 +52,7 @@
 
 | Endpoint | Query Params | Route Params | Body | Response |
 |:---------|:------------:|:------------:|:----:|:--------:|
-| **GET** `/api/tags/:spaceId/color/:label` | | `spaceId` as space ID, `label` as tag label | | [Color Response](#color-response) holding the color of the tag, or `null` if tag does not exist |
+| **GET** `/api/tags/:spaceId/color/:label` | `exclude` as single item ID to exclude reading tags from | `spaceId` as space ID, `label` as tag label | | [Color Response](#color-response) holding the color of the tag, or `null` if tag does not exist |
 
 ### Utility Endpoints
 

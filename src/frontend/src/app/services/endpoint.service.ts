@@ -446,14 +446,20 @@ export class EndpointService {
   /**
    * Retrieves the color of an existing tag in the given space.
    * @param spaceId Space ID
+   * @param itemId Item ID to exclude in consideration
    * @param label Tag label to search for
    * @returns Color response
    */
-  public async getTagColor(spaceId: string, label: string): Promise<IColorResponse> {
+  public async getTagColor(spaceId: string, itemId: string | null, label: string): Promise<IColorResponse> {
+
+    const params: Record<string, string> = {};
+
+    if ( itemId )
+      params['exclude'] = itemId;
 
     return lastValueFrom(this.http.get<any>(
       `${environment.apiBaseUrl}/tags/${spaceId}/color/${label}`,
-      { headers: await this.getAuthorizationHeader()}
+      { headers: await this.getAuthorizationHeader(), params }
     ));
 
   }
