@@ -1,7 +1,7 @@
 import { Component, ViewContainerRef, ViewChild, HostListener } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent, SidepaneComponent, ModalComponent, NotificationComponent } from '@devflow/components';
-import { AppService, AuthService, ModalService, NotificationService } from './services';
+import { AppService, AuthService, ModalService, ModalSize, NotificationService } from './services';
 import { User } from 'firebase/auth';
 import { FloatingButtonComponent } from './components/shared/floating-button/floating-button.component';
 import { HelpModalComponent } from './components/modals/help/help.component';
@@ -123,7 +123,7 @@ export class AppComponent {
 
     this.modals.openModal('Help', HelpModalComponent, [
       { label: 'Close', type: 'secondary', closesModal: true }
-    ]);
+    ], undefined, { size: ModalSize.Large });
 
   }
 
