@@ -176,6 +176,9 @@ export class TextboxComponent implements OnInit, AfterViewInit {
 
   private async createTag(value: string): Promise<void> {
 
+    if ( this.type !== 'search' )
+      value = value.replace(/^(not:)+/i, '');
+
     if ( ! value.trim() )
       return;
 

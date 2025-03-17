@@ -6,6 +6,7 @@ import { IResponseUrlMetadata } from "../models/responses";
 import { ServerError } from "../lib/error";
 import { ValidatorSchema } from "../services/validator";
 import { protectedRoute } from "../lib/middleware/auth";
+import { isDataURI } from "validator";
 
 export const UtilitiesRouter = Router();
 
@@ -205,24 +206,42 @@ UtilitiesRouter.post('/utils/metadata', asyncHandler(async (req: FetchMetadataRe
 
   metadata.favicon = favicons.svg || bestPNG || favicons.ico || originUrl + '/favicon.ico';
 
-  // Truncate
+  // Normalize
   if ( metadata.title?.length )
     metadata.title = metadata.title.substring(0, 256);
+  else
+    delete metadata.title;
 
   if ( metadata.description?.length )
     metadata.description = metadata.description.substring(0, 1024);
+  else
+    delete metadata.description;
 
-  if ( metadata.posterUrl?.length )
-    metadata.posterUrl = metadata.posterUrl.substring(0, 1024);
+  if ( metadata.posterUrl?.length ) {
+
+    if ( isDataURI(metadata.posterUrl) && metadata.posterUrl.length > 1024 )
+      delete metadata.posterUrl;
+    else
+      metadata.posterUrl = metadata.posterUrl.substring(0, 1024);
+
+  }
+  else
+    delete metadata.posterUrl;
 
   if ( metadata.originTitle?.length )
     metadata.originTitle = metadata.originTitle.substring(0, 256);
+  else
+    delete metadata.originTitle;
 
   if ( metadata.originUrl?.length )
     metadata.originUrl = metadata.originUrl.substring(0, 1024);
+  else
+    delete metadata.originUrl;
 
   if ( metadata.favicon?.length )
     metadata.favicon = metadata.favicon.substring(0, 1024);
+  else
+    delete metadata.favicon;
 
   res.json(metadata);
 

@@ -33,6 +33,10 @@ export class TagComponent {
 
   }
 
+  /** If true, renders a visual "not" section at the start of the tag */
+  @Input({ transform: booleanAttribute })
+  public negative: boolean = false;
+
   /** If true, tag will be rendered in monochrome, ignoring its color */
   @Input({ transform: booleanAttribute })
   public monochrome: boolean = false;
@@ -61,6 +65,12 @@ export class TagComponent {
 
     event.stopPropagation();
     this.onRemove.emit();
+
+  }
+
+  public getVisualLabel(): string {
+
+    return this.negative ? this.value.replace(/^(not:)+/i, '') : this.value;
 
   }
 

@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { isURL } from 'validator';
+import { isDataURI, isURL } from 'validator';
 import { Color, Permission } from './normalized';
 
 const ColorSubSchema = {
@@ -107,7 +107,7 @@ export const ItemSchema = new Schema({
         protocols: ['http', 'https'],
         require_protocol: true,
         require_valid_protocol: true
-      }),
+      }) || isDataURI(v),
       message: () => 'Poster URL is not a valid URL!'
     }
   },
@@ -173,6 +173,7 @@ ItemSchema.index({ spaceId: 1, collectionId: 1, 'tags.label': 1 });
 ItemSchema.index({ spaceId: 1, collectionId: 1, title: 1, 'tags.label': 1 });
 ItemSchema.index({ spaceId: 1, title: 1 });
 ItemSchema.index({ spaceId: 1, 'tags.label': 1 });
+ItemSchema.index({ spaceId: 1, 'tags.label': 1, _id: 1 });
 ItemSchema.index({ spaceId: 1, title: 1, 'tags.label': 1 });
 
 export const DbItem = model('Item', ItemSchema);

@@ -1,3 +1,6 @@
+@if ( negative ) {
+  <div class="negate">Not</div>
+}
 <div class="tag"
 [ngStyle]="{
   backgroundColor: monochrome ? 'currentColor' : finalColor
@@ -8,7 +11,7 @@
   'high-contrast': highContrast
 }">
   <span [ngStyle]="{ '--monochrome-color': finalMonochromeTextColor }">
-    {{ value }}
+    {{ getVisualLabel() }}
   </span>
 </div>
 

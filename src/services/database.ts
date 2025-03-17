@@ -360,7 +360,10 @@ export class DatabaseService implements Service {
 
     const trueOwner = await this.enforcePermission(token, spaceId, collection.owner, Permission.CanModifyContent);
 
-    data.tags = data.tags.map(t => ({ ...t, label: t.label.trim().toLowerCase() }));
+    data.tags = data.tags
+    .map(t => ({ ...t, label: t.label.trim().toLowerCase().replace(/^(not:)+/i, '') }))
+    .filter(t => !! t.label.length);
+
     data.tags = uniqBy(data.tags, tag => tag.label);
     
     const item = new DbItem({
@@ -419,7 +422,10 @@ export class DatabaseService implements Service {
 
       doc.tags.splice(0, doc.tags.length);
 
-      let newTags = data.tags.map(t => ({ ...t, label: t.label.trim().toLowerCase() }));
+      let newTags = data.tags
+      .map(t => ({ ...t, label: t.label.trim().toLowerCase().replace(/^(not:)+/i, '') }))
+      .filter(t => !! t.label.length);
+
       newTags = uniqBy(newTags, tag => tag.label);
 
       doc.tags.push(...newTags);
@@ -494,7 +500,16 @@ export class DatabaseService implements Service {
 
     if ( tags?.length ) {
 
-      query['tags.label'] = { $in: tags.map(t => t.trim().toLowerCase()).filter(t => t.length) };
+      query['tags.label'] = {
+        $in: tags.map(t => t.trim().toLowerCase()).filter(t => t.length && ! t.toLowerCase().startsWith('not:')),
+        $nin: tags.map(t => t.trim().toLowerCase()).filter(t => t.length && t.toLowerCase().startsWith('not:')).map(t => t.replace(/^(not:)+/, ''))
+      };
+
+      if ( ! query['tags.label'].$in.length )
+        delete query['tags.label'].$in;
+
+      if ( ! query['tags.label'].$nin.length )
+        delete query['tags.label'].$nin;
 
     }
 
@@ -539,7 +554,16 @@ export class DatabaseService implements Service {
 
     if ( tags?.length ) {
 
-      query['tags.label'] = { $in: tags.map(t => t.trim().toLowerCase()).filter(t => t.length) };
+      query['tags.label'] = {
+        $in: tags.map(t => t.trim().toLowerCase()).filter(t => t.length && ! t.toLowerCase().startsWith('not:')),
+        $nin: tags.map(t => t.trim().toLowerCase()).filter(t => t.length && t.toLowerCase().startsWith('not:')).map(t => t.replace(/^(not:)+/, ''))
+      };
+
+      if ( ! query['tags.label'].$in.length )
+        delete query['tags.label'].$in;
+
+      if ( ! query['tags.label'].$nin.length )
+        delete query['tags.label'].$nin;
 
     }
 

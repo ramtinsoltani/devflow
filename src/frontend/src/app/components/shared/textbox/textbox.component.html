@@ -43,6 +43,7 @@
         [color]="tag.color"
         removable
         [monochrome]="monochromeTags"
+        [negative]="tag.label.startsWith('not:')"
         monochromeTextColor="gray-3"
         (click)="onCycleTagColor(tag, i)"
         (onRemove)="onDeleteTag(i)">

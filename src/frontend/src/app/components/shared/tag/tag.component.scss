@@ -6,24 +6,41 @@
   max-width: max-content;
 }
 
+.negate,
 .tag {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: utils.rem(2px);
-  border-radius: 2px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
   text-transform: uppercase;
   font-size: utils.rem(10px);
   font-weight: 500;
   padding: utils.rem(2px) utils.rem(5px);
   cursor: inherit;
   user-select: none;
+}
+
+.negate {
+  color: utils.color(gray-9);
+  background-color: utils.color(accent-red);
+  font-weight: 400;
+}
+
+.tag {
+  gap: utils.rem(2px);
+  border-radius: 2px;
 
   &.removable {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     padding-right: 0;
   }
+}
+
+.negate ~ .tag {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
 }
 
 .button {
