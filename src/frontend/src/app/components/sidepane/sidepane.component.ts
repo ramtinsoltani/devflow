@@ -12,6 +12,8 @@ import { InviteModalComponent, InviteModalData } from '../modals/invite/invite.c
 import { ButtonComponent } from '../shared/button/button.component';
 import { InvitationsModalComponent } from '../modals/invitations/invitations.component';
 import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinner.component';
+import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-sidepane',
@@ -22,7 +24,9 @@ import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinn
     RouterLinkActive,
     IconComponent,
     ButtonComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    CdkDrag,
+    CdkDropList
   ],
   templateUrl: './sidepane.component.html',
   styleUrl: './sidepane.component.scss'
@@ -41,6 +45,10 @@ export class SidepaneComponent implements OnInit, OnDestroy {
   public Color = Color;
   public invitations: IPermission[] = [];
   public fetching: boolean = false;
+  public currentUser: User | null = null;
+  public avatarFailed: boolean = false;
+  public spaceReorderingInProgress: boolean = false;
+  public collectionReorderingInProgress: boolean = false;
 
   constructor(
     private app: AppService,
@@ -116,6 +124,14 @@ export class SidepaneComponent implements OnInit, OnDestroy {
 
       if ( event.shortcut === KeyboardShortcut.NewCollection && this.selectedSpace )
         return this.onNewCollection();
+
+    }));
+
+    // Auth
+    this.subscriptions.push(this.auth.onAuthStateChanged$.subscribe(user => {
+
+      this.currentUser = user;
+      this.avatarFailed = false;
 
     }));
     
@@ -442,6 +458,61 @@ export class SidepaneComponent implements OnInit, OnDestroy {
   public hasWritePermission(): boolean {
 
     return !! this.selectedSpace && (! this.selectedSpace.shared || this.selectedSpace.permission === Permission.CanModifyContent);
+
+  }
+
+  public onSpaceDropped(event: CdkDragDrop<ISpace[]>): void {
+
+    if ( event.currentIndex === event.previousIndex )
+      return;
+  
+    moveItemInArray(this.spaces, event.previousIndex, event.currentIndex);
+
+    // Reorder
+    const currentSpace = this.spaces[event.currentIndex];
+    const previousSpace: ISpace | undefined = this.spaces.filter(s => ! s.shared)[event.currentIndex - 1];
+    const nextSpace: ISpace | undefined = this.spaces.filter(s => ! s.shared)[event.currentIndex + 1];
+
+    this.spaceReorderingInProgress = true;
+
+    this.endpoint.reorderSpace(
+      currentSpace.id,
+      nextSpace?.id || null,
+      previousSpace?.id || null
+    )
+    .catch(console.error)
+    .finally(() => this.spaceReorderingInProgress = false);
+
+  }
+
+  public onCollectionDropped(event: CdkDragDrop<ICollection[]>): void {
+
+    if ( event.currentIndex === event.previousIndex )
+      return;
+  
+    moveItemInArray(this.collections, event.previousIndex, event.currentIndex);
+
+    // Reorder
+    const currentCollection = this.collections[event.currentIndex];
+    const previousCollection: ICollection | undefined = this.collections[event.currentIndex - 1];
+    const nextCollection: ICollection | undefined = this.collections[event.currentIndex + 1];
+
+    this.collectionReorderingInProgress = true;
+
+    this.endpoint.reorderCollection(
+      currentCollection.spaceId,
+      currentCollection.id,
+      nextCollection?.id || null,
+      previousCollection?.id || null
+    )
+    .catch(console.error)
+    .finally(() => this.collectionReorderingInProgress = false);
+
+  }
+
+  public onAvatarFailed(): void {
+
+    this.avatarFailed = true;
 
   }
 

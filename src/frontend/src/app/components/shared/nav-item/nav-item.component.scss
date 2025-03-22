@@ -8,11 +8,25 @@
   cursor: pointer;
   font-size: 1em;
   border-radius: 3px;
-  transition: background-color .15s ease-in-out;
+  transition: background-color .15s ease-in-out, box-shadow .15s ease-in-out;
   outline: none;
 
-  &:hover {
+  &.cdk-drag-animating {
+    transition: all .15s ease-in-out !important;
+  }
+
+  &.cdk-drag-preview {
+    box-shadow: 0 10px 20px utils.color(dropshadow);
+  }
+
+  &:hover,
+  &.cdk-drag-preview {
     background-color: utils.color(gray-3);
+  }
+
+  &.cdk-drag-placeholder {
+    opacity: 0;
+    user-select: none;
   }
 }
 

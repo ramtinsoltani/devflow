@@ -17,6 +17,7 @@ import { UtilitiesRouter } from './routers/utils';
 import { HealthRouter } from './routers/health';
 import { IResponseError } from './models/responses';
 import { TagsRouter } from './routers/tags';
+import { ReorderRouter } from './routers/reorder';
 
 dotenv.config();
 
@@ -70,6 +71,7 @@ app.use('/api', SearchRouter);
 app.use('/api', PermissionsRouter);
 app.use('/api', TagsRouter);
 app.use('/api', UtilitiesRouter);
+app.use('/api', ReorderRouter);
 
 // API 404
 app.use('/api', (req: Request, res: Response<IResponseError>) => {

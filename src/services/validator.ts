@@ -80,5 +80,6 @@ export enum ValidatorSchema {
   RequestNewItem = 'request-new-item',
   RequestUpdateItem = 'request-update-item',
   RequestFetchMetadata = 'request-fetch-metadata',
-  RequestNewPermission = 'request-new-permission'
+  RequestNewPermission = 'request-new-permission',
+  RequestReorder = 'request-reorder'
 }

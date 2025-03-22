@@ -60,6 +60,13 @@
 |:---------|:------------:|:------------:|:----:|:--------:|
 | **POST** `/api/utils/metadata` | | | [Fetch URL Metadata Request](#fetch-url-metadata-request) | [URL Metadata](#url-metadata-response) |
 
+### Reorder Endpoints
+
+| Endpoint | Query Params | Route Params | Body | Response |
+|:---------|:------------:|:------------:|:----:|:--------:|
+| **PATCH** `/api/reorder/:spaceId` | | `spaceId` as space ID | [Reorder Request](#reorder-request) | Reorders an owned space (excluding shared spaces). |
+| **PATCH** `/api/reorder/:spaceId/:collectionId` | | `spaceId` as space ID, `collectionId` as collection ID | [Reorder Request](#reorder-request) | Reorders a collection. |
+| **PATCH** `/api/reorder/:spaceId/:collectionId/:itemId` | | `spaceId` as space ID, `collectionId` as collection ID, `itemId` as item ID | [Reorder Request](#reorder-request) | Reorders an item. |
 
 # Data Models
 
@@ -237,6 +244,15 @@ interface RequestUpdateItem {
   description?: string | null,
   posterUrl?: string | null,
   tags?: Tag[]
+}
+```
+
+### Reorder Request
+
+```ts
+interface ReorderRequest {
+  before: string | null,
+  after: string | null
 }
 ```
 

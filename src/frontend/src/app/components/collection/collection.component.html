@@ -11,7 +11,11 @@
   (onClear)="onSearchClear()"
   (onSearch)="onSearch($event)"></app-textbox>
 </div>
-<div class="items" [ngClass]="{ empty: ! fetching && (filteredItems?.length === 0 || items.length === 0) }">
+<div class="items"
+[ngClass]="{ empty: ! fetching && (filteredItems?.length === 0 || items.length === 0) }"
+cdkDropList
+cdkDropListOrientation="mixed"
+(cdkDropListDropped)="onItemDropped($event)">
   @if ( fetching ) {
     <app-loading-spinner></app-loading-spinner>
   }
@@ -22,7 +26,9 @@
       [readOnly]="! hasWritePermission"
       [fetching]="fetchingMetadata.has(item.id)"
       (onItemUpdate)="onItemUpdated(i, $event)"
-      (onTagFilter)="onTagFilter($event)">
+      (onTagFilter)="onTagFilter($event)"
+      cdkDrag
+      [cdkDragDisabled]="! hasWritePermission || reorderingInProgress || filteredItems">
       </app-item>
     }
   

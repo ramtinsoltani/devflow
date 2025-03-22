@@ -7,20 +7,24 @@ export interface ICommonDocument {
   createdAt: number
 }
 
-export interface ISpace extends ICommonDocument {
+export interface IOrderedDocument {
+  order?: number
+}
+
+export interface ISpace extends ICommonDocument, IOrderedDocument {
   name: string,
   shared?: true,
   permission?: Permission
 }
 
-export interface ICollection extends ICommonDocument {
+export interface ICollection extends ICommonDocument, IOrderedDocument {
   spaceId: string,
   name: string,
   color: Color,
   size: number
 }
 
-export interface IItem extends ICommonDocument {
+export interface IItem extends ICommonDocument, IOrderedDocument {
   spaceId: string,
   collectionId: string,
   title: string,

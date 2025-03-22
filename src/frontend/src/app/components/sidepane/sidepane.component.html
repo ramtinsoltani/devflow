@@ -28,7 +28,7 @@
     </app-nav-item>
   }
 
-  <div class="items">
+  <div class="items" cdkDropList cdkDropListOrientation="vertical" (cdkDropListDropped)="onSpaceDropped($event)">
     @if ( fetching ) {
       <app-loading-spinner></app-loading-spinner>
     }
@@ -44,7 +44,9 @@
         secondaryActionIconHoverColor="gray-9"
         (click)="onSelectSpace(space)"
         (onAction)="onEditSpace(space)"
-        (onSecondaryAction)="onInviteUser(space)">
+        (onSecondaryAction)="onInviteUser(space)"
+        cdkDrag
+        [cdkDragDisabled]="spaceReorderingInProgress || filteredSpaces">
         </app-nav-item>
       }
   
@@ -59,12 +61,6 @@
       }
     }
   </div>
-  <app-nav-item
-  label="Logout"
-  forceAccentColor
-  accentColor="accent-red"
-  (click)="onLogout()">
-  </app-nav-item>
 }
 @else {
   <div class="nav-back"
@@ -100,7 +96,7 @@
       </app-button>
     }
   </div>
-  <div class="items">
+  <div class="items" cdkDropList cdkDropListOrientation="vertical" (cdkDropListDropped)="onCollectionDropped($event)">
     @if ( fetching ) {
       <app-loading-spinner></app-loading-spinner>
     }
@@ -121,7 +117,9 @@
           actionIcon="pen-to-square"
           actionIconSize="1em"
           actionIconHoverColor="gray-9"
-          (onAction)="onEditCollection(collection)">
+          (onAction)="onEditCollection(collection)"
+          cdkDrag
+          [cdkDragDisabled]="collectionReorderingInProgress || filteredCollections">
           </app-nav-item>
         }
         @else {
@@ -141,10 +139,24 @@
       }
     }
   </div>
-  <app-nav-item
-    label="Logout"
-    accentColor="accent-red"
-    forceAccentColor
-    (click)="onLogout()">
-    </app-nav-item>
+}
+@if ( currentUser ) {
+  <div class="logout-item">
+    @if ( ! avatarFailed && currentUser.photoURL ) {
+      <img class="user-avatar" [src]="currentUser.photoURL" (error)="onAvatarFailed()">
+    }
+    @else {
+      <div class="user-avatar avatar-placeholder">
+        <app-icon
+        icon="user"
+        iconSize="20px">
+        </app-icon>
+      </div>
+    }
+    <div class="user-info">
+      <span class="username">{{ currentUser.displayName ?? '' }}</span>
+      <span class="email">{{ currentUser.email ?? '' }}</span>
+      <span class="logout-button" (click)="onLogout()">Logout</span>
+    </div>
+  </div>
 }

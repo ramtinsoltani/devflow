@@ -1,6 +1,6 @@
-import mongoose, { syncIndexes } from 'mongoose';
+import mongoose, { Document, syncIndexes } from 'mongoose';
 import { DbCollection, DbItem, DbPermission, DbSpace } from '../models/database';
-import { IRequestNewCollection, IRequestNewItem, IRequestNewPermission, IRequestNewSpace, IRequestUpdateCollection, IRequestUpdateItem, IRequestUpdateSpace } from '../models/requests';
+import { IRequestNewCollection, IRequestNewItem, IRequestNewPermission, IRequestNewSpace, IRequestReorder, IRequestUpdateCollection, IRequestUpdateItem, IRequestUpdateSpace } from '../models/requests';
 import { Color, ICollection, IItem, IPermission, ISpace, Permission } from '../models/normalized';
 import { normalizeCommonDocument } from '../lib/normalizer';
 import { ServerError } from '../lib/error';
@@ -140,9 +140,27 @@ export class DatabaseService implements Service {
   public async getSpaces(token: DecodedIdToken): Promise<ISpace[]> {
 
     // Get all spaces owned by the authorized user
-    const spaces = await DbSpace.find({ owner: token.uid }).sort({ createdAt: 1 });
+    const spaces = await DbSpace.aggregate([
+      {
+        $match: { owner: token.uid }
+      },
+      {
+        $addFields: {
+          sortOrder: {
+            $cond: {
+              if: { $gt: ["$order", null] }, // If `order` exists (not undefined or null), use it
+              then: "$order",
+              else: { $toLong: "$createdAt" } // Otherwise, fall back to `createdAt` in milliseconds timestamp format
+            }
+          }
+        }
+      },
+      {
+        $sort: { sortOrder: 1, createdAt: 1 } // Sort by order (or createdAt as fallback)
+      }
+    ]).exec();
 
-    // Get all shared spaces
+    // Get all shared spaces (IMPORTANT: should be appended to the bottom, otherwise will break reordering)
     let sharedSpaces: ISpace[] = [];
     const permissions = await DbPermission.find({ grantedTo: token.uid, accepted: true });
 
@@ -250,7 +268,27 @@ export class DatabaseService implements Service {
     if ( ! spaceId )
       throw new ServerError('invalid-request', 'Space ID missing!');
 
-    const collections = await DbCollection.find({ spaceId }).sort({ createdAt: 1 });
+    const collections = await DbCollection.aggregate([
+      {
+        $match: {
+          spaceId: new mongoose.Types.ObjectId(spaceId)
+        }
+      },
+      {
+        $addFields: {
+          sortOrder: {
+            $cond: {
+              if: { $gt: ["$order", null] }, // If `order` exists (not undefined or null), use it
+              then: "$order",
+              else: { $toLong: "$createdAt" } // Otherwise, fall back to `createdAt` in milliseconds timestamp format
+            }
+          }
+        }
+      },
+      {
+        $sort: { sortOrder: 1, createdAt: 1 } // Sort by order (or createdAt as fallback)
+      }
+    ]).exec();
 
     if ( collections.length )
       await this.enforcePermission(token, spaceId, collections[0].owner, Permission.ReadOnly);
@@ -336,7 +374,28 @@ export class DatabaseService implements Service {
     if ( ! collectionId )
       throw new ServerError('invalid-request', 'Missing collection ID!');
 
-    const items = await DbItem.find({ collectionId, spaceId }).sort({ createdAt: -1 });
+    const items = await DbItem.aggregate([
+      {
+        $match: {
+          collectionId: new mongoose.Types.ObjectId(collectionId),
+          spaceId: new mongoose.Types.ObjectId(spaceId)
+        }
+      },
+      {
+        $addFields: {
+          sortOrder: {
+            $cond: {
+              if: { $gt: ["$order", null] }, // If `order` exists (not undefined or null), use it
+              then: "$order",
+              else: { $toLong: "$createdAt" } // Otherwise, fall back to `createdAt` in milliseconds timestamp format
+            }
+          }
+        }
+      },
+      {
+        $sort: { sortOrder: -1, createdAt: -1 } // Sort by order (or createdAt as fallback)
+      }
+    ]).exec();
 
     if ( items.length )
       await this.enforcePermission(token, spaceId, items[0].owner, Permission.ReadOnly);
@@ -734,6 +793,130 @@ export class DatabaseService implements Service {
     const tag = item.tags.find(t => t.label?.toLowerCase().trim() === tagLabel.toLowerCase().trim());
 
     return tag?.color ?? null;
+
+  }
+
+  /**
+   * Reorders a space.
+   * @param token Decoded token of an authorized user
+   * @param spaceId Space ID
+   * @param order Order request body
+   */
+  public async reorderSpace(token: DecodedIdToken, spaceId: string, order: IRequestReorder): Promise<void> {
+
+    if ( ! spaceId )
+      throw new ServerError('invalid-request', 'Missing space ID!');
+
+    if ( ! order.before && ! order.after )
+      throw new ServerError('invalid-request', 'Before and after spaces cannot be both missing!');
+
+    const space = await DbSpace.findOne({ _id: spaceId, owner: token.uid });
+    const before = order.before !== null ? await DbSpace.findOne({ _id: order.before, owner: token.uid }) : undefined;
+    const after = order.after !== null ? await DbSpace.findOne({ _id: order.after, owner: token.uid }) : undefined;
+
+    if ( ! space )
+      throw new ServerError('not-found', `No space found with ID "${spaceId}"!`);
+
+    if ( ! before && order.before )
+      throw new ServerError('not-found', `No before space found with ID "${order.before}"!`);
+
+    if ( ! after && order.after )
+      throw new ServerError('not-found', `No after space found with ID "${order.after}"!`);
+
+    const afterTimestamp = after?.order || after?.createdAt.getTime() || 0;
+    const beforeTimestamp = before?.order || before?.createdAt.getTime() || (afterTimestamp * 2);
+
+    space.order = Math.round((beforeTimestamp + afterTimestamp) / 2);
+
+    await space.save();
+
+  }
+
+  /**
+   * Reorders a collection.
+   * @param token Decoded token of an authorized user
+   * @param spaceId Space ID
+   * @param collectionId Collection ID
+   * @param order Order request body
+   */
+  public async reorderCollection(token: DecodedIdToken, spaceId: string, collectionId: string, order: IRequestReorder): Promise<void> {
+
+    if ( ! collectionId )
+      throw new ServerError('invalid-request', 'Missing collection ID!');
+
+    if ( ! spaceId )
+      throw new ServerError('invalid-request', 'Missing space ID!');
+
+    if ( ! order.before && ! order.after )
+      throw new ServerError('invalid-request', 'Before and after collections cannot be both missing!');
+
+    const collection = await DbCollection.findOne({ _id: collectionId, spaceId });
+    const before = order.before !== null ? await DbCollection.findOne({ _id: order.before, spaceId }) : undefined;
+    const after = order.after !== null ? await DbCollection.findOne({ _id: order.after, spaceId }) : undefined;
+
+    if ( ! collection )
+      throw new ServerError('not-found', `No collection found with ID "${collectionId}"!`);
+
+    if ( ! before && order.before )
+      throw new ServerError('not-found', `No before collection found with ID "${order.before}"!`);
+
+    if ( ! after && order.after )
+      throw new ServerError('not-found', `No after collection found with ID "${order.after}"!`);
+
+    await this.enforcePermission(token, spaceId, collection.owner, Permission.CanModifyContent);
+
+    const afterTimestamp = after?.order || after?.createdAt.getTime() || 0;
+    const beforeTimestamp = before?.order || before?.createdAt.getTime() || (afterTimestamp * 2);
+
+    collection.order = Math.round((beforeTimestamp + afterTimestamp) / 2);
+
+    await collection.save();
+
+  }
+
+  /**
+   * Reorders a space.
+   * @param token Decoded token of an authorized user
+   * @param spaceId Space ID
+   * @param collectionId Collection ID
+   * @param itemId Item ID
+   * @param order Order request body
+   */
+  public async reorderItem(token: DecodedIdToken, spaceId: string, collectionId: string, itemId: string, order: IRequestReorder): Promise<void> {
+
+    if ( ! itemId )
+      throw new ServerError('invalid-request', 'Missing item ID!');
+
+    if ( ! collectionId )
+      throw new ServerError('invalid-request', 'Missing collection ID!');
+
+    if ( ! spaceId )
+      throw new ServerError('invalid-request', 'Missing space ID!');
+
+    if ( ! order.before && ! order.after )
+      throw new ServerError('invalid-request', 'Before and after items cannot be both missing!');
+
+    const item = await DbItem.findOne({ _id: itemId, spaceId });
+    const before = order.before !== null ? await DbItem.findOne({ _id: order.before, spaceId }) : undefined;
+    const after = order.after !== null ? await DbItem.findOne({ _id: order.after, spaceId }) : undefined;
+
+    if ( ! item )
+      throw new ServerError('not-found', `No item found with ID "${itemId}"!`);
+
+    if ( ! before && order.before )
+      throw new ServerError('not-found', `No before item found with ID "${order.before}"!`);
+
+    if ( ! after && order.after )
+      throw new ServerError('not-found', `No after item found with ID "${order.after}"!`);
+
+    await this.enforcePermission(token, spaceId, item.owner, Permission.CanModifyContent);
+
+    const beforeTimestamp = before?.order || before?.createdAt.getTime() || 0;
+    const afterTimestamp = after?.order || after?.createdAt.getTime() || (beforeTimestamp * 2);
+
+    item.order = Math.round((beforeTimestamp + afterTimestamp) / 2);
+
+    await item.save();
 
   }
 

@@ -12,6 +12,7 @@ import { NgClass } from '@angular/common';
 import isURL from 'validator/es/lib/isURL';
 import { cloneDeep } from 'lodash-es';
 import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinner.component';
+import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-collection',
@@ -21,7 +22,9 @@ import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinn
     TextboxComponent,
     EmptyPlaceholderComponent,
     LoadingSpinnerComponent,
-    NgClass
+    NgClass,
+    CdkDrag,
+    CdkDropList
   ],
   templateUrl: './collection.component.html',
   styleUrl: './collection.component.scss'
@@ -37,6 +40,7 @@ export class CollectionComponent implements OnDestroy {
   public fetchingMetadata = new Map<string, true>();
   public hasWritePermission: boolean = true;
   public fetching: boolean = false;
+  public reorderingInProgress: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -291,6 +295,32 @@ export class CollectionComponent implements OnDestroy {
     // Otherwise, apply tag filter in collections search (current view)
     else
       this.router.navigate([], { relativeTo: this.route, queryParams: { tags: event.tag }});
+
+  }
+
+  public onItemDropped(event: CdkDragDrop<IItem[]>): void {
+
+    if ( event.currentIndex === event.previousIndex )
+      return;
+
+    moveItemInArray(this.items, event.previousIndex, event.currentIndex);
+
+    // Reorder request
+    const currentItem = this.items[event.currentIndex];
+    const previousItem: IItem | undefined = this.items[event.currentIndex - 1];
+    const nextItem: IItem | undefined = this.items[event.currentIndex + 1];
+
+    this.reorderingInProgress = true;
+    
+    this.endpoint.reorderItem(
+      currentItem.spaceId,
+      currentItem.collectionId,
+      currentItem.id,
+      nextItem?.id || null,
+      previousItem?.id || null
+    )
+    .catch(console.error)
+    .finally(() => this.reorderingInProgress = false);
 
   }
 

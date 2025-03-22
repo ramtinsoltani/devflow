@@ -5,13 +5,13 @@ import { Document, Types } from "mongoose";
  * @param doc Mongoose document
  * @returns Normalized JSON object
  */
-export function normalizeCommonDocument(doc: Document<any>) {
+export function normalizeCommonDocument(doc: any) {
 
   const normalized: any = {
     id: (doc._id as Types.ObjectId).toString(),
-    ...doc.toJSON(),
-    updatedAt: (doc as any).updatedAt.getTime(),
-    createdAt: (doc as any).createdAt.getTime()
+    ...(doc instanceof Document ? doc.toJSON() : doc),
+    updatedAt: doc.updatedAt.getTime(),
+    createdAt: doc.createdAt.getTime()
   };
 
   delete normalized.__v;

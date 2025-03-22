@@ -1,0 +1,12 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+additionalProperties: false
+properties:
+  before:
+    type: [string, "null"]
+    required: true
+    minLength: 1
+  after:
+    type: [string, "null"]
+    required: true
+    minLength: 1

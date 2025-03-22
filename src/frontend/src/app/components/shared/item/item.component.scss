@@ -2,15 +2,39 @@
 
 :host {
   position: relative;
+  
+  &.cdk-drag-animating {
+    transition: all .15s ease-in-out !important;
+  }
 
-  &:hover .card {
+  &:hover .card,
+  &.cdk-drag-preview {
     background-color: utils.color(gray-3);
     transform: scale(1.05);
     box-shadow: 0 10px 20px utils.color(dropshadow);
+    border-radius: 3px;
   
     app-icon.edit-icon {
       display: initial !important;
     }
+  }
+}
+
+:host.cdk-drag-placeholder {
+  
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    width: calc(100% - 6px);
+    height: calc(100% - 6px);
+    border: 3px dashed utils.color(gray-2);
+    border-radius: 5px;
+  }
+  
+  .card {
+    opacity: 0;
+    user-select: none;
   }
 }
 

@@ -21,6 +21,10 @@ export const SpaceSchema = new Schema({
     type: String,
     required: true,
     maxLength: 64
+  },
+  order: {
+    type: Number,
+    required: false
   }
 }, {
   timestamps: true
@@ -52,6 +56,10 @@ export const CollectionSchema = new Schema({
     required: true,
     default: 0,
     min: 0
+  },
+  order: {
+    type: Number,
+    required: false
   }
 }, {
   timestamps: true
@@ -159,6 +167,10 @@ export const ItemSchema = new Schema({
     type: Boolean,
     required: true,
     default: false
+  },
+  order: {
+    type: Number,
+    required: false
   }
 }, {
   timestamps: true

@@ -464,6 +464,60 @@ export class EndpointService {
 
   }
 
+  /**
+   * Reorders a space.
+   * @param spaceId Space ID
+   * @param before ID of the space that comes before the new order of this space (null if new order is at the end)
+   * @param after ID of the space that comes after the new order of this space (null if new order is at the beginning)
+   * @returns 
+   */
+  public async reorderSpace(spaceId: string, before: string | null, after: string | null): Promise<IGeneralMessageResponse> {
+
+    return lastValueFrom(this.http.patch<any>(
+      `${environment.apiBaseUrl}/reorder/${spaceId}`,
+      { before, after },
+      { headers: await this.getAuthorizationHeader() }
+    ));
+
+  }
+
+  /**
+   * Reorders a collection.
+   * @param spaceId Space ID
+   * @param collectionId Collection ID
+   * @param before ID of the collection that comes before the new order of this collection (null if new order is at the end)
+   * @param after ID of the collection that comes after the new order of this collection (null if new order is at the beginning)
+   * @returns 
+   */
+  public async reorderCollection(spaceId: string, collectionId: string, before: string | null, after: string | null): Promise<IGeneralMessageResponse> {
+
+    return lastValueFrom(this.http.patch<any>(
+      `${environment.apiBaseUrl}/reorder/${spaceId}/${collectionId}`,
+      { before, after },
+      { headers: await this.getAuthorizationHeader() }
+    ));
+
+  }
+
+  /**
+   * Reorders a space.
+   * @param spaceId Space ID
+   * @param collectionId Collection ID
+   * @param itemId Item ID
+   * @param before ID of the space that comes before the new order of this space (null if new order is at the end)
+   * @param after ID of the space that comes after the new order of this space (null if new order is at the beginning)
+   * @returns 
+   */
+  public async reorderItem(spaceId: string, collectionId: string, itemId: string, before: string | null, after: string | null): Promise<IGeneralMessageResponse> {
+
+    return lastValueFrom(this.http.patch<any>(
+      `${environment.apiBaseUrl}/reorder/${spaceId}/${collectionId}/${itemId}`,
+      { before, after },
+      { headers: await this.getAuthorizationHeader() }
+    ));
+
+  }
+
 }
 
 export interface INewSpaceRequest {

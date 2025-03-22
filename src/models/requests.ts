@@ -59,6 +59,11 @@ export interface IRequestFetchMetadata {
   url: string
 }
 
+export interface IRequestReorder {
+  before: number | null,
+  after: number | null
+}
+
 export type NewSpaceRequest = AuthorizedRequest<any, any, IRequestNewSpace>;
 export type UpdateSpaceRequest = AuthorizedRequest<{ id: string }, any, IRequestUpdateSpace>;
 export type DeleteSpaceRequest = AuthorizedRequest<{ id: string }>;
@@ -82,3 +87,6 @@ export type RevokePermissionRequest = AuthorizedRequest<{ id: string }>;
 export type SelfRevokePermissionRequest = AuthorizedRequest<{ id: string }>;
 export type FetchMetadataRequest = AuthorizedRequest<any, any, IRequestFetchMetadata>;
 export type GetTagColorRequest = AuthorizedRequest<{ spaceId: string, label: string }, any, any, { exclude?: string }>;
+export type ReorderSpaceRequest = AuthorizedRequest<{ spaceId: string }, any, IRequestReorder>;
+export type ReorderCollectionRequest = AuthorizedRequest<{ spaceId: string, collectionId: string }, any, IRequestReorder>;
+export type ReorderItemRequest = AuthorizedRequest<{ spaceId: string, collectionId: string, itemId: string }, any, IRequestReorder>;

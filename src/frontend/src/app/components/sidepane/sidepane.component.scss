@@ -103,3 +103,75 @@
     z-index: 1;
   }
 }
+
+.logout-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 3px;
+  padding: 10px;
+  padding-left: 15px;
+  user-select: none;
+  transition: background-color .15s ease-in-out;
+
+  &:hover {
+    background-color: utils.color(gray-3);
+
+    .logout-button {
+      display: initial !important;
+    }
+
+    .email {
+      display: none !important;
+    }
+  }
+
+  .user-avatar {
+    border-radius: 3px;
+    width: utils.rem(40px);
+    height: utils.rem(40px);
+
+    &.avatar-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: utils.color(gray-4);
+      color: utils.color(gray-8);
+    }
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    font-weight: 400;
+    overflow: hidden;
+
+    .username,
+    .email {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .username {
+      font-size: utils.rem(16px);
+    }
+
+    .email {
+      font-size: utils.rem(14px);
+      color: utils.color(gray-6);
+    }
+
+    .logout-button {
+      display: none;
+      font-size: utils.rem(14px);
+      color: utils.color(accent-red);
+      cursor: pointer;
+      max-width: fit-content;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
