@@ -1,7 +1,7 @@
 import { NgClass, NgStyle } from '@angular/common';
 import { Component, Input, Output, HostListener, EventEmitter, OnInit, booleanAttribute, OnDestroy } from '@angular/core';
 import { Color, ICollection, IItem, ITag } from '@devflow/models';
-import { AppService, EndpointService, ModalService, ModalSize, UtilsService } from '@devflow/services';
+import { AppService, EndpointService, ModalService, ModalSize, UtilsService, DexieService } from '@devflow/services';
 import { IconComponent } from '../icon/icon.component';
 import { TagComponent } from '../tag/tag.component';
 import { ItemModalComponent, ItemModalData, ItemModalOutput } from '../../modals/item/item.component';
@@ -27,12 +27,13 @@ import { cloneDeep } from 'lodash-es';
 export class ItemComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
-
+  
   public spaceId!: string;
   public collectionColor: Color = Color.Blue;
   public collectionPaletteColor!: string;
   public collection!: ICollection;
   public hovered: boolean = false;
+  public itemChecked: boolean = false;
 
   /** Item object */
   @Input()
@@ -41,6 +42,10 @@ export class ItemComponent implements OnInit, OnDestroy {
   /** Whether item is read only (no update controls) or not */
   @Input()
   public readOnly: boolean = false;
+
+  /** Whether item is in check mode (clicks will check/uncheck the item) or not */
+  @Input()
+  public checkModeActive: boolean = false;
 
   /** Displays fetching spinner on item */
   @Input()
@@ -57,6 +62,10 @@ export class ItemComponent implements OnInit, OnDestroy {
   /** Emits when item tag is clicked */
   @Output()
   public onTagFilter = new EventEmitter<TagFilterEvent>();
+
+  /** Emits when the checked status of this item changes */
+  @Output()
+  public onItemCheckedStatusChanged = new EventEmitter<boolean>();
 
   private ctrlKey: boolean = false;
 
@@ -94,7 +103,8 @@ export class ItemComponent implements OnInit, OnDestroy {
     private app: AppService,
     private route: ActivatedRoute,
     private router: Router,
-    private utils: UtilsService
+    private utils: UtilsService,
+    private dexie: DexieService
   ) { }
 
   ngOnInit(): void {
@@ -102,6 +112,14 @@ export class ItemComponent implements OnInit, OnDestroy {
     this.spaceId = this.route.snapshot.paramMap.get('spaceId') as string;
 
     this.subscriptions.push(this.app.collection$.subscribe(() => this.getCollectionInfo()));
+
+    if ( this.item ) {
+
+      this.dexie.checkedItems.get(this.item.id)
+      .then(checked => this.itemChecked = !! checked)
+      .catch(console.error);
+
+    }
   
   }
 
@@ -115,7 +133,7 @@ export class ItemComponent implements OnInit, OnDestroy {
 
   public onEditItem(event: MouseEvent): void {
 
-    if ( this.readOnly )
+    if ( this.readOnly || this.checkModeActive )
       return;
 
     event.stopImmediatePropagation();
@@ -187,7 +205,25 @@ export class ItemComponent implements OnInit, OnDestroy {
 
   public onCardClick(): void {
 
+    if ( this.checkModeActive )
+      return this.toggleCheckStatus();
+
     window.open(this.item?.url, '_blank');
+
+  }
+
+  public toggleCheckStatus(): void {
+
+    if ( ! this.item )
+      return;
+
+    this.itemChecked = ! this.itemChecked;
+
+    (this.itemChecked ?
+    this.dexie.checkedItems.add({ id: this.item.id }, this.item.id) :
+    this.dexie.checkedItems.delete(this.item.id))
+    .then(() => this.onItemCheckedStatusChanged.emit(this.itemChecked))
+    .catch(console.error);
 
   }
 

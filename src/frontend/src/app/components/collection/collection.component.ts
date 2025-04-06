@@ -13,6 +13,7 @@ import isURL from 'validator/es/lib/isURL';
 import { cloneDeep } from 'lodash-es';
 import { LoadingSpinnerComponent } from '../shared/loading-spinner/loading-spinner.component';
 import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
+import { ButtonComponent } from '../shared/button/button.component';
 
 @Component({
   selector: 'app-collection',
@@ -20,6 +21,7 @@ import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk
     ItemComponent,
     NavItemComponent,
     TextboxComponent,
+    ButtonComponent,
     EmptyPlaceholderComponent,
     LoadingSpinnerComponent,
     NgClass,
@@ -41,6 +43,7 @@ export class CollectionComponent implements OnDestroy {
   public hasWritePermission: boolean = true;
   public fetching: boolean = false;
   public reorderingInProgress: boolean = false;
+  public itemCheckerActive: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -203,6 +206,12 @@ export class CollectionComponent implements OnDestroy {
 
       }
 
+      if ( event.shortcut === KeyboardShortcut.ItemCheckerActive ) {
+
+        this.itemCheckerActive = true;
+        
+      }
+
     }));
 
   }
@@ -321,6 +330,18 @@ export class CollectionComponent implements OnDestroy {
     )
     .catch(console.error)
     .finally(() => this.reorderingInProgress = false);
+
+  }
+
+  public onToggleItemChecker(): void {
+
+    this.itemCheckerActive = ! this.itemCheckerActive;
+
+  }
+
+  public onDisableItemChecker(): void {
+
+    this.itemCheckerActive = false;
 
   }
 

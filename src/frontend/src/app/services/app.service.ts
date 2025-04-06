@@ -7,7 +7,8 @@ export enum KeyboardShortcut {
   NewSpace,
   NewCollection,
   NewItem,
-  PasteItem
+  PasteItem,
+  ItemCheckerActive
 }
 
 @Injectable({
@@ -18,7 +19,8 @@ export class AppService {
   private static KEYBOARD_SHORTCUT_COMBOS = [
     { shortcut: KeyboardShortcut.NewSpace, combo: { key: 'N', shiftKey: true, ctrlKey: false, altKey: false } },
     { shortcut: KeyboardShortcut.NewCollection, combo: { key: 'C', shiftKey: true, ctrlKey: false, altKey: false } },
-    { shortcut: KeyboardShortcut.NewItem, combo: { key: 'I', shiftKey: true, ctrlKey: false, altKey: false } }
+    { shortcut: KeyboardShortcut.NewItem, combo: { key: 'I', shiftKey: true, ctrlKey: false, altKey: false } },
+    { shortcut: KeyboardShortcut.ItemCheckerActive, combo: { key: 'c', shiftKey: false, ctrlKey: false, altKey: false } }
   ];
 
   private _collections$ = new BehaviorSubject<ICollection[]>([]);

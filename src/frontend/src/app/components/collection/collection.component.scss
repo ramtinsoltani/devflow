@@ -18,6 +18,15 @@
     max-width: 600px;
   }
 
+  .item-checker {
+    color: utils.color(gray-8);
+    margin-left: auto;
+
+    &.active {
+      color: utils.color(accent-green);
+    }
+  }
+
   .new-item {
     font-size: utils.rem(14px);
     flex-shrink: 0;

@@ -4,3 +4,4 @@ export * from './modal.service';
 export * from './utils.service';
 export * from './notification.service';
 export * from './auth.service';
+export * from './dexie.service';

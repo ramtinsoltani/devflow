@@ -10,6 +10,14 @@
   monochromeTags
   (onClear)="onSearchClear()"
   (onSearch)="onSearch($event)"></app-textbox>
+  <app-button
+  class="item-checker"
+  icon="check"
+  iconSize="1rem"
+  allowColorOverrides
+  compact
+  [ngClass]="{ active: itemCheckerActive }"
+  (onClick)="onToggleItemChecker()"></app-button>
 </div>
 <div class="items"
 [ngClass]="{ empty: ! fetching && (filteredItems?.length === 0 || items.length === 0) }"
@@ -24,11 +32,13 @@ cdkDropListOrientation="mixed"
       <app-item
       [item]="item"
       [readOnly]="! hasWritePermission"
+      [checkModeActive]="itemCheckerActive"
       [fetching]="fetchingMetadata.has(item.id)"
       (onItemUpdate)="onItemUpdated(i, $event)"
+      (onItemCheckedStatusChanged)="onDisableItemChecker()"
       (onTagFilter)="onTagFilter($event)"
       cdkDrag
-      [cdkDragDisabled]="! hasWritePermission || reorderingInProgress || filteredItems">
+      [cdkDragDisabled]="! hasWritePermission || reorderingInProgress || filteredItems || itemCheckerActive">
       </app-item>
     }
   

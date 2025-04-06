@@ -1,5 +1,12 @@
 @if ( item ) {
   <div class="card" (click)="onCardClick()">
+
+    @if (itemChecked) {
+      <div class="checkmark">
+        <app-icon icon="check"></app-icon>
+      </div>
+    }
+
     <app-item-image
     [posterUrl]="item.posterUrl"
     [title]="item.originTitle"
@@ -12,7 +19,7 @@
     <div class="content">
       <div class="content-header">
         <div class="title" [title]="item.title">{{ item.title }}</div>
-        @if ( ! readOnly && ! fetching ) {
+        @if ( ! readOnly && ! fetching && ! checkModeActive ) {
           <app-icon class="edit-icon" icon="pen-to-square" iconSize=".875em" containerSize="1.25em" (click)="onEditItem($event)"></app-icon>
         }
       </div>
