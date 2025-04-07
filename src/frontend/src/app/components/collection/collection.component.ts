@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Color, IItem, ITag } from '@devflow/models';
-import { AppService, EndpointService, IUpdateItemRequest, KeyboardShortcut, ModalService, ModalSize } from '@devflow/services';
+import { AppService, EndpointService, IUpdateItemRequest, KeyboardShortcut, ModalService, ModalSize, NotificationService } from '@devflow/services';
 import { Subscription } from 'rxjs';
 import { ItemComponent, TagFilterEvent } from '../shared/item/item.component';
 import { NavItemComponent } from '../shared/nav-item/nav-item.component';
@@ -36,6 +36,7 @@ export class CollectionComponent implements OnDestroy {
   private subscriptions: Subscription[] = [];
   private spaceId!: string;
   private collectionId!: string;
+  private checkedItems = new Map<string, boolean>();
 
   public items: IItem[] = [];
   public filteredItems?: IItem[] = undefined;
@@ -44,13 +45,15 @@ export class CollectionComponent implements OnDestroy {
   public fetching: boolean = false;
   public reorderingInProgress: boolean = false;
   public itemCheckerActive: boolean = false;
+  public currentCheckedView: CheckedItemsView = CheckedItemsView.All;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private endpoint: EndpointService,
     private modals: ModalService,
-    private app: AppService
+    private app: AppService,
+    private notification: NotificationService
   ) {
 
     // Subscribe to route param changes
@@ -206,10 +209,16 @@ export class CollectionComponent implements OnDestroy {
 
       }
 
-      if ( event.shortcut === KeyboardShortcut.ItemCheckerActive ) {
+      if ( event.shortcut === KeyboardShortcut.ToggleItemChecker ) {
 
-        this.itemCheckerActive = true;
+        this.onToggleItemChecker();
         
+      }
+
+      if ( event.shortcut === KeyboardShortcut.ChangeItemCheckedView ) {
+
+        this.onToggleCheckedItemsView();
+
       }
 
     }));
@@ -337,11 +346,77 @@ export class CollectionComponent implements OnDestroy {
 
     this.itemCheckerActive = ! this.itemCheckerActive;
 
+    this.notification.create({
+      type: 'info',
+      message: `Item checker ${this.itemCheckerActive ? 'ON' : 'OFF'}`
+    });
+
   }
 
-  public onDisableItemChecker(): void {
+  public onToggleCheckedItemsView(): void {
 
-    this.itemCheckerActive = false;
+    const enumValues = Object.values(CheckedItemsView);
+    const currentIndex = enumValues.indexOf(this.currentCheckedView);
+    const nextIndex = currentIndex === enumValues.length - 1 ? 0 : currentIndex + 1;
+
+    this.currentCheckedView = enumValues[nextIndex];
+
+  }
+
+  public onItemCheckedStatusChanged(item: IItem, checked: boolean): void {
+
+    this.checkedItems.set(item.id, checked);
+
+  }
+
+  public isCheckedViewTogglerVisible(): boolean {
+
+    const checkedStatus = Array.from(this.checkedItems.values());
+    const uniqueValues: any = {};
+
+    for ( const status of checkedStatus )
+      uniqueValues[`${status}`] = true;
+    
+    return Object.keys(uniqueValues).length > 1;
+
+  }
+
+  public get currentCheckedViewTooltip(): string {
+
+    switch (this.currentCheckedView) {
+
+      case CheckedItemsView.All:
+        return 'Display all items (checked/unchecked)';
+      
+      case CheckedItemsView.Checked:
+        return 'Display checked items only';
+      
+      case CheckedItemsView.Unchecked:
+        return 'Display unchecked items only';
+
+    }
+
+  }
+
+  public getItemsAfterFilters(): IItem[] {
+
+    return (this.filteredItems || this.items)
+    .filter(item => {
+
+      switch (this.currentCheckedView) {
+
+        case CheckedItemsView.All:
+          return true;
+        
+        case CheckedItemsView.Checked:
+          return !! this.checkedItems.get(item.id);
+        
+        case CheckedItemsView.Unchecked:
+          return ! this.checkedItems.get(item.id);
+
+      }
+
+    });
 
   }
 
@@ -353,4 +428,10 @@ export class CollectionComponent implements OnDestroy {
     
   }
 
+}
+
+export enum CheckedItemsView {
+  All = 'Display All',
+  Checked = 'Checked Only',
+  Unchecked = 'Unchecked Only'
 }

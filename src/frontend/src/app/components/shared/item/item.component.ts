@@ -116,7 +116,12 @@ export class ItemComponent implements OnInit, OnDestroy {
     if ( this.item ) {
 
       this.dexie.checkedItems.get(this.item.id)
-      .then(checked => this.itemChecked = !! checked)
+      .then(checked => {
+
+        this.itemChecked = !! checked;
+        this.onItemCheckedStatusChanged.emit(this.itemChecked);
+
+      })
       .catch(console.error);
 
     }

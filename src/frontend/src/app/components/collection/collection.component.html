@@ -10,14 +10,27 @@
   monochromeTags
   (onClear)="onSearchClear()"
   (onSearch)="onSearch($event)"></app-textbox>
-  <app-button
-  class="item-checker"
-  icon="check"
-  iconSize="1rem"
-  allowColorOverrides
-  compact
-  [ngClass]="{ active: itemCheckerActive }"
-  (onClick)="onToggleItemChecker()"></app-button>
+  <div class="control-buttons-group">
+
+    @if ( isCheckedViewTogglerVisible() ) {
+      <app-button
+      [label]="currentCheckedView"
+      allowColorOverrides
+      compact
+      [title]="currentCheckedViewTooltip"
+      (onClick)="onToggleCheckedItemsView()"></app-button>
+    }
+
+    <app-button
+    class="item-checker"
+    icon="check"
+    iconSize="1rem"
+    allowColorOverrides
+    compact
+    title="Toggle item checker"
+    [ngClass]="{ active: itemCheckerActive }"
+    (onClick)="onToggleItemChecker()"></app-button>
+  </div>
 </div>
 <div class="items"
 [ngClass]="{ empty: ! fetching && (filteredItems?.length === 0 || items.length === 0) }"
@@ -28,14 +41,14 @@ cdkDropListOrientation="mixed"
     <app-loading-spinner></app-loading-spinner>
   }
   @else {
-    @for (item of filteredItems || items; track item.updatedAt; let i = $index) {
+    @for (item of getItemsAfterFilters(); track item.updatedAt; let i = $index) {
       <app-item
       [item]="item"
       [readOnly]="! hasWritePermission"
       [checkModeActive]="itemCheckerActive"
       [fetching]="fetchingMetadata.has(item.id)"
       (onItemUpdate)="onItemUpdated(i, $event)"
-      (onItemCheckedStatusChanged)="onDisableItemChecker()"
+      (onItemCheckedStatusChanged)="onItemCheckedStatusChanged(item, $event)"
       (onTagFilter)="onTagFilter($event)"
       cdkDrag
       [cdkDragDisabled]="! hasWritePermission || reorderingInProgress || filteredItems || itemCheckerActive">
