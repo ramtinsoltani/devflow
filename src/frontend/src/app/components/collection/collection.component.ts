@@ -371,6 +371,9 @@ export class CollectionComponent implements OnDestroy {
 
   public isCheckedViewTogglerVisible(): boolean {
 
+    if ( this.filteredItems?.length === 0 || ! this.items.length )
+      return false;
+
     const checkedStatus = Array.from(this.checkedItems.values());
     const uniqueValues: any = {};
 

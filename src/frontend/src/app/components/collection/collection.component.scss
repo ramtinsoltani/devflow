@@ -5,6 +5,11 @@
   flex-direction: column;
   gap: 15px;
   flex: 1;
+  max-height: max-content;
+
+  &:has(app-empty-placeholder) {
+    max-height: unset;
+  }
 }
 
 .controls {
